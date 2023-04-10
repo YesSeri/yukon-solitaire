@@ -1,20 +1,32 @@
-#define CLUB 'C'
-#define HEART 'H'
-#define DIAMOND 'D'
-#define SPADE 'S'
-#define ACE 1
-#define TWO 2
-#define THREE 3
-#define FOUR 4
-#define FIVE 5
-#define SIX 6
-#define SEVEN 7
-#define EIGHT 8
-#define NINE 9
-#define TEN 10
-#define JACK 11
-#define QUEEN 12
-#define KING 13
+#include "Card.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-typedef int Value;
-typedef char Suit;
+Card* create_card(Suit suit, Value v)
+{
+    Card* c = malloc(sizeof(Card));
+    c->value = v;
+    c->suit = suit;
+    c->next = NULL;
+    return c;
+}
+
+char card_value_to_char(Value v)
+{
+    // if (v < 1 || v > 12) {
+    //     printf("Illegal conversion value in card_value_to_char: %d", v);
+    //     exit(-1);
+    // }
+    switch (v) {
+    case 1:
+        return 'A';
+    case 10:
+        return 'J';
+    case 11:
+        return 'Q';
+    case 12:
+        return 'K';
+    default:
+        return v + '0';
+    }
+}
