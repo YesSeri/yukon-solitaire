@@ -5,11 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main()
-{
-    Suit suits[] = { CLUB, HEART, DIAMOND, SPADE };
-
-    Card* head = NULL;
+void create_unsorted_deck(){
 
     for (int i = 0; i < 4; i++) {
         Suit suit = suits[i];
@@ -18,6 +14,14 @@ int main()
             insert_at_head(&head, c);
         }
     }
+}
+
+int main()
+{
+    Suit suits[] = { CLUB, HEART, DIAMOND, SPADE };
+
+    Card* head = NULL;
+
     print_linked_list(head);
     return 0;
 }

@@ -27,7 +27,7 @@ void print_linked_list(Card* deck)
     Card* current = deck;
 
     printf("HEAD -> \n");
-    while (current != NULL) {
+    while (current->next != NULL) {
         printf("%d%c -> ", current->value, current->suit);
         if (current->suit != current->next->suit) {
             printf("\n");
@@ -35,5 +35,6 @@ void print_linked_list(Card* deck)
 
         current = current->next;
     }
+    printf("%d%c -> ", current->value, current->suit);
     printf("\n");
 }
