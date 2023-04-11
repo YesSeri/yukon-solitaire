@@ -2,31 +2,41 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Card* create_card(Suit suit, Value v)
-{
-    Card* c = malloc(sizeof(Card));
+Card *create_card(Suit suit, Value v, bool is_hidden) {
+    Card *c = malloc(sizeof(Card));
     c->value = v;
     c->suit = suit;
+    c->is_hidden = is_hidden;
     c->next = NULL;
     return c;
 }
 
-char card_value_to_char(Value v)
-{
-    // if (v < 1 || v > 12) {
-    //     printf("Illegal conversion value in card_value_to_char: %d", v);
-    //     exit(-1);
-    // }
-    switch (v) {
-    case 1:
-        return 'A';
-    case 10:
-        return 'J';
-    case 11:
-        return 'Q';
-    case 12:
-        return 'K';
-    default:
-        return v + '0';
+char card_value_to_char(Card *c) {
+    switch (c->value) {
+        case ACE:
+            return 'A';
+        case TEN:
+            return 'T';
+        case JACK:
+            return 'J';
+        case QUEEN:
+            return 'Q';
+        case KING:
+            return 'K';
+        default:
+            return c->value + '0';
+    }
+}
+
+void print_card(Card *c) {
+    if (c == NULL) {
+        printf("NULL\t");
+        return;
+    }
+    char c_val = card_value_to_char(c);
+    if (c->is_hidden) {
+        printf("[]\t");
+    } else {
+        printf("%c%c\t", c_val, c->suit);
     }
 }

@@ -1,6 +1,8 @@
 #ifndef CARD_H_INCLUDED
 #define CARD_H_INCLUDED
 
+#include <stdbool.h>
+
 #define CLUB 'C'
 #define HEART 'H'
 #define DIAMOND 'D'
@@ -25,9 +27,12 @@ typedef char Suit;
 typedef struct card {
     Suit suit;
     Value value;
-    struct card* next;
+    bool is_hidden;
+    struct card *next;
 } Card;
 
-Card* create_card(Suit suit, Value v);
+Card *create_card(Suit, Value, bool);
+
+void print_card(Card *c);
 
 #endif
