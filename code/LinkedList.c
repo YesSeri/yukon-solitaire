@@ -18,16 +18,37 @@
 //
 
 void insert_at_head(LinkedList *list, Card *new_card) {
-    // if (list->head == NULL) {
-    //     new_card->next = list->head;
-    // }
     new_card->next = list->head;
     list->head = new_card;
     list->length++;
 }
 
+void append_recursive(Card *current_card_ptr, Card *new_card_ptr) {
+    if (current_card_ptr->next == NULL) {
+        current_card_ptr->next = new_card_ptr;
+    } else {
+        append_recursive(current_card_ptr->next, new_card_ptr);
+    }
+
+}
+
+void append(LinkedList *list, Card *new_card) {
+    Card *last_card = get_card_at_index(list, list->length - 1);
+    last_card->next = new_card;
+    list->length++;
+//    Card *head = list->head;
+
+//    if (head == NULL) {
+//        list->head = new_card;
+//    } else {
+//        append_recursive(head, new_card);
+//    }
+}
+
 // Get at index i
-Card *get(Card *card_ptr, int i) {
+// Returns null if index if is bigger than list.
+Card *get_card_at_index(LinkedList *list, int i) {
+    Card *card_ptr = list->head;
     while (i) {
         if (card_ptr == NULL) {
             return NULL;
@@ -36,7 +57,6 @@ Card *get(Card *card_ptr, int i) {
         i--;
     }
     return card_ptr;
-
 }
 
 void debug_print_linked_list(LinkedList *list) {

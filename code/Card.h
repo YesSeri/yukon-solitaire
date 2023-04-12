@@ -3,26 +3,28 @@
 
 #include <stdbool.h>
 
-#define CLUB 'C'
-#define HEART 'H'
-#define DIAMOND 'D'
-#define SPADE 'S'
-#define ACE 1
-#define TWO 2
-#define THREE 3
-#define FOUR 4
-#define FIVE 5
-#define SIX 6
-#define SEVEN 7
-#define EIGHT 8
-#define NINE 9
-#define TEN 10
-#define JACK 11
-#define QUEEN 12
-#define KING 13
+typedef enum suit {
+    CLUB = 'C',
+    DIAMOND = 'H',
+    HEART = 'D',
+    SPADE = 'S'
+} Suit;
+typedef enum value {
+    ACE = 1,
+    TWO,
+    THREE,
+    FOUR,
+    FIVE,
+    SIX,
+    SEVEN,
+    EIGHT,
+    NINE,
+    TEN,
+    JACK,
+    QUEEN,
+    KING
+} Value;
 
-typedef int Value;
-typedef char Suit;
 
 typedef struct card {
     Suit suit;
@@ -32,6 +34,8 @@ typedef struct card {
 } Card;
 
 Card *create_card(Suit, Value, bool);
+
+void get_card_string(Card *, char *);
 
 void print_card(Card *c);
 

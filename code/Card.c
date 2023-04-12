@@ -1,6 +1,7 @@
 #include "Card.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 Card *create_card(Suit suit, Value v, bool is_hidden) {
     Card *c = malloc(sizeof(Card));
@@ -28,15 +29,15 @@ char card_value_to_char(Card *c) {
     }
 }
 
-void print_card(Card *c) {
-    if (c == NULL) {
-        printf("NULL\t");
+void get_card_string(Card *c, char *str) {
+    if (c == NULL || c->is_hidden) {
+        strcpy(str, "[]");
         return;
-    }
-    char c_val = card_value_to_char(c);
-    if (c->is_hidden) {
-        printf("[]\t");
     } else {
-        printf("%c%c\t", c_val, c->suit);
+        char c_val = card_value_to_char(c);
+        str[0] = c_val;
+        str[1] = c->suit;
+        str[2] = '\0';
+        return;
     }
 }
