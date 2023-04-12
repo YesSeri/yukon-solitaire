@@ -34,7 +34,12 @@ void append_recursive(Card *current_card_ptr, Card *new_card_ptr) {
 
 void append(LinkedList *list, Card *new_card) {
     Card *last_card = get_card_at_index(list, list->length - 1);
-    last_card->next = new_card;
+    if (last_card == NULL) {
+        list->head = new_card;
+    } else {
+        last_card->next = new_card;
+    }
+
     list->length++;
 //    Card *head = list->head;
 
