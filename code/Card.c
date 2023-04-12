@@ -8,7 +8,6 @@ Card *create_card(Suit suit, Value v, bool is_hidden) {
     c->value = v;
     c->suit = suit;
     c->is_hidden = is_hidden;
-    c->next = NULL;
     return c;
 }
 

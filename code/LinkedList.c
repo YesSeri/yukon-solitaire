@@ -79,3 +79,22 @@ void debug_print_linked_list(LinkedList *list) {
     printf("length: %d", list->length);
     printf("\n");
 }
+
+/**
+ * Moves n cards from one linked list to the other.
+ * @param from
+ * @param to
+ * @param n
+ */
+void move_cards(LinkedList *from, LinkedList *to, int n) {
+    Card *card_ptr = get_card_at_index(from, n - 1);
+    if (card_ptr == NULL) {
+        return;
+    }
+    Card *next_card_ptr = card_ptr->next;
+    card_ptr->next = NULL;
+    append(to, from->head);
+    from->head = next_card_ptr;
+    from->length -= n;
+    to->length += n;
+}

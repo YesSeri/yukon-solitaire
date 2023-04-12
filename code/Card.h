@@ -30,7 +30,6 @@ typedef struct card {
     Suit suit;
     Value value;
     bool is_hidden;
-    struct card *next;
 } Card;
 
 Card *create_card(Suit, Value, bool);
