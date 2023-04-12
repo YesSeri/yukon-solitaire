@@ -1,47 +1,50 @@
-// This includes #define for ace, 1, 2, ... king and for suits heart, club, diamond, spade.
-#include "Types.h"
-#include <stdbool.h>
-#include <stdio.h>
+//
+// Created by henrik on 4/12/23.
+//
+
+#include "DoublyLinkedList.h"
 #include <stdlib.h>
 
-typedef int Value;
-typedef char Suit;
-
-typedef struct node {
-    int data;
-    struct node* next;
-    struct node* prev;
-} Node;
-
-void insert_at_head(Node** head_ptr, Node* node_ptr)
-{
-    node_ptr->next = (*head_ptr);
-    (*head_ptr) = node_ptr;
+Node *create_node(Card *c_ptr) {
+    Node *node = malloc(sizeof(Node));
+    node->card_ptr = c_ptr;
+    node->next = NULL;
+    node->prev = NULL;
+    return node;
 }
 
-void print_linked_list(Node* deck)
-{
-    Node* current = deck;
-
-    printf("HEAD -> ");
-    while (current != NULL) {
-        printf("%d -> ", current->data);
-        current = current->next;
-    }
-    printf("\n");
+/**
+ * insert at end of dll.
+ * @param dll
+ * @param i
+ */
+void append_end(DoublyLinkedList *dll, Node *n_ptr) {
+    Node *sentinel = dll->dummy_ptr;
+    Node *last = sentinel->prev;
+    last->next = n_ptr;
+    n_ptr->prev = last;
+    n_ptr->next = sentinel;
+    sentinel->prev = n_ptr;
 }
 
-int main()
-{
-    Node* head = NULL;
+void create_unsorted_deck(DoublyLinkedList *dll) {
+    Suit suits[] = {CLUB, DIAMOND, HEART, SPADE};
+    for (int i = 0; i < 4; i++) {
+        Suit suit = suits[i];
+        for (Value v = ACE; v <= KING; v++) {
+            Card *c = create_card(suit, v, false);
+            Node *n = create_node(c);
 
-    for (int i = 0; i < 20; i++) {
-        Node* n = malloc(sizeof(Node));
-        n->next = NULL;
-        n->data = i;
-        insert_at_head(&head, n);
+            append_end(dll, n);
+        }
     }
+}
 
-    print_linked_list(head);
-    return 0;
+DoublyLinkedList *create_doubly_linked_list() {
+    DoublyLinkedList *dll = malloc(sizeof(DoublyLinkedList));
+    Node *dummy_ptr = create_node(NULL);
+    dll->dummy_ptr = dummy_ptr;
+    dll->dummy_ptr->next = dll->dummy_ptr;
+    dll->dummy_ptr->prev = dll->dummy_ptr;
+    return dll;
 }
