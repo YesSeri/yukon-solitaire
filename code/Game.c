@@ -1,8 +1,8 @@
 // This includes #define for ace, 1, 2, ... king and for suits heart, club, diamond, spade.
 #include "Card.h"
-#include "LinkedList.h"
 #include "View.h"
 #include "DoublyLinkedList.h"
+#include "Stack.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,31 +25,31 @@
 //}
 
 
-void create_columns_arr_from_deck(Deck *deck, Column columns_arr[NUMBER_OF_COLUMNS]) {
-    int col_sizes[] = {1, 6, 7, 8, 9, 10, 11};
-
-    // We copy all the cards from deck to the linked lists, instead of just creating new pointers.
-    // We don't want to risk that card orders gets changed and then later we need to save deck.
-    // This way we can make sure deck stays intact.
-
-
-    Card *deck_card_ptr = get_card_at_index(deck, 0);
-    Card *col_card_ptr = create_card(deck_card_ptr->suit, deck_card_ptr->value, false);
-    insert_at_head(&(columns_arr[0]), col_card_ptr);
-
-    for (int i = 1; i < NUMBER_OF_COLUMNS; i++) {
-        int size = col_sizes[i];
-        for (int j = 0; j < size; j++) {
-            // The five first cards in each column are shown when starting game.
-//            bool is_hidden = j + 5 < size;
-            bool is_hidden = false;
-            deck_card_ptr = deck_card_ptr->next;
-
-            col_card_ptr = create_card(deck_card_ptr->suit, deck_card_ptr->value, is_hidden);
-            insert_at_head(&(columns_arr[i]), col_card_ptr);
-        }
-    }
-}
+//void create_columns_arr_from_deck(Deck *deck, Column columns_arr[NUMBER_OF_COLUMNS]) {
+//    int col_sizes[] = {1, 6, 7, 8, 9, 10, 11};
+//
+//    // We copy all the cards from deck to the linked lists, instead of just creating new pointers.
+//    // We don't want to risk that card orders gets changed and then later we need to save deck.
+//    // This way we can make sure deck stays intact.
+//
+//
+//    Card *deck_card_ptr = get_card_at_index(deck, 0);
+//    Card *col_card_ptr = create_card(deck_card_ptr->suit, deck_card_ptr->value, false);
+//    insert_at_head(&(columns_arr[0]), col_card_ptr);
+//
+//    for (int i = 1; i < NUMBER_OF_COLUMNS; i++) {
+//        int size = col_sizes[i];
+//        for (int j = 0; j < size; j++) {
+//            // The five first cards in each column are shown when starting game.
+////            bool is_hidden = j + 5 < size;
+//            bool is_hidden = false;
+//            deck_card_ptr = deck_card_ptr->next;
+//
+//            col_card_ptr = create_card(deck_card_ptr->suit, deck_card_ptr->value, is_hidden);
+//            insert_at_head(&(columns_arr[i]), col_card_ptr);
+//        }
+//    }
+//}
 
 int main() {
 //    DoublyLinkedList *dll = create_doubly_linked_list();
@@ -68,27 +68,33 @@ int main() {
 //        printf("i: %d\n", *current->card_ptr);
 //        current = current->next;
 //    }
+    Stack *s = create_stack();
+    Card *c1 = create_card(CLUB, ACE, false);
+    Card *c2 = create_card(CLUB, EIGHT, false);
+    Card *c3 = create_card(CLUB, FIVE, false);
+    push(s, c1);
+    push(s, c2);
+    push(s, c3);
 
     DoublyLinkedList *dll = create_doubly_linked_list();
 //    Deck deck;
 
-
     create_unsorted_deck(dll);
 
     DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
-    DoublyLinkedList *foundations_arr[NUMBER_OF_FOUNDATIONS];
+    Stack *foundations_arr[NUMBER_OF_FOUNDATIONS];
     for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
         columns_arr[i] = create_doubly_linked_list();
     }
 
     for (int i = 0; i < NUMBER_OF_FOUNDATIONS; i++) {
-        foundations_arr[i] = create_doubly_linked_list();
+        foundations_arr[i] = create_stack();
     }
 
     print_view(columns_arr, foundations_arr);
-    create_columns_arr_from_deck(&dll, columns_arr);
+//    create_columns_arr_from_deck(&dll, columns_arr);
 
-    print_view(columns_arr, foundations_arr);
+//    print_view(columns_arr, foundations_arr);
     return 0;
 }
 

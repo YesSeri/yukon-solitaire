@@ -3,12 +3,13 @@
 //
 
 #include "Card.h"
-#include "LinkedList.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "View.h"
+#include "DoublyLinkedList.h"
+#include "Stack.h"
 
 #define NUMBER_OF_COLUMNS 7
 #define NUMBER_OF_FOUNDATIONS 4
@@ -23,11 +24,12 @@ void print_header() {
 }
 
 
-void print_main_section(Column *columns_arr, Foundation *foundations_arr) {
+void print_main_section(DoublyLinkedList *columns_arr, Stack *foundations_arr) {
     int max_size = 0;
-    Card *col_ptr_arr[NUMBER_OF_COLUMNS];
+    Node *col_ptr_arr[NUMBER_OF_COLUMNS];
     for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
-        col_ptr_arr[i] = columns_arr[i].head;
+//        col_ptr_arr[i] = columns_arr[i].dummy_ptr->next;
+        col_ptr_arr[i] = columns_arr[i].dummy_ptr;
         if (columns_arr[i].length > max_size) {
             max_size = columns_arr[i].length;
         }
@@ -38,18 +40,18 @@ void print_main_section(Column *columns_arr, Foundation *foundations_arr) {
     char card_string[3];
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < NUMBER_OF_COLUMNS; col++) {
-            Card *current = col_ptr_arr[col];
-            if (current != NULL) {
-                get_card_string(current, card_string);
+            Node *current = col_ptr_arr[col];
+            if (current->card_ptr != NULL) {
+                get_card_string(current->card_ptr, card_string);
                 printf("%s", card_string);
-                col_ptr_arr[col] = current->next;
+                col_ptr_arr[col]++;
             }
             printf("\t");
         }
 
         if (row % 2 == 0 && row < MIN_HEIGHT_MAIN_SECTION) {
-            Foundation foundation = foundations_arr[row / 2];
-            Card *current = foundation.head;
+            Stack foundation = foundations_arr[row / 2];
+            Card *current = peek(&foundation);
             get_card_string(current, card_string);
             printf("\t%s\tF%d", card_string, row / 2 + 1);
         }
@@ -63,7 +65,7 @@ void print_footer() {
 
 }
 
-void print_view(Column columns_arr[NUMBER_OF_COLUMNS], Foundation foundations_arr[NUMBER_OF_FOUNDATIONS]) {
+void print_view(DoublyLinkedList columns_arr[NUMBER_OF_COLUMNS], Stack foundations_arr[NUMBER_OF_FOUNDATIONS]) {
     print_header();
     printf("\n");
     print_main_section(columns_arr, foundations_arr);

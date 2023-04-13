@@ -15,11 +15,12 @@ typedef struct node {
 
 typedef struct {
     Node *dummy_ptr;
+    int length;
 } DoublyLinkedList;
 
 Node *create_node(Card *);
 
-void append_end(DoublyLinkedList *, Node *);
+void append(DoublyLinkedList *, Node *);
 
 void create_unsorted_deck(DoublyLinkedList *);
 
