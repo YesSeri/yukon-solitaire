@@ -2,3 +2,5 @@
 .vscode
 /code/out
 docs/req.pdf
+cmake-build-debug
+.idea

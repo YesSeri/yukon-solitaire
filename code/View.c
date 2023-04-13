@@ -9,7 +9,7 @@
 
 #include "View.h"
 #include "DoublyLinkedList.h"
-#include "Stack.h"
+#include "Foundation.h"
 
 #define NUMBER_OF_COLUMNS 7
 #define NUMBER_OF_FOUNDATIONS 4

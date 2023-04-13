@@ -2,7 +2,7 @@
 #include "Card.h"
 #include "View.h"
 #include "DoublyLinkedList.h"
-#include "Stack.h"
+#include "Foundation.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,31 +52,33 @@
 //}
 
 int main() {
-//    DoublyLinkedList *dll = create_doubly_linked_list();
-//    int v1 = 7;
-//    int v2 = 1;
-//    int v3 = 3;
-//    Node *n1 = create_node(&v1);
-//    Node *n2 = create_node(&v2);
-//    Node *n3 = create_node(&v3);
-//    append_end(dll, n1);
-//    append_end(dll, n2);
-//    append_end(dll, n3);
-//
-//    Node *current = n1;
-//    while (current->card_ptr != NULL) {
-//        printf("i: %d\n", *current->card_ptr);
-//        current = current->next;
-//    }
-    Stack *s = create_stack();
-    Card *c1 = create_card(CLUB, ACE, false);
-    Card *c2 = create_card(CLUB, EIGHT, false);
-    Card *c3 = create_card(CLUB, FIVE, false);
-    push(s, c1);
-    push(s, c2);
-    push(s, c3);
-
     DoublyLinkedList *dll = create_doubly_linked_list();
+    Card *c1 = create_card(CLUB, ACE, false);
+    Card *c2 = create_card(CLUB, TWO, false);
+    Card *c3 = create_card(CLUB, THREE, false);
+    Node *n1 = create_node(c1);
+    Node *n2 = create_node(c2);
+    Node *n3 = create_node(c3);
+    append(dll, n1);
+    append(dll, n2);
+    prepend(dll, n3);
+
+    Node *current = dll->dummy_ptr->next;
+    while (current->card_ptr != NULL) {
+        printf("i: %d\n", current->card_ptr->value);
+        current = current->next;
+    }
+    Card *cx = create_card(CLUB, TWO, false);
+    Node *nx = search_list_for_card(dll, cx);
+//    Stack *s = create_stack();
+//    Card *c1 = create_card(CLUB, ACE, false);
+//    Card *c2 = create_card(CLUB, EIGHT, false);
+//    Card *c3 = create_card(CLUB, FIVE, false);
+//    push(s, c1);
+//    push(s, c2);
+//    push(s, c3);
+
+//    DoublyLinkedList *dll = create_doubly_linked_list();
 //    Deck deck;
 
     create_unsorted_deck(dll);
@@ -91,7 +93,7 @@ int main() {
         foundations_arr[i] = create_stack();
     }
 
-    print_view(columns_arr, foundations_arr);
+//    print_view(columns_arr, foundations_arr);
 //    create_columns_arr_from_deck(&dll, columns_arr);
 
 //    print_view(columns_arr, foundations_arr);

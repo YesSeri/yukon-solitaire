@@ -2,16 +2,9 @@
 #define LINKED_LIST_H_INCLUDED
 
 #include "Card.h"
+#include "DoublyLinkedList.h"
 
-typedef struct stack_node {
-    struct stack_node *next;
-    Card *card_ptr;
-} StackNode;
-
-
-typedef struct {
-    StackNode *head;
-} Stack;
+typedef DoublyLinkedList Stack;
 
 void push(Stack *stack, Card *c_ptr);
 
