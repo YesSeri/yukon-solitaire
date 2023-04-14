@@ -63,12 +63,12 @@ void print_main_section(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS],
 }
 
 void print_footer() {
-    printf("TODO >\n");
-
+    printf("INPUT > ");
 }
 
 void
 print_view(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS], Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS]) {
+    printf("\n");
     print_header();
     printf("\n");
     print_main_section(columns_arr, foundations_arr);

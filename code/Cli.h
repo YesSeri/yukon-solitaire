@@ -7,6 +7,9 @@
 
 #include "Cli.c"
 
-Command *prompt();
+
+Move* parse_move(char *);
+
+Command *promptPlayer();
 
 #endif //CODE_CLIPARSER_H

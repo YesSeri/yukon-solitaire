@@ -58,36 +58,9 @@ void create_columns_arr_from_deck(DoublyLinkedList *deck, DoublyLinkedList *colu
 }
 
 int main() {
-//    DoublyLinkedList *deck = create_doubly_linked_list();
-//    Card *c1 = create_card(CLUB, ACE, false);
-//    Card *c2 = create_card(CLUB, TWO, false);
-//    Card *c3 = create_card(CLUB, THREE, false);
-//    Node *n1 = create_node(c1);
-//    Node *n2 = create_node(c2);
-//    Node *n3 = create_node(c3);
-//    append(deck, n1);
-//    append(deck, n2);
-//    prepend(deck, n3);
-
-//    Node *current = deck->dummy_ptr->next;
-//    while (current->card_ptr != NULL) {
-//        printf("i: %d\n", current->card_ptr->value);
-//        current = current->next;
-//    Card *cx = create_card(CLUB, TWO, false);
-//    Node *nx = search_list_for_card(deck, cx);
-//    Foundation *s = create_stack();
-//    Card *c1 = create_card(CLUB, ACE, false);
-//    Card *c2 = create_card(CLUB, EIGHT, false);
-//    Card *c3 = create_card(CLUB, FIVE, false);
-//    push(s, c1);
-//    push(s, c2);
-//    push(s, c3);
-
     DoublyLinkedList *deck = create_doubly_linked_list();
-//    Deck deck;
 
     create_unsorted_deck(deck);
-//
     DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
     Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
 
@@ -102,6 +75,7 @@ int main() {
     create_columns_arr_from_deck(deck, columns_arr);
 
     print_view(columns_arr, foundations_arr);
+    promptPlayer();
     return 0;
 }
 
