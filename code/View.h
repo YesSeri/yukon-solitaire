@@ -5,6 +5,13 @@
 #ifndef CODE_VIEW_H
 #define CODE_VIEW_H
 
-//void print_view(Column [], Foundation []);
+#include "DoublyLinkedList.h"
+#include "Foundation.h"
+
+#define NUMBER_OF_COLUMNS 7
+#define NUMBER_OF_FOUNDATIONS 4
+
+
+void print_view(DoublyLinkedList *[NUMBER_OF_COLUMNS], Foundation *[NUMBER_OF_FOUNDATIONS]);
 
 #endif //CODE_VIEW_H

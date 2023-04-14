@@ -4,14 +4,14 @@
 #include "Card.h"
 #include "DoublyLinkedList.h"
 
-typedef DoublyLinkedList Stack;
+typedef DoublyLinkedList Foundation;
 
-void push(Stack *stack, Card *c_ptr);
+void push(Foundation *, Node *);
 
-Card *peek(Stack *stack);
+Card *peek(Foundation *stack);
 
-Card *pop(Stack *);
+Card *pop(Foundation *);
 
-Stack *create_stack();
+Foundation *create_stack();
 
 #endif

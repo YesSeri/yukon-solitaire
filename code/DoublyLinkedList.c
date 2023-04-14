@@ -15,8 +15,6 @@ Node *create_node(Card *c_ptr) {
 }
 
 
-
-
 /**
  * PRIVATE FUNCTION. Use move cards instead. This function does not, and SHOULD not free the pointer.
  * That is  done in move_cards.
@@ -62,7 +60,7 @@ void insert_node_between_these_two_nodes(Node *n_before, Node *n_after, Node *n)
 }
 
 /**
- * insert at end of dll.
+ * insert at end of deck.
  * @param dll
  * @param n_ptr
  */
@@ -74,6 +72,7 @@ void append(DoublyLinkedList *dll, Node *n_ptr) {
 }
 
 // A general observation. Pointers vs pointer to pointers, when prepending.
+//
 // Double pointer so we don't need to assign value when changing value of head in function.
 // Node* would mean that when we change value of head pointer, e.g. 0xff to 0xdd, the change would only persist inside the function.
 // That is because we are changing the object given to the function not the value it is pointing to.
@@ -138,7 +137,7 @@ DoublyLinkedList *create_doubly_linked_list() {
 void move_cards(DoublyLinkedList *from, DoublyLinkedList *to, Card *c) {
     Node *n = search_list_for_card(from, *c);
     if (n == NULL) {
-        printf("Card not found in list. Card: %s", c->suit, c->value);
+        printf("Card not found in list. Card: %c%d", c->suit, c->value);
     }
     free(c);
 }

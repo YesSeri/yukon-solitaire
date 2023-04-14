@@ -24,6 +24,8 @@ Node *search_list_for_card(DoublyLinkedList *dll, Card c_ptr);
 
 Card *get_card_at(DoublyLinkedList *, int);
 
+Node *get_node_at(DoublyLinkedList *, int);
+
 void append(DoublyLinkedList *, Node *);
 
 void prepend(DoublyLinkedList *, Node *);

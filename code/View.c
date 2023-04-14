@@ -24,34 +24,36 @@ void print_header() {
 }
 
 
-void print_main_section(DoublyLinkedList *columns_arr, Stack *foundations_arr) {
+void print_main_section(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS],
+                        Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS]) {
     int max_size = 0;
-    Node *col_ptr_arr[NUMBER_OF_COLUMNS];
+//    Node* col_ptr_arr[NUMBER_OF_COLUMNS];
     for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
+//        col_ptr_arr[i] = columns_arr[i]->dummy_ptr;
 //        col_ptr_arr[i] = columns_arr[i].dummy_ptr->next;
-        col_ptr_arr[i] = columns_arr[i].dummy_ptr;
-        if (columns_arr[i].length > max_size) {
-            max_size = columns_arr[i].length;
+//        col_ptr_arr[i] = columns_arr[i]->dummy_ptr;
+        if (columns_arr[i]->length > max_size) {
+            max_size = columns_arr[i]->length;
         }
     }
-    // We need minimum 7 rows to render all 4 foundations, at row 0, 2, 4 and 6.
+//    // We need minimum 7 rows to render all 4 foundations, at row 0, 2, 4 and 6.
     int height = max_size < MIN_HEIGHT_MAIN_SECTION ? MIN_HEIGHT_MAIN_SECTION : max_size;
-
+//
     char card_string[3];
     for (int row = 0; row < height; row++) {
         for (int col = 0; col < NUMBER_OF_COLUMNS; col++) {
-            Node *current = col_ptr_arr[col];
-            if (current->card_ptr != NULL) {
+            int col_length = columns_arr[col]->length;
+            if (row < col_length) {
+                Node *current = get_node_at(columns_arr[col], col_length - row - 1);
                 get_card_string(current->card_ptr, card_string);
                 printf("%s", card_string);
-                col_ptr_arr[col]++;
             }
             printf("\t");
+            fflush(stdout);
         }
-
         if (row % 2 == 0 && row < MIN_HEIGHT_MAIN_SECTION) {
-            Stack foundation = foundations_arr[row / 2];
-            Card *current = peek(&foundation);
+            Foundation *foundation = foundations_arr[row / 2];
+            Card *current = peek(foundation);
             get_card_string(current, card_string);
             printf("\t%s\tF%d", card_string, row / 2 + 1);
         }
@@ -65,7 +67,8 @@ void print_footer() {
 
 }
 
-void print_view(DoublyLinkedList columns_arr[NUMBER_OF_COLUMNS], Stack foundations_arr[NUMBER_OF_FOUNDATIONS]) {
+void
+print_view(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS], Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS]) {
     print_header();
     printf("\n");
     print_main_section(columns_arr, foundations_arr);

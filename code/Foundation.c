@@ -9,15 +9,15 @@
 // Foundation is a stack. We can only access top element.
 // It is only a typedef for DoublyLinkedList.
 
-void push(Stack *stack, Card *c_ptr) {
-    prepend(stack, c_ptr);
+void push(Foundation *stack, Node *n_ptr) {
+    prepend(stack, n_ptr);
 }
 
-Card *peek(Stack *stack) {
+Card *peek(Foundation *stack) {
     return get_card_at(stack, 0);
 }
 
 
-Stack *create_stack() {
-
+Foundation *create_stack() {
+    return create_doubly_linked_list();
 }
