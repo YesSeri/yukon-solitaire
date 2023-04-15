@@ -3,15 +3,9 @@
 #include "View.h"
 #include "DoublyLinkedList.h"
 #include "Foundation.h"
+#include "Cli.h"
 #include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
-
-#define NUMBER_OF_COLUMNS 7
-#define NUMBER_OF_FOUNDATIONS 4
-#define DECK_SIZE 52
-#define MIN_HEIGHT_MAIN_SECTION 7
-
 
 //void create_unsorted_deck(Deck *list) {
 //    Suit suits[] = {CLUB, DIAMOND, HEART, SPADE};
@@ -59,7 +53,6 @@ void create_columns_arr_from_deck(DoublyLinkedList *deck, DoublyLinkedList *colu
 
 int main() {
     DoublyLinkedList *deck = create_doubly_linked_list();
-
     create_unsorted_deck(deck);
     DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
     Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
@@ -74,9 +67,20 @@ int main() {
 
     create_columns_arr_from_deck(deck, columns_arr);
 
-    print_view(columns_arr, foundations_arr);
-    promptPlayer();
+    char input[16];
+    int input_len = 0;
+    // Point this at the correct function depending on what action the player should take.
+    // This is a function pointer.
+    void (*actionFn)();
+    while (1) {
+        print_view(columns_arr, foundations_arr);
+        while (input_len == 0) {
+            getPlayerInput(input, &input_len);
+        }
+        parseInput(input, input_len, &actionFn);
+        input_len = 0;
+        actionFn();
+        break;
+    }
     return 0;
 }
-
-

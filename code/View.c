@@ -3,17 +3,12 @@
 //
 
 #include "Card.h"
-#include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
-
 #include "View.h"
-#include "DoublyLinkedList.h"
-#include "Foundation.h"
+
 
 #define NUMBER_OF_COLUMNS 7
 #define NUMBER_OF_FOUNDATIONS 4
-#define DECK_SIZE 52
 #define MIN_HEIGHT_MAIN_SECTION 7
 
 void print_header() {

@@ -2,14 +2,32 @@
 // Created by henrik on 4/12/23.
 //
 
-#ifndef CODE_CLIPARSER_H
-#define CODE_CLIPARSER_H
+#ifndef CODE_CLI_H
+#define CODE_CLI_H
 
-#include "Cli.c"
+#include "Card.h"
 
+typedef enum command {
+    SHOW,
+    LOAD,
+    QUIT,
+    TO_STARTUP,
+    TO_PLAY,
+    MOVE,
+    ERROR
+} Command;
 
-Move* parse_move(char *);
+typedef struct {
+    int to;
+    int from_col;
+    Suit suit;
+    Value value;
+} Move;
 
-Command *promptPlayer();
+Move *parse_move(char *, char *, char *);
 
-#endif //CODE_CLIPARSER_H
+Command parseInput(char *input, int input_len, void (**)());
+
+char *getPlayerInput(char [], int *);
+
+#endif //CODE_CLI_H
