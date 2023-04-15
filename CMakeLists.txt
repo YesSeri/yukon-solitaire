@@ -5,6 +5,7 @@ set(CMAKE_C_STANDARD 11)
 
 include_directories(code)
 
+
 add_executable(yukon_solitaire
         code/Card.c
         code/Card.h
@@ -17,4 +18,5 @@ add_executable(yukon_solitaire
         code/View.h
         code/Cli.c
         code/Cli.h
-        )
+        code/Actions.c
+        code/Actions.h)

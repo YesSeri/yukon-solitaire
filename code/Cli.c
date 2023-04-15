@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <malloc.h>
 #include "Cli.h"
 
 //**ALl phases**
@@ -24,18 +25,6 @@
 //| `P`  | to play phase       |
 //
 
-void make_player_move() {
-    printf("PLAYER MAKING MOVE");
-}
-
-void quit_game() {
-    printf("Quitting game");
-}
-
-typedef enum phase {
-    Setup,
-    Play,
-} Phase;
 
 //
 // from can be either only column C3 or column plus card C3:4C, 4C=Four of Clubs
@@ -44,21 +33,31 @@ typedef enum phase {
 
 //<from> -> <to>
 
-Move *parse_move(char *str, char *from, char *to) {
-//    char from[8];
-//    char to[8];
-    do {
-        *from++ = *str++;
-    } while (str[0] != '-' && str[1] != '>');
-
+Move *parse_move(char *input, int input_len, char *from, char *to) {
+// Add to from char array until we reach `->`
+    while (input[0] != '-' && input[1] != '>' && input_len) {
+        *from++ = *input++;
+        input_len--;
+    }
     // Move past delimiter ->
-    str = str + 2;
+    input += 2;
+    input_len -= 2;
 
-    do {
-        *to++ = *str++;
-    } while (*str != '\0');
+// Add to `to` char array until we reach `\0`, null char.
+    while (*input != '\0' && input_len) {
+        *to++ = *input++;
+        input_len--;
+    }
+
     *from++ = '\0';
     *to++ = '\0';
+
+    Card *c = malloc(sizeof(Card));
+
+    if (strlen(from) == 2) {
+
+    }
+
 
     return NULL;
 }
@@ -75,25 +74,24 @@ char *getPlayerInput(char str[], int *len_ptr) {
 
     str[0] = 'Q';
     str[1] = 'Q';
+    str[3] = '\0';
     *len_ptr = strlen(str);
 
 }
 
-Command parseInput(char *input, int input_len, void (**actionFn)()) {
+// We return a pointer, pointing to the fn that corresponds to the parsed input.
+fn_ptr parseInput(char *input, int input_len, ParsedData *parsed_data) {
 // TODO What is max input length?
-
     if (input_len > 3) {
         char from[8];
         char to[8];
-        parse_move(input, from, to);
-        *actionFn = &make_player_move;
-        return MOVE;
+        parse_move(input, input_len, from, to);
+        return make_player_move;
+//        return MOVE;
     };
     if (input_len = 2) {
         if (input[0] == 'Q' && input[1] == 'Q') {
-            printf("QUIT");
-            *actionFn = &quit_game;
-            return QUIT;
+            return quit_game;
         }
     };
     if (input[0] == 'S') {
@@ -103,12 +101,12 @@ Command parseInput(char *input, int input_len, void (**actionFn)()) {
 
     }
     if (input[0] == 'P') {
-        return TO_PLAY;
+//        return TO_PLAY;
     }
     if (input[0] == 'Q') {
-        return TO_STARTUP;
+//        return TO_STARTUP;
     }
-    return ERROR;
+//    return ERROR;
 //    SW
 //    LD
 //    P

@@ -69,17 +69,23 @@ int main() {
 
     char input[16];
     int input_len = 0;
+    ParsedData parsed_data;
     // Point this at the correct function depending on what action the player should take.
     // This is a function pointer.
-    void (*actionFn)();
+    void (*actionFn)(DoublyLinkedList *column_arr[7], Foundation *f_arr[7], DoublyLinkedList *, void *parsedData);
+
     while (1) {
         print_view(columns_arr, foundations_arr);
         while (input_len == 0) {
             getPlayerInput(input, &input_len);
         }
-        parseInput(input, input_len, &actionFn);
+        actionFn = parseInput(input, input_len, &parsed_data);
+        if (actionFn == NULL) {
+            printf("Invalid input try again.");
+            continue;
+        }
+        actionFn(columns_arr, foundations_arr, deck, &parsed_data);
         input_len = 0;
-        actionFn();
         break;
     }
     return 0;
