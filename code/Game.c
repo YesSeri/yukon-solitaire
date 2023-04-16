@@ -40,8 +40,21 @@ void create_columns_arr_from_deck(DoublyLinkedList *deck, DoublyLinkedList *colu
                     col == 5 && height < 10 ||
                     col == 6 && height < 11
                     ) {
-                // TODO Hide cards from player
-                bool is_hidden = false;
+                bool is_hidden;
+                if(
+                        col==1&&height<1||
+                        col==2&&height<2||
+                        col==3&&height<3||
+                        col==4&&height<4||
+                        col==5&&height<5||
+                        col==6&&height<6
+                ){
+                    is_hidden = true;
+                }
+                else{
+                    is_hidden = false;
+                }
+
                 Card *c = create_card(deck_node_ptr->card_ptr->suit, deck_node_ptr->card_ptr->value, is_hidden);
                 col_node_ptr = create_node(c);
                 prepend(columns_arr[col], col_node_ptr);
