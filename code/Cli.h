@@ -10,36 +10,31 @@
 
 // If we have a move, we get move data
 // With quit we get no extra data.
-enum data_type {
-    NO_EXTRA_DATA,
-    MOVE,
-    ERROR,
-    NUMBER,
-    FILENAME,
-    LOAD,
+enum command {
     QUIT,
-    TO_STARTUP,
-    TO_PLAY,
+    MOVE,
+    SAVE,
+    LOAD
 };
 
-union data {
+typedef union data {
     Move move;
     int argument;
     char filename[32];
-};
+} Data;
 
 typedef struct {
     union data data;
-    enum data_type type;
-} ParsedData;
+    enum command command;
+} ParsedInputData;
 
 // Columns, foundations, deck.
-typedef void (*fn_ptr)(ParsedData *, DoublyLinkedList *[], Foundation *[], DoublyLinkedList *);
+typedef void (*fn_ptr)(ParsedInputData *, DoublyLinkedList *[], Foundation *[], DoublyLinkedList *);
 
-Move *parse_move(char *, int input_len, char *, char *);
+ParsedInputData parse_move(char *, int, char *, char *);
 
-fn_ptr parseInput(char *input, int input_len, ParsedData *parsed_data);
+ParsedInputData *parse_input(char *, int, ParsedInputData *);
 
-char *getPlayerInput(char [], int *);
+char *get_player_input(char *, int *);
 
 #endif //CODE_CLI_H

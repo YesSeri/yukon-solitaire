@@ -11,7 +11,6 @@
 #define NUMBER_OF_COLUMNS 7
 #define NUMBER_OF_FOUNDATIONS 4
 
+void print_view(DoublyLinkedList* [NUMBER_OF_COLUMNS], Foundation* [NUMBER_OF_FOUNDATIONS]);
 
-void print_view(DoublyLinkedList *[NUMBER_OF_COLUMNS], Foundation *[NUMBER_OF_FOUNDATIONS]);
-
-#endif //CODE_VIEW_H
+#endif // CODE_VIEW_H

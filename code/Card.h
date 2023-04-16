@@ -9,6 +9,8 @@ typedef enum suit {
     HEART = 'D',
     SPADE = 'S'
 } Suit;
+
+
 typedef enum value {
     ACE = 1,
     TWO,
@@ -35,6 +37,8 @@ typedef struct card {
 Card *create_card(Suit, Value, bool);
 
 void get_card_string(Card *, char *);
+
+Value card_char_to_value(char);
 
 void print_card(Card *c);
 

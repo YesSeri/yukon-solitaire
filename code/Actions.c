@@ -4,7 +4,7 @@
 
 #include "Actions.h"
 
-void make_player_move(ParsedData *parsedData, DoublyLinkedList *column_arr[7], Foundation *f_arr[7], DoublyLinkedList *deck) {
+void make_player_move(ParsedInputData *parsedData, DoublyLinkedList *column_arr[7], Foundation *f_arr[7], DoublyLinkedList *deck) {
     printf("PLAYER MAKING MOVE");
 }
 

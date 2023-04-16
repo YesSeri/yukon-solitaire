@@ -33,37 +33,54 @@
 
 //<from> -> <to>
 
-Move *parse_move(char *input, int input_len, char *from, char *to) {
+void parse_move_into_data_struct(char *from, char *to);
+
+ParsedInputData parse_move(char *input, int input_len, char *from, char *to) {
 // Add to from char array until we reach `->`
+    int i = 0;
     while (input[0] != '-' && input[1] != '>' && input_len) {
-        *from++ = *input++;
+        from[i] = input[i];
+        i++;
         input_len--;
     }
+    from[i] = '\0';
     // Move past delimiter ->
-    input += 2;
+    i += 2;
     input_len -= 2;
 
 // Add to `to` char array until we reach `\0`, null char.
     while (*input != '\0' && input_len) {
-        *to++ = *input++;
+        to[i] = input[i];
+        i++;
         input_len--;
     }
+    to[i] = '\0';
 
-    *from++ = '\0';
-    *to++ = '\0';
+    Move *move = malloc(sizeof(Move));
+    Card *card = NULL;
+//   FROM C3:4C
+//   TO F2
+    move->is_from_col = from[0] == 'C';
+    move->from = from[1] - '0';
 
-    Card *c = malloc(sizeof(Card));
-
-    if (strlen(from) == 2) {
-
+    if (from[2] == ':') {
+        Value v = card_char_to_value(from[3]);
+        // TODO error checking;
+        Suit s = from[4];
+        card = create_card(s, v, false);
+        move->card = card;
     }
+    ParsedInputData parsedInputData;
+    Data data;
+    data.move = *move;
+    parsedInputData.data = data;
+    parsedInputData.command = MOVE;
+    return parsedInputData;
 
-
-    return NULL;
 }
 
 
-char *getPlayerInput(char str[], int *len_ptr) {
+char *get_player_input(char *str, int *len_ptr) {
 //    scanf("%s", str);
 //    str[0] = 'a';
 //    str[1] = 'a';
@@ -80,14 +97,12 @@ char *getPlayerInput(char str[], int *len_ptr) {
 }
 
 // We return a pointer, pointing to the fn that corresponds to the parsed input.
-fn_ptr parseInput(char *input, int input_len, ParsedData *parsed_data) {
+ParsedInputData *parse_input(char *input, int input_len, ParsedInputData *parsed_data) {
 // TODO What is max input length?
     if (input_len > 3) {
         char from[8];
         char to[8];
         parse_move(input, input_len, from, to);
-        return make_player_move;
-//        return MOVE;
     };
     if (input_len = 2) {
         if (input[0] == 'Q' && input[1] == 'Q') {
@@ -113,6 +128,10 @@ fn_ptr parseInput(char *input, int input_len, ParsedData *parsed_data) {
 //    Q
 //    MOVE
 //    ERROR
+}
+
+void parse_move_into_data_struct(char *from, char *to) {
+
 }
 
 

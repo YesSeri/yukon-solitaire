@@ -9,21 +9,18 @@
 // Card is null if there is none.
 //
 // from and to explanation
-// 0 = col_1
-// 1 = col_2
-// ...
-// 6 = col_7
-// 7 = foundation_1
-// ...
-// 10 = foundation_10
 
+// is_from_col is true if we are moving from column, else we are moving from foundation
 typedef struct {
     int from;
+    int is_from_col;
     int to;
     Card *card;
 } Move;
 
-void make_player_move(ParsedData *parsedData, DoublyLinkedList *column_arr[7], Foundation *f_arr[7], DoublyLinkedList *);
+void
+make_player_move(ParsedInputData *parsedData, DoublyLinkedList *column_arr[7], Foundation *f_arr[7],
+                 DoublyLinkedList *);
 
 void quit_game();
 
