@@ -26,7 +26,9 @@ typedef struct {
 
 Move *parse_move(char *, char *, char *);
 
-Command parseInput(char *input, int input_len, void (**)());
+typedef void (*actionFn)(char*);
+
+actionFn parseInput(char *input, int input_len);
 
 char *getPlayerInput(char [], int *);
 

@@ -84,15 +84,15 @@ int main() {
     int input_len = 0;
     // Point this at the correct function depending on what action the player should take.
     // This is a function pointer.
-    void (*actionFn)();
+    actionFn action;
     while (1) {
         print_view(columns_arr, foundations_arr);
         while (input_len == 0) {
             getPlayerInput(input, &input_len);
         }
-        parseInput(input, input_len, &actionFn);
+        action = parseInput(input, input_len);
+        action(input);
         input_len = 0;
-        actionFn();
         break;
     }
     return 0;

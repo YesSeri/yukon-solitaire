@@ -24,12 +24,25 @@
 //| `P`  | to play phase       |
 //
 
-void make_player_move() {
+void make_player_move(char *input) {
     printf("PLAYER MAKING MOVE");
 }
 
-void quit_game() {
+void quit_game(char *input) {
     printf("Quitting game");
+}
+
+void start_game(char *input) {
+    printf("Starting game\n");
+}
+
+void setup_game(char *input) {
+    printf("Setting up game\n");
+}
+
+void parse_error(char *input){
+    printf("%s", input);
+    printf("Is not a valid input");
 }
 
 typedef enum phase {
@@ -65,7 +78,7 @@ Move *parse_move(char *str, char *from, char *to) {
 
 
 char *getPlayerInput(char str[], int *len_ptr) {
-//    scanf("%s", str);
+    scanf("%s", str);
 //    str[0] = 'a';
 //    str[1] = 'a';
 //    str[2] = '-';
@@ -73,27 +86,25 @@ char *getPlayerInput(char str[], int *len_ptr) {
 //    str[4] = 'b';
 //    str[5] = 'b';
 
-    str[0] = 'Q';
-    str[1] = 'Q';
+    //str[0] = 'Q';
+    //str[1] = 'Q';
     *len_ptr = strlen(str);
 
 }
 
-Command parseInput(char *input, int input_len, void (**actionFn)()) {
+actionFn parseInput(char *input, int input_len) {
 // TODO What is max input length?
 
     if (input_len > 3) {
         char from[8];
         char to[8];
         parse_move(input, from, to);
-        *actionFn = &make_player_move;
-        return MOVE;
+        return &make_player_move;
     };
-    if (input_len = 2) {
+    if (input_len == 2) {
         if (input[0] == 'Q' && input[1] == 'Q') {
             printf("QUIT");
-            *actionFn = &quit_game;
-            return QUIT;
+            return &quit_game;
         }
     };
     if (input[0] == 'S') {
@@ -103,12 +114,12 @@ Command parseInput(char *input, int input_len, void (**actionFn)()) {
 
     }
     if (input[0] == 'P') {
-        return TO_PLAY;
+        return &start_game;
     }
     if (input[0] == 'Q') {
-        return TO_STARTUP;
+        return &setup_game;
     }
-    return ERROR;
+    return &parse_error;
 //    SW
 //    LD
 //    P
