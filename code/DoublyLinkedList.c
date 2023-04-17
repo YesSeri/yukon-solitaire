@@ -135,6 +135,7 @@ DoublyLinkedList *create_doubly_linked_list() {
  *
  */
 void move_cards(DoublyLinkedList *from, DoublyLinkedList *to, Card *c) {
+    //TODO Implement
     Node *n = search_list_for_card(from, *c);
     if (n == NULL) {
         printf("Card not found in list. Card: %c%d", c->suit, c->value);

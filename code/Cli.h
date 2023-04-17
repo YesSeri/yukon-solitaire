@@ -18,15 +18,17 @@ typedef enum command {
 } Command;
 
 typedef struct {
-    int to;
     int from_col;
-    Suit suit;
-    Value value;
+    Suit from_suit;
+    Value from_value;
+    int to_col;
+    Suit to_suit;
+    Value to_value;
 } Move;
 
-Move *parse_move(char *, char *, char *);
-
-Command parseInput(char *input, int input_len, void (**)());
+Move *parse_move(char *);
+typedef void (*actionFn)(char*);
+Command parseInput(char *input, int input_len, actionFn *inputFn);
 
 char *getPlayerInput(char [], int *);
 

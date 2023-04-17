@@ -19,6 +19,8 @@
 //}
 
 
+actionFn parse_command(Command command);
+
 void create_columns_arr_from_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS]) {
     int col_sizes[] = {1, 6, 7, 8, 9, 10, 11};
 
@@ -84,16 +86,83 @@ int main() {
     int input_len = 0;
     // Point this at the correct function depending on what action the player should take.
     // This is a function pointer.
-    void (*actionFn)();
+
     while (1) {
         print_view(columns_arr, foundations_arr);
         while (input_len == 0) {
             getPlayerInput(input, &input_len);
         }
-        parseInput(input, input_len, &actionFn);
+
+        /*
+         * Tobs btw
+         * I imagine the flow going like this:
+         * get input
+         * figure out type of input in parseInput
+         * This function then returns the way to show results in the form of printFn
+         * do what you need to do to the type of input, by first parsing the command, and then running the corresponding function
+         * print the output by calling the printFn
+         *
+         */
+        actionFn printFn;
+        Command command;
+        command = parseInput(input, input_len, &printFn);
+        actionFn action = parse_command(command);
+        action(input);
+        printFn(input);
         input_len = 0;
-        actionFn();
         break;
     }
     return 0;
+}
+
+
+void show_action(char *input) {
+    printf("Showing cards...\n");
+}
+
+void load_action(char *input) {
+    printf("Loading data...\n");
+}
+
+void quit_action(char *input) {
+    printf("Quitting game...\n");
+}
+
+void to_startup_action(char *input) {
+    printf("Switching to startup phase...\n");
+}
+
+void to_play_action(char *input) {
+    printf("Switching to play phase...\n");
+}
+
+void move_action(char *input) {
+    Move *move = parse_move(input);
+//TODO figure out how to parse the move to the move cards function
+    //move_cards()
+}
+
+void error_action(char *input) {
+    printf("Error: %s is not a valid input.\n", input);
+}
+
+actionFn parse_command(Command command) {
+    switch (command) {
+
+        case SHOW:
+            return &show_action;
+        case LOAD:
+            return &load_action;
+        case QUIT:
+            return &quit_action;
+        case TO_STARTUP:
+            return &to_startup_action;
+        case TO_PLAY:
+            return &to_play_action;
+        case MOVE:
+            return &move_action;
+        case ERROR:
+            return &error_action;
+    }
+
 }

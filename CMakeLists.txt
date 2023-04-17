@@ -17,4 +17,4 @@ add_executable(yukon_solitaire
         code/View.h
         code/Cli.c
         code/Cli.h
-        )
+        code/Game.h)

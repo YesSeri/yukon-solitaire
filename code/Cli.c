@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "Cli.h"
 
 //**ALl phases**
@@ -44,28 +45,24 @@ typedef enum phase {
 
 //<from> -> <to>
 
-Move *parse_move(char *str, char *from, char *to) {
-//    char from[8];
-//    char to[8];
-    do {
-        *from++ = *str++;
-    } while (str[0] != '-' && str[1] != '>');
+Move *parse_move(char *str) {
+    //TODO Check if parsing is accurate
+    Move *move = (Move *)malloc(sizeof(Move));
+    sscanf(str, "C%d:%c%d->C%d:%c%d",
+           &move->from_col,
+           (char *)&move->from_suit,
+           (int *)&move->from_value,
+           &move->to_col,
+           (char *)&move->to_suit,
+           (int *)&move->to_value);
 
-    // Move past delimiter ->
-    str = str + 2;
-
-    do {
-        *to++ = *str++;
-    } while (*str != '\0');
-    *from++ = '\0';
-    *to++ = '\0';
-
-    return NULL;
+    return move;
 }
 
 
+
 char *getPlayerInput(char str[], int *len_ptr) {
-//    scanf("%s", str);
+    scanf("%s", str);
 //    str[0] = 'a';
 //    str[1] = 'a';
 //    str[2] = '-';
@@ -73,26 +70,26 @@ char *getPlayerInput(char str[], int *len_ptr) {
 //    str[4] = 'b';
 //    str[5] = 'b';
 
-    str[0] = 'Q';
-    str[1] = 'Q';
+//    str[0] = 'Q';
+  //  str[1] = 'Q';
     *len_ptr = strlen(str);
 
 }
 
-Command parseInput(char *input, int input_len, void (**actionFn)()) {
+Command parseInput(char *input, int input_len, actionFn *printFn) {
 // TODO What is max input length?
 
     if (input_len > 3) {
         char from[8];
         char to[8];
         parse_move(input, from, to);
-        *actionFn = &make_player_move;
+        *printFn = &make_player_move;
         return MOVE;
     };
-    if (input_len = 2) {
+    if (input_len == 2) {
         if (input[0] == 'Q' && input[1] == 'Q') {
             printf("QUIT");
-            *actionFn = &quit_game;
+            *printFn = &quit_game;
             return QUIT;
         }
     };
