@@ -42,6 +42,7 @@ void print_main_section(DoublyLinkedList* columns_arr[NUMBER_OF_COLUMNS],
                 Node* current = get_node_at(columns_arr[col], col_length - row - 1);
                 get_card_string(current->card_ptr, card_string);
                 printf("%s", card_string);
+                fflush(stdout);
             }
             printf("\t");
             fflush(stdout);

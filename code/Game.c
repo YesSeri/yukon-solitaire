@@ -19,6 +19,8 @@
 //    }
 //}
 
+bool is_valid_move(Move *, DoublyLinkedList *, DoublyLinkedList *);
+
 void create_columns_arr_from_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS]) {
     int col_heights[] = {1, 6, 7, 8, 9, 10, 11};
 
@@ -74,12 +76,14 @@ void move_action(Move *move, DoublyLinkedList *from_list, DoublyLinkedList *to_l
 // TODO move multiple cards
 // TODO move to and from foundations
     printf("Move to make: ");
+    is_valid_move(move, from_list, to_list);
     if (move->card == NULL) {
         printf("Moving top card, from: %d, To: %d\n", move->from, move->to);
         move_single_card(from_list, to_list);
         free(move);
     } else {
         printf("From: %d, To: %d, Card: %c%d\n", move->from, move->to, move->card->suit, move->card->value);
+        move_cards(from_list, to_list, move->card);
         free(move->card);
         free(move);
     }
@@ -89,10 +93,12 @@ void move_action(Move *move, DoublyLinkedList *from_list, DoublyLinkedList *to_l
 
 }
 
-void error_action(char *input) {
-    printf("Error: %s is not a valid input.\n", input);
+bool is_valid_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
+    if (move->card == NULL || search_list_for_card(from, move->card) != NULL) {
+        return true;
+    }
+    return false;
 }
-
 
 int main() {
     DoublyLinkedList *deck = create_doubly_linked_list();
@@ -144,11 +150,9 @@ int main() {
             }
             case QUIT:
                 printf("Quitting game...");
-                fflush(stdout);
                 exit(0);
             case ERROR:
             default:
-            INPUT_ERROR:
                 printf("Invalid input, try again.");
                 continue;
         }

@@ -37,48 +37,6 @@
 
 //<from> -> <to>
 
-//ParsedInputData *parse_move(char *input, int input_len) {
-//    char from[MAX_LEN_MOVE_FROM] = "";
-//    char to[MAX_LEN_MOVE_TO] = "";
-//    // Add to the from char array until we reach `->`
-//    int i = 0;
-//    while (!(input[i] == ' ' || input[i] == '-') && i < input_len) {
-//        from[i] = input[i];
-//        i++;
-//    }
-//    from[i] = '\0';
-//    // Move past delimiter and spaces " -> "
-//    i += 4;
-//
-//    int j = 0;
-//    // Add to `to` char array until we reach `\0`, null char.
-//    while (input[i] != '\0' && i < input_len) {
-//        to[j++] = input[i++];
-//    }
-//    to[i] = '\0';
-//
-//    Move *move = malloc(sizeof(Move));
-//    Card *card = NULL;
-//    move->card = card;
-//    //   FROM C3:4C
-//    //   TO F2
-//    move->is_from_col = from[0] == 'C';
-//    move->from = from[1] - '0';
-//
-//    if (from[2] == ':') {
-//        Value v = card_char_to_value(from[3]);
-//        // TODO error checking;
-//        Suit s = from[4];
-//        card = create_card(s, v, false);
-//        move->card = card;
-//    }
-//    ParsedInputData *parsedInputData = malloc(sizeof(ParsedInputData));
-//    Data data;
-//    data.move = *move;
-//    parsedInputData->data = data;
-//    parsedInputData->command = MOVE;
-//    return parsedInputData;
-//}
 Move *parse_move(char *str) {
     //TODO Check if parsing is accurate
     Move *move = malloc(sizeof(Move));
@@ -90,11 +48,11 @@ Move *parse_move(char *str) {
 
     if (str[2] == ':') {
         move->card = malloc(sizeof(Card));
-        sscanf(str, "%c%d:%c%d -> %c%d",
+        sscanf(str, "%c%d:%d%c -> %c%d",
                &from_col_or_foundation,
                &from_i,
-               &move->card->suit,
                &move->card->value,
+               &move->card->suit,
                &to_col_or_foundation,
                &to_i);
     } else {
@@ -127,11 +85,11 @@ int col_index_to_int(char *col_str) {
 
 void get_player_input(char *str, int *len_ptr) {
 //     TODO USE THIS IN FINAL PRODUCT
-    scanf("%s", str);
+//    scanf("%s", str);
 
 //    For testing
 //    strcpy(str, "C3 -> C2");
-//    strcpy(str, "C3:H5 -> C1");
+    strcpy(str, "C3:7H -> C1");
 //    strcpy(str, "C3 -> F1");
 //    strcpy(str, "QQ");
 
