@@ -37,8 +37,6 @@
 
 //<from> -> <to>
 
-void parse_move_into_data_struct(char *from, char *to);
-
 //ParsedInputData *parse_move(char *input, int input_len) {
 //    char from[MAX_LEN_MOVE_FROM] = "";
 //    char to[MAX_LEN_MOVE_TO] = "";
@@ -83,14 +81,44 @@ void parse_move_into_data_struct(char *from, char *to);
 //}
 Move *parse_move(char *str) {
     //TODO Check if parsing is accurate
-    Move *move = (Move *)malloc(sizeof(Move));
-    sscanf(str, "C%d:%c%d->C%d:%c%d",
-           &move->from_col,
-           (char *)&move->from_suit,
-           (int *)&move->from_value,
-           &move->to_col,
-           (char *)&move->to_suit,
-           (int *)&move->to_value);
+    Move *move = malloc(sizeof(Move));
+    Card *card;
+    move->card = card;
+
+
+    char from_col_or_foundation;
+    int from_i;
+    char to_col_or_foundation;
+    int to_i;
+
+    if (str[2] == ':') {
+        move->card = malloc(sizeof(Card));
+        char card_suit;
+        int card_val;
+        sscanf(str, "%c%d:%c%d -> %c%d",
+               &from_col_or_foundation,
+               &from_i,
+               &card_suit,
+               &card_val,
+               &to_col_or_foundation,
+               &to_i);
+        move->card->suit = card_suit;
+        move->card->value = card_val;
+    } else {
+        card = NULL;
+
+        sscanf(str, "%c%d -> %c%d",
+               &from_col_or_foundation,
+               &from_i,
+               &to_col_or_foundation,
+               &to_i);
+    }
+    move->is_from_col = from_col_or_foundation == 'C';
+    move->from = from_i;
+    move->is_to_col = to_col_or_foundation == 'C';
+    move->to = to_i;
+    return move;
+}
 
 int col_index_to_int(char *col_str) {
     char col = col_str[0];
@@ -102,16 +130,15 @@ int col_index_to_int(char *col_str) {
     } else {
         return -1;
     }
-
 }
 
 void get_player_input(char *str, int *len_ptr) {
 //     TODO USE THIS IN FINAL PRODUCT
-    scanf("%s", str);
+//    scanf("%s", str);
 
 //    For testing
 //    strcpy(str, "C3 -> C2");
-//    strcpy(str, "C3:H5 -> C1");
+    strcpy(str, "C3:H5 -> C1");
 //    strcpy(str, "C3 -> F1");
 //    strcpy(str, "QQ");
 

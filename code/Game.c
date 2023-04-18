@@ -50,6 +50,48 @@ void create_columns_arr_from_deck(DoublyLinkedList *deck, DoublyLinkedList *colu
     }
 }
 
+void show_action(char *input) {
+    printf("Showing cards...\n");
+}
+
+void load_action(char *input) {
+    printf("Loading data...\n");
+}
+
+void quit_action(char *input) {
+    printf("Quitting game...\n");
+}
+
+void to_startup_action(char *input) {
+    printf("Switching to startup phase...\n");
+}
+
+void to_play_action(char *input) {
+    printf("Switching to play phase...\n");
+}
+
+void move_action(Move *move) {
+//TODO figure out how to parse the move to the move cards function
+    printf("Move to make: ");
+    if (move->card == NULL) {
+        printf("Moving top card, from: %d, To: %d\n", move->from, move->to);
+        free(move);
+    } else {
+        printf("From: %d, To: %d, Card: %c%d\n", move->from, move->to,move->card->suit, move->card->value);
+        free(move->card);
+        free(move);
+    }
+
+    // Free pointers after move
+
+
+}
+
+void error_action(char *input) {
+    printf("Error: %s is not a valid input.\n", input);
+}
+
+
 int main() {
     DoublyLinkedList *deck = create_doubly_linked_list();
     create_unsorted_deck(deck);
@@ -91,23 +133,22 @@ int main() {
         switch (command) {
             case MOVE: {
 
-                int from = col_index_to_int(&input[0]);
-                Card *c;
-                int to;
-                int offset = input[2] == ':' ? 9 : 7;
-                if (input[2] == ':' && from < 8) {
-                    Suit s = input[3];
-                    Value v = input[4] - '0';
-                    c = create_card(s, v, false);
-                    to = col_index_to_int(&input[9]);
-                } else {
-                    c = NULL;
-                    to = col_index_to_int(&input[6]);
-                }
-                if (from == -1 || to == -1) {
-                    goto INPUT_ERROR;
-                }
-                printf("from: %d, to: %d");
+                Move *move = parse_move(input);
+
+                move_action(move);
+//                int from = col_index_to_int(&input[0]);
+//                int to;
+//                if (input[2] == ':' && from < 8) {
+//                    Suit s = input[3];
+//                    Value v = input[4] - '0';
+//                    to = col_index_to_int(&input[9]);
+//                } else {
+//                    to = col_index_to_int(&input[6]);
+//                }
+//                if (from == -1 || to == -1) {
+//                    goto INPUT_ERROR;
+//                }
+//                printf("from: %d, to: %d");
                 break;
             }
             case QUIT:
@@ -125,34 +166,4 @@ int main() {
     return 0;
 }
 
-
-void show_action(char *input) {
-    printf("Showing cards...\n");
-}
-
-void load_action(char *input) {
-    printf("Loading data...\n");
-}
-
-void quit_action(char *input) {
-    printf("Quitting game...\n");
-}
-
-void to_startup_action(char *input) {
-    printf("Switching to startup phase...\n");
-}
-
-void to_play_action(char *input) {
-    printf("Switching to play phase...\n");
-}
-
-void move_action(char *input) {
-    Move *move = parse_move(input);
-//TODO figure out how to parse the move to the move cards function
-    //move_cards()
-}
-
-void error_action(char *input) {
-    printf("Error: %s is not a valid input.\n", input);
-}
 

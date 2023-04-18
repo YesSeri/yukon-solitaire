@@ -23,22 +23,14 @@ typedef enum commandType {
 
 typedef struct {
     int from;
-    int is_from_col;
+    bool is_from_col;
     int to;
+    bool is_to_col;
     Card *card;
 } Move;
-typedef union data {
-    Move move;
-    int argument;
-    char filename[32];
-} Data;
 
-typedef struct {
-    union data data;
-    enum commandType command;
-} ParsedInputData;
 
-ParsedInputData *parse_move(char *, int);
+Move *parse_move(char *);
 
 CommandType parse_input_type(char *, int);
 
