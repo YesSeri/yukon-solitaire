@@ -71,7 +71,8 @@ void to_play_action(char *input) {
 }
 
 void move_action(Move *move, DoublyLinkedList *from_list, DoublyLinkedList *to_list) {
-//TODO figure out how to parse the move to the move cards function
+// TODO move multiple cards
+// TODO move to and from foundations
     printf("Move to make: ");
     if (move->card == NULL) {
         printf("Moving top card, from: %d, To: %d\n", move->from, move->to);

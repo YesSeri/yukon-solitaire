@@ -90,17 +90,13 @@ Move *parse_move(char *str) {
 
     if (str[2] == ':') {
         move->card = malloc(sizeof(Card));
-        char card_suit;
-        int card_val;
         sscanf(str, "%c%d:%c%d -> %c%d",
                &from_col_or_foundation,
                &from_i,
-               &card_suit,
-               &card_val,
+               &move->card->suit,
+               &move->card->value,
                &to_col_or_foundation,
                &to_i);
-        move->card->suit = card_suit;
-        move->card->value = card_val;
     } else {
         move->card = NULL;
 
@@ -131,10 +127,10 @@ int col_index_to_int(char *col_str) {
 
 void get_player_input(char *str, int *len_ptr) {
 //     TODO USE THIS IN FINAL PRODUCT
-//    scanf("%s", str);
+    scanf("%s", str);
 
 //    For testing
-    strcpy(str, "C3 -> C2");
+//    strcpy(str, "C3 -> C2");
 //    strcpy(str, "C3:H5 -> C1");
 //    strcpy(str, "C3 -> F1");
 //    strcpy(str, "QQ");
