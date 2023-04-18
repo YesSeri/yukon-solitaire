@@ -4,7 +4,8 @@
 
 #include "Actions.h"
 
-void make_player_move(ParsedInputData *parsedData, DoublyLinkedList *column_arr[7], Foundation *f_arr[7], DoublyLinkedList *deck) {
+void make_player_move(ParsedInputData *parsedData, DoublyLinkedList *column_arr[7], Foundation *f_arr[7],
+                      DoublyLinkedList *deck) {
     printf("PLAYER MAKING MOVE");
 }
 
@@ -12,4 +13,7 @@ void quit_game() {
     printf("Quitting game");
 }
 
+void move_from_col() {
+    printf("Moving from column %d to column %d", 1, 2);
+}
 

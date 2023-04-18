@@ -2,10 +2,12 @@
 // Created by henrik on 4/14/23.
 //
 
-#include <stdio.h>
-#include <string.h>
-#include <malloc.h>
 #include "Cli.h"
+#include <malloc.h>
+#include <string.h>
+
+#define MAX_LEN_MOVE_FROM 6
+#define MAX_LEN_MOVE_TO 3
 
 //**ALl phases**
 //
@@ -25,7 +27,6 @@
 //| `P`  | to play phase       |
 //
 
-
 //
 // from can be either only column C3 or column plus card C3:4C, 4C=Four of Clubs
 //
@@ -35,31 +36,31 @@
 
 void parse_move_into_data_struct(char *from, char *to);
 
-ParsedInputData parse_move(char *input, int input_len, char *from, char *to) {
-// Add to from char array until we reach `->`
+ParsedInputData *parse_move(char *input, int input_len) {
+    char from[MAX_LEN_MOVE_FROM] = "";
+    char to[MAX_LEN_MOVE_TO] = "";
+    // Add to the from char array until we reach `->`
     int i = 0;
-    while (input[0] != '-' && input[1] != '>' && input_len) {
+    while (!(input[i] == ' ' || input[i] == '-') && i < input_len) {
         from[i] = input[i];
         i++;
-        input_len--;
     }
     from[i] = '\0';
-    // Move past delimiter ->
-    i += 2;
-    input_len -= 2;
+    // Move past delimiter and spaces " -> "
+    i += 4;
 
-// Add to `to` char array until we reach `\0`, null char.
-    while (*input != '\0' && input_len) {
-        to[i] = input[i];
-        i++;
-        input_len--;
+    int j = 0;
+    // Add to `to` char array until we reach `\0`, null char.
+    while (input[i] != '\0' && i < input_len) {
+        to[j++] = input[i++];
     }
     to[i] = '\0';
 
     Move *move = malloc(sizeof(Move));
     Card *card = NULL;
-//   FROM C3:4C
-//   TO F2
+    move->card = card;
+    //   FROM C3:4C
+    //   TO F2
     move->is_from_col = from[0] == 'C';
     move->from = from[1] - '0';
 
@@ -70,71 +71,78 @@ ParsedInputData parse_move(char *input, int input_len, char *from, char *to) {
         card = create_card(s, v, false);
         move->card = card;
     }
-    ParsedInputData parsedInputData;
+    ParsedInputData *parsedInputData = malloc(sizeof(ParsedInputData));
     Data data;
     data.move = *move;
-    parsedInputData.data = data;
-    parsedInputData.command = MOVE;
+    parsedInputData->data = data;
+    parsedInputData->command = MOVE;
     return parsedInputData;
+}
+
+int col_index_to_int(char *col_str) {
+    char col = col_str[0];
+    char col_index = col_str[1];
+    if (col == 'C') {
+        return col_index - '0';
+    } else if (col == 'F') {
+        return col_index - '0' + 7;
+    } else {
+        return -1;
+    }
 
 }
 
+void get_player_input(char *str, int *len_ptr) {
+//     TODO USE THIS IN FINAL PRODUCT
+    scanf("%16s", str);
 
-char *get_player_input(char *str, int *len_ptr) {
-//    scanf("%s", str);
-//    str[0] = 'a';
-//    str[1] = 'a';
-//    str[2] = '-';
-//    str[3] = '>';
-//    str[4] = 'b';
-//    str[5] = 'b';
+//    For testing
+//    strcpy(str, "C3 -> C2");
+//    strcpy(str, "C3:H5 -> C1");
+//    strcpy(str, "C3 -> F1");
+//    strcpy(str, "QQ");
 
-    str[0] = 'Q';
-    str[1] = 'Q';
-    str[3] = '\0';
     *len_ptr = strlen(str);
-
 }
 
 // We return a pointer, pointing to the fn that corresponds to the parsed input.
-ParsedInputData *parse_input(char *input, int input_len, ParsedInputData *parsed_data) {
-// TODO What is max input length?
+CommandType parse_input_type(char *input, int input_len) {
+    // TODO What is max input length?
     if (input_len > 3) {
-        char from[8];
-        char to[8];
-        parse_move(input, input_len, from, to);
+//        return parse_move(input, input_len);
+        return MOVE;
     };
-    if (input_len = 2) {
+    if (input_len == 2) {
         if (input[0] == 'Q' && input[1] == 'Q') {
-            return quit_game;
+            return QUIT;
+//            parsed_data->commandType = QUIT;
         }
     };
-    if (input[0] == 'S') {
-
+    if (input[0] == 'S' && input[1] == 'W') {
+        return SAVE_DECK;
     }
-    if (input[0] == 'L') {
-
+    if (input[0] == 'L' && input[1] == 'W') {
+        return LOAD_DECK;
     }
     if (input[0] == 'P') {
-//        return TO_PLAY;
+        return TO_PLAY;
     }
     if (input[0] == 'Q') {
-//        return TO_STARTUP;
+        return TO_STARTUP;
     }
-//    return ERROR;
-//    SW
-//    LD
-//    P
-//    Q
-//    MOVE
-//    ERROR
+
+    // If there is no matching command there must be an error.
+    return ERROR;
+    //    SW
+    //    LD
+    //    P
+    //    Q
+    //    MOVE
+    //    ERROR
 }
 
 void parse_move_into_data_struct(char *from, char *to) {
-
 }
-
-
 
 //**Play**
 //
@@ -154,4 +162,3 @@ void parse_move_into_data_struct(char *from, char *to) {
 //| `SR` | shuffle random      |
 //| `SD` | save data           |
 //| `P`  | to play phase       |
-

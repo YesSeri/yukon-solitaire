@@ -3,3 +3,5 @@
 docs/req.pdf
 cmake-build-debug
 .idea
+
+CMakeLists.txt

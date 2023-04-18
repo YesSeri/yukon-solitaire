@@ -5,8 +5,8 @@
 
 typedef enum suit {
     CLUB = 'C',
-    DIAMOND = 'H',
-    HEART = 'D',
+    DIAMOND = 'D',
+    HEART = 'H',
     SPADE = 'S'
 } Suit;
 

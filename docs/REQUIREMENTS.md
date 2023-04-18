@@ -18,7 +18,7 @@ This is what the game should look like.
 
 - Console info at the bottom
 
-    - LAST Command: The last command entered
+    - LAST CommandType: The last commandType entered
 
     - Message: Any messages from the game
 

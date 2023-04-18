@@ -6,17 +6,27 @@
 #define CODE_CLI_H
 
 #include "Card.h"
-#include "Actions.h"
 
 // If we have a move, we get move data
 // With quit we get no extra data.
-enum command {
+
+typedef enum commandType {
     QUIT,
     MOVE,
-    SAVE,
-    LOAD
-};
+    SAVE_DECK,
+    LOAD_DECK,
+    TO_PLAY,
+    TO_STARTUP,
+    ERROR,
+    // TODO add all commands
+} CommandType;
 
+typedef struct {
+    int from;
+    int is_from_col;
+    int to;
+    Card *card;
+} Move;
 typedef union data {
     Move move;
     int argument;
@@ -25,16 +35,15 @@ typedef union data {
 
 typedef struct {
     union data data;
-    enum command command;
+    enum commandType command;
 } ParsedInputData;
 
-// Columns, foundations, deck.
-typedef void (*fn_ptr)(ParsedInputData *, DoublyLinkedList *[], Foundation *[], DoublyLinkedList *);
+ParsedInputData *parse_move(char *, int);
 
-ParsedInputData parse_move(char *, int, char *, char *);
+CommandType parse_input_type(char *, int);
 
-ParsedInputData *parse_input(char *, int, ParsedInputData *);
+void get_player_input(char *, int *);
 
-char *get_player_input(char *, int *);
+int col_index_to_int(char *col_str);
 
-#endif //CODE_CLI_H
+#endif // CODE_CLI_H
