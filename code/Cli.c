@@ -2,6 +2,9 @@
 // Created by henrik on 4/14/23.
 //
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "Cli.h"
 #include <malloc.h>
 #include <string.h>
@@ -36,48 +39,58 @@
 
 void parse_move_into_data_struct(char *from, char *to);
 
-ParsedInputData *parse_move(char *input, int input_len) {
-    char from[MAX_LEN_MOVE_FROM] = "";
-    char to[MAX_LEN_MOVE_TO] = "";
-    // Add to the from char array until we reach `->`
-    int i = 0;
-    while (!(input[i] == ' ' || input[i] == '-') && i < input_len) {
-        from[i] = input[i];
-        i++;
-    }
-    from[i] = '\0';
-    // Move past delimiter and spaces " -> "
-    i += 4;
-
-    int j = 0;
-    // Add to `to` char array until we reach `\0`, null char.
-    while (input[i] != '\0' && i < input_len) {
-        to[j++] = input[i++];
-    }
-    to[i] = '\0';
-
-    Move *move = malloc(sizeof(Move));
-    Card *card = NULL;
-    move->card = card;
-    //   FROM C3:4C
-    //   TO F2
-    move->is_from_col = from[0] == 'C';
-    move->from = from[1] - '0';
-
-    if (from[2] == ':') {
-        Value v = card_char_to_value(from[3]);
-        // TODO error checking;
-        Suit s = from[4];
-        card = create_card(s, v, false);
-        move->card = card;
-    }
-    ParsedInputData *parsedInputData = malloc(sizeof(ParsedInputData));
-    Data data;
-    data.move = *move;
-    parsedInputData->data = data;
-    parsedInputData->command = MOVE;
-    return parsedInputData;
-}
+//ParsedInputData *parse_move(char *input, int input_len) {
+//    char from[MAX_LEN_MOVE_FROM] = "";
+//    char to[MAX_LEN_MOVE_TO] = "";
+//    // Add to the from char array until we reach `->`
+//    int i = 0;
+//    while (!(input[i] == ' ' || input[i] == '-') && i < input_len) {
+//        from[i] = input[i];
+//        i++;
+//    }
+//    from[i] = '\0';
+//    // Move past delimiter and spaces " -> "
+//    i += 4;
+//
+//    int j = 0;
+//    // Add to `to` char array until we reach `\0`, null char.
+//    while (input[i] != '\0' && i < input_len) {
+//        to[j++] = input[i++];
+//    }
+//    to[i] = '\0';
+//
+//    Move *move = malloc(sizeof(Move));
+//    Card *card = NULL;
+//    move->card = card;
+//    //   FROM C3:4C
+//    //   TO F2
+//    move->is_from_col = from[0] == 'C';
+//    move->from = from[1] - '0';
+//
+//    if (from[2] == ':') {
+//        Value v = card_char_to_value(from[3]);
+//        // TODO error checking;
+//        Suit s = from[4];
+//        card = create_card(s, v, false);
+//        move->card = card;
+//    }
+//    ParsedInputData *parsedInputData = malloc(sizeof(ParsedInputData));
+//    Data data;
+//    data.move = *move;
+//    parsedInputData->data = data;
+//    parsedInputData->command = MOVE;
+//    return parsedInputData;
+//}
+Move *parse_move(char *str) {
+    //TODO Check if parsing is accurate
+    Move *move = (Move *)malloc(sizeof(Move));
+    sscanf(str, "C%d:%c%d->C%d:%c%d",
+           &move->from_col,
+           (char *)&move->from_suit,
+           (int *)&move->from_value,
+           &move->to_col,
+           (char *)&move->to_suit,
+           (int *)&move->to_value);
 
 int col_index_to_int(char *col_str) {
     char col = col_str[0];
@@ -94,7 +107,7 @@ int col_index_to_int(char *col_str) {
 
 void get_player_input(char *str, int *len_ptr) {
 //     TODO USE THIS IN FINAL PRODUCT
-    scanf("%16s", str);
+    scanf("%s", str);
 
 //    For testing
 //    strcpy(str, "C3 -> C2");
@@ -108,10 +121,6 @@ void get_player_input(char *str, int *len_ptr) {
 // We return a pointer, pointing to the fn that corresponds to the parsed input.
 CommandType parse_input_type(char *input, int input_len) {
     // TODO What is max input length?
-    if (input_len > 3) {
-//        return parse_move(input, input_len);
-        return MOVE;
-    };
     if (input_len == 2) {
         if (input[0] == 'Q' && input[1] == 'Q') {
             return QUIT;
@@ -131,6 +140,11 @@ CommandType parse_input_type(char *input, int input_len) {
         return TO_STARTUP;
     }
 
+    if (input_len > 3) {
+//        return parse_move(input, input_len);
+        return MOVE;
+    };
+
     // If there is no matching command there must be an error.
     return ERROR;
     //    SW
@@ -141,8 +155,7 @@ CommandType parse_input_type(char *input, int input_len) {
     //    ERROR
 }
 
-void parse_move_into_data_struct(char *from, char *to) {
-}
+
 
 //**Play**
 //
