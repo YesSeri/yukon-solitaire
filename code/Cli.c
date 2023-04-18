@@ -82,9 +82,6 @@
 Move *parse_move(char *str) {
     //TODO Check if parsing is accurate
     Move *move = malloc(sizeof(Move));
-    Card *card;
-    move->card = card;
-
 
     char from_col_or_foundation;
     int from_i;
@@ -105,7 +102,7 @@ Move *parse_move(char *str) {
         move->card->suit = card_suit;
         move->card->value = card_val;
     } else {
-        card = NULL;
+        move->card = NULL;
 
         sscanf(str, "%c%d -> %c%d",
                &from_col_or_foundation,
@@ -114,9 +111,9 @@ Move *parse_move(char *str) {
                &to_i);
     }
     move->is_from_col = from_col_or_foundation == 'C';
-    move->from = from_i;
+    move->from = from_i - 1;
     move->is_to_col = to_col_or_foundation == 'C';
-    move->to = to_i;
+    move->to = to_i - 1;
     return move;
 }
 
@@ -137,8 +134,8 @@ void get_player_input(char *str, int *len_ptr) {
 //    scanf("%s", str);
 
 //    For testing
-//    strcpy(str, "C3 -> C2");
-    strcpy(str, "C3:H5 -> C1");
+    strcpy(str, "C3 -> C2");
+//    strcpy(str, "C3:H5 -> C1");
 //    strcpy(str, "C3 -> F1");
 //    strcpy(str, "QQ");
 

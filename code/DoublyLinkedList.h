@@ -33,6 +33,11 @@ void prepend(DoublyLinkedList *, Node *);
 void create_unsorted_deck(DoublyLinkedList *);
 
 DoublyLinkedList *create_doubly_linked_list();
+
 void move_cards(DoublyLinkedList *from, DoublyLinkedList *to, Card *c);
+
+Node *remove_at(DoublyLinkedList *, int);
+
+void move_single_card(DoublyLinkedList *, DoublyLinkedList *);
 
 #endif //CODE_DOUBLYLINKEDLIST_H

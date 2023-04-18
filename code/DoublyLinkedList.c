@@ -142,3 +142,19 @@ void move_cards(DoublyLinkedList *from, DoublyLinkedList *to, Card *c) {
     }
     free(c);
 }
+
+
+Node *remove_at(DoublyLinkedList *dll, int index) {
+    Node *n = get_node_at(dll, index);
+    Node *n_before = n->prev;
+    Node *n_after = n->next;
+    n_before->next = n_after;
+    n_after->prev = n_before;
+    dll->length--;
+    return n;
+}
+
+void move_single_card(DoublyLinkedList *from, DoublyLinkedList *to) {
+    Card *card_from = remove_at(from, 0);
+    prepend(to, card_from);
+}

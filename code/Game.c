@@ -70,14 +70,15 @@ void to_play_action(char *input) {
     printf("Switching to play phase...\n");
 }
 
-void move_action(Move *move) {
+void move_action(Move *move, DoublyLinkedList *from_list, DoublyLinkedList *to_list) {
 //TODO figure out how to parse the move to the move cards function
     printf("Move to make: ");
     if (move->card == NULL) {
         printf("Moving top card, from: %d, To: %d\n", move->from, move->to);
+        move_single_card(from_list, to_list);
         free(move);
     } else {
-        printf("From: %d, To: %d, Card: %c%d\n", move->from, move->to,move->card->suit, move->card->value);
+        printf("From: %d, To: %d, Card: %c%d\n", move->from, move->to, move->card->suit, move->card->value);
         free(move->card);
         free(move);
     }
@@ -134,21 +135,10 @@ int main() {
             case MOVE: {
 
                 Move *move = parse_move(input);
+                DoublyLinkedList *from = move->is_from_col ? columns_arr[move->from] : foundations_arr[move->from];
+                DoublyLinkedList *to = move->is_to_col ? columns_arr[move->to] : foundations_arr[move->to];
 
-                move_action(move);
-//                int from = col_index_to_int(&input[0]);
-//                int to;
-//                if (input[2] == ':' && from < 8) {
-//                    Suit s = input[3];
-//                    Value v = input[4] - '0';
-//                    to = col_index_to_int(&input[9]);
-//                } else {
-//                    to = col_index_to_int(&input[6]);
-//                }
-//                if (from == -1 || to == -1) {
-//                    goto INPUT_ERROR;
-//                }
-//                printf("from: %d, to: %d");
+                move_action(move, from, to);
                 break;
             }
             case QUIT:
