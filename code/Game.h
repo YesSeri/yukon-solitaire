@@ -23,5 +23,7 @@ void error_action(char *input);
 
 bool validate_to_foundation_move();
 
+void print_error_message();
+
 DoublyLinkedList *columns_arr[];
 #endif //YUKON_SOLITAIRE_GAME_H

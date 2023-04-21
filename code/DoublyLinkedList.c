@@ -145,9 +145,11 @@ void move_cards(DoublyLinkedList *from, DoublyLinkedList *to, Card *c) {
         n = n->next;
     }
 
+    from->dummy_ptr = last_card_to_move->next;
     last_card_to_move->next = to->dummy_ptr->next;
-    to->dummy_ptr->next->prev = last_card_to_move;
-    to->dummy_ptr->next = first_card_to_move->next;
+    last_card_to_move->next->prev = last_card_to_move;
+//    to->dummy_ptr->next->prev = last_card_to_move;
+    to->dummy_ptr->next = first_card_to_move;
     first_card_to_move->prev = to->dummy_ptr;
 
     to->length += len;

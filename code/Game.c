@@ -8,7 +8,20 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-// TODO error handling with global variable.
+#include <string.h>
+
+
+// 0 means no problem
+// 1 means move problem
+// 2 means illegal command
+// TODO come up with more
+typedef enum err {
+    NO_ERROR,
+    MOVE_ERR,
+    CMD_ERR,
+    WRITE_ERR,
+} ErrorEnum;
+ErrorEnum g_error_code = NO_ERROR;
 
 //void create_unsorted_deck(Deck *list) {
 //    Suit suits[] = {CLUB, DIAMOND, HEART, SPADE};
@@ -85,6 +98,7 @@ void move_action(Move *move, DoublyLinkedList *from_list, DoublyLinkedList *to_l
         free(move);
     } else {
         printf("From: %d, To: %d, Card: %c%d\n", move->from, move->to, move->card->suit, move->card->value);
+        fflush(stdout);
         move_cards(from_list, to_list, move->card);
         free(move->card);
         free(move);
@@ -108,7 +122,7 @@ bool is_valid_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
     if (move->is_to_col) {
         // Move one card
 
-        Card *card_from;
+        Card *card_from = NULL;
         Card *card_to = get_node_at(to, 0)->card_ptr;
         if (move->card == NULL) {
             card_from = get_node_at(from, 0)->card_ptr;
@@ -121,7 +135,7 @@ bool is_valid_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
             return false;
         }
         // Card must be one lower than the col it is moving to and of a different suit
-        if (!(card_from->value == card_to->value - 1 || card_from->suit != card_to->suit)) {
+        if (!(card_from->value == card_to->value - 1 || card_from->suit == card_to->suit)) {
             return false;
         }
     } else {
@@ -161,16 +175,15 @@ int main() {
      * print the output by calling the printFn
      *
      */
+    Command command;
     while (1) {
-        char input[16];
-        int input_len = 0;
+        char input[16] = "";
         print_view(columns_arr, foundations_arr);
-        while (input_len == 0) {
-            get_player_input(input, &input_len);
+        while (strlen(input) == 0) {
+            get_player_input(input);
         }
-
-        CommandType command = parse_input_type(input, input_len);
-        switch (command) {
+        parse_input_type(input, &command);
+        switch (command.type) {
             case MOVE: {
                 Move *move = parse_move(input);
                 DoublyLinkedList *from = move->is_from_col ? columns_arr[move->from] : foundations_arr[move->from];
@@ -179,17 +192,30 @@ int main() {
                 if (isValid) {
                     move_action(move, from, to);
                 } else {
-                    goto HANDLE_ERROR;
+                    g_error_code = MOVE_ERR;
                 }
             }
+                break;
             case QUIT:
                 printf("Quitting game...");
+                exit(0);
+            case SAVE_DECK:
+                printf("saving deck");
+                g_error_code = WRITE_ERR;
                 break;
-            case ERROR:
-            default:
-            HANDLE_ERROR:
-                printf("Invalid input, try again.");
-                continue;
+            case LOAD_DECK:
+                break;
+            case TO_PLAY:
+                break;
+            case TO_STARTUP:
+                break;
+            case UNKNOWN:
+                g_error_code = CMD_ERR;
+
+        }
+        if (g_error_code != NO_ERROR) {
+            print_error_message();
+            g_error_code = NO_ERROR;
         }
 
     }
@@ -197,3 +223,22 @@ int main() {
 }
 
 
+void print_error_message() {
+    switch (g_error_code) {
+        case NO_ERROR:
+            break;
+        case MOVE_ERR:
+            fprintf(stderr, "Illegal move");
+            break;
+        case CMD_ERR:
+            fprintf(stderr, "Illegal command.");
+            break;
+        case WRITE_ERR:
+            fprintf(stderr, "Could not write deck to file.");
+            break;
+        default:
+            fprintf(stderr, "Unknown error message!\n");
+            exit(-1);
+    }
+    fprintf(stderr, "\n");
+}

@@ -4,22 +4,32 @@
 
 #ifndef CODE_CLI_H
 #define CODE_CLI_H
+#define ARG_LENGTH 64
 
 #include "Card.h"
 
 // If we have a move, we get move data
 // With quit we get no extra data.
 
-typedef enum commandType {
+enum commandType {
     QUIT,
     MOVE,
     SAVE_DECK,
     LOAD_DECK,
     TO_PLAY,
     TO_STARTUP,
-    ERROR,
+    UNKNOWN,
     // TODO add all commands
-} CommandType;
+};
+
+union argument {
+    char str[ARG_LENGTH];
+    int val;
+};
+typedef struct command {
+    enum commandType type;
+    union argument arg;
+} Command;
 
 typedef struct {
     int from;
@@ -31,9 +41,9 @@ typedef struct {
 
 Move *parse_move(char *);
 
-CommandType parse_input_type(char *, int);
+void parse_input_type(char *, Command *);
 
-void get_player_input(char *, int *);
+void get_player_input(char *);
 
 int col_index_to_int(char *col_str);
 

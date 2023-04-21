@@ -45,13 +45,14 @@ Move *parse_move(char *str) {
     int from_i;
     char to_col_or_foundation;
     int to_i;
+    char value_c;
 
     if (str[2] == ':') {
         move->card = malloc(sizeof(Card));
-        sscanf(str, "%c%d:%d%c -> %c%d",
+        sscanf(str, "%c%d:%c%c -> %c%d",
                &from_col_or_foundation,
                &from_i,
-               &move->card->value,
+               &value_c,
                &move->card->suit,
                &to_col_or_foundation,
                &to_i);
@@ -64,6 +65,7 @@ Move *parse_move(char *str) {
                &to_col_or_foundation,
                &to_i);
     }
+    move->card->value = card_char_to_value(value_c);
     move->is_from_col = from_col_or_foundation == 'C';
     move->from = from_i - 1;
     move->is_to_col = to_col_or_foundation == 'C';
@@ -83,48 +85,58 @@ int col_index_to_int(char *col_str) {
     }
 }
 
-void get_player_input(char *str, int *len_ptr) {
+void get_player_input(char *str) {
 //     TODO USE THIS IN FINAL PRODUCT
-    scanf("%s", str);
+//    scanf("%s", str);
 
 //    For testing
 //    strcpy(str, "C6 -> C3");
-//    strcpy(str, "C3:7H -> C1");
+    strcpy(str, "C2:AD -> C5");
 //    strcpy(str, "C3 -> F1");
 //    strcpy(str, "QQ");
 
-    *len_ptr = strlen(str);
+//    size_t buf_size = 16;
+//    *len_ptr = getline(str, &buf_size, stdin);
+
+//    size_t bufsize = 80;
+
+//    getline(&str, &bufsize, stdin);
 }
 
 // We return a pointer, pointing to the fn that corresponds to the parsed input.
-CommandType parse_input_type(char *input, int input_len) {
+void parse_input_type(char *input, Command *command) {
     // TODO What is max input length?
-    if (input_len == 2) {
-        if (input[0] == 'Q' && input[1] == 'Q') {
-            return QUIT;
-//            parsed_data->commandType = QUIT;
-        }
-    };
-    if (input[0] == 'S' && input[1] == 'W') {
-        return SAVE_DECK;
-    }
-    if (input[0] == 'L' && input[1] == 'W') {
-        return LOAD_DECK;
-    }
-    if (input[0] == 'P') {
-        return TO_PLAY;
-    }
-    if (input[0] == 'Q') {
-        return TO_STARTUP;
-    }
 
-    if (input_len > 3) {
-//        return parse_move(input, input_len);
-        return MOVE;
-    };
+    char cmd_str[3];
+    sscanf(input, "%s", cmd_str);
+    int cmd_str_len = strlen(cmd_str);
+
+    if (input[0] == 'C') {
+        command->type = MOVE;
+    }
+    if (cmd_str_len == 2) {
+        if (input[0] == 'Q' && input[1] == 'Q') {
+            command->type = QUIT;
+        }
+    }
+    if (input[0] == 'S' && input[1] == 'W') {
+        char arg_str[ARG_LENGTH] = "";
+        sscanf(input, "%s %s", cmd_str, arg_str);
+        command->type = SAVE_DECK;
+    }
+//    if (input[0] == 'L' && input[1] == 'W') {
+//        return LOAD_DECK;
+//    }
+//    if (input[0] == 'P') {
+//        return TO_PLAY;
+//    }
+//    if (input[0] == 'Q') {
+//        return TO_STARTUP;
+//    }
+//
 
     // If there is no matching command there must be an error.
-    return ERROR;
+//    return ERROR;
     //    SW
     //    LD
     //    P
