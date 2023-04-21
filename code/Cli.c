@@ -85,11 +85,11 @@ int col_index_to_int(char *col_str) {
 
 void get_player_input(char *str, int *len_ptr) {
 //     TODO USE THIS IN FINAL PRODUCT
-//    scanf("%s", str);
+    scanf("%s", str);
 
 //    For testing
-//    strcpy(str, "C3 -> C2");
-    strcpy(str, "C3:7H -> C1");
+//    strcpy(str, "C6 -> C3");
+//    strcpy(str, "C3:7H -> C1");
 //    strcpy(str, "C3 -> F1");
 //    strcpy(str, "QQ");
 

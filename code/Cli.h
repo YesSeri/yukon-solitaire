@@ -29,7 +29,6 @@ typedef struct {
     Card *card;
 } Move;
 
-
 Move *parse_move(char *);
 
 CommandType parse_input_type(char *, int);

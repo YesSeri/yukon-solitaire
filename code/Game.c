@@ -4,9 +4,11 @@
 #include "DoublyLinkedList.h"
 #include "Foundation.h"
 #include "Cli.h"
+#include "Game.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+// TODO error handling with global variable.
 
 //void create_unsorted_deck(Deck *list) {
 //    Suit suits[] = {CLUB, DIAMOND, HEART, SPADE};
@@ -76,10 +78,10 @@ void move_action(Move *move, DoublyLinkedList *from_list, DoublyLinkedList *to_l
 // TODO move multiple cards
 // TODO move to and from foundations
     printf("Move to make: ");
-    is_valid_move(move, from_list, to_list);
     if (move->card == NULL) {
         printf("Moving top card, from: %d, To: %d\n", move->from, move->to);
         move_single_card(from_list, to_list);
+
         free(move);
     } else {
         printf("From: %d, To: %d, Card: %c%d\n", move->from, move->to, move->card->suit, move->card->value);
@@ -87,6 +89,12 @@ void move_action(Move *move, DoublyLinkedList *from_list, DoublyLinkedList *to_l
         free(move->card);
         free(move);
     }
+    // Once we have moved cards we make top card in from list visible.
+    Card *c = get_card_at(from_list, 0);
+    if (c) {
+        c->is_hidden = false;
+    }
+
 
     // Free pointers after move
 
@@ -94,9 +102,36 @@ void move_action(Move *move, DoublyLinkedList *from_list, DoublyLinkedList *to_l
 }
 
 bool is_valid_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
-    if (move->card == NULL || search_list_for_card(from, move->card) != NULL) {
-        return true;
+
+    // Move multiple cards
+    // You can never move several cards to a column.
+    if (move->is_to_col) {
+        // Move one card
+
+        Card *card_from;
+        Card *card_to = get_node_at(to, 0)->card_ptr;
+        if (move->card == NULL) {
+            card_from = get_node_at(from, 0)->card_ptr;
+            // If card_ptr is empty the dummy ptr points to itself, meaning there are no cards in this column or foundation.
+        } else {
+            card_from = search_list_for_node(from, move->card)->card_ptr;
+        }
+        // Card must exist in column
+        if (card_from == NULL) {
+            return false;
+        }
+        // Card must be one lower than the col it is moving to and of a different suit
+        if (!(card_from->value == card_to->value - 1 || card_from->suit != card_to->suit)) {
+            return false;
+        }
+    } else {
+        return validate_to_foundation_move();
     }
+    // TODO empty columns can only be filled with a king
+    return true;
+}
+
+bool validate_to_foundation_move() {
     return false;
 }
 
@@ -116,9 +151,16 @@ int main() {
 
     create_columns_arr_from_deck(deck, columns_arr);
 
-    // Point this at the correct function depending on what action the player should take.
-    // This is a function pointer.
-
+    /*
+     * Tobs btw
+     * I imagine the flow going like this:
+     * get input
+     * figure out type of input in parseInput
+     * This function then returns the way to show results in the form of printFn
+     * do what you need to do to the type of input, by first parsing the command, and then running the corresponding function
+     * print the output by calling the printFn
+     *
+     */
     while (1) {
         char input[16];
         int input_len = 0;
@@ -127,32 +169,25 @@ int main() {
             get_player_input(input, &input_len);
         }
 
-        /*
-         * Tobs btw
-         * I imagine the flow going like this:
-         * get input
-         * figure out type of input in parseInput
-         * This function then returns the way to show results in the form of printFn
-         * do what you need to do to the type of input, by first parsing the command, and then running the corresponding function
-         * print the output by calling the printFn
-         *
-         */
         CommandType command = parse_input_type(input, input_len);
         switch (command) {
             case MOVE: {
-
                 Move *move = parse_move(input);
                 DoublyLinkedList *from = move->is_from_col ? columns_arr[move->from] : foundations_arr[move->from];
                 DoublyLinkedList *to = move->is_to_col ? columns_arr[move->to] : foundations_arr[move->to];
-
-                move_action(move, from, to);
-                break;
+                bool isValid = is_valid_move(move, from, to);
+                if (isValid) {
+                    move_action(move, from, to);
+                } else {
+                    goto HANDLE_ERROR;
+                }
             }
             case QUIT:
                 printf("Quitting game...");
-                exit(0);
+                break;
             case ERROR:
             default:
+            HANDLE_ERROR:
                 printf("Invalid input, try again.");
                 continue;
         }
