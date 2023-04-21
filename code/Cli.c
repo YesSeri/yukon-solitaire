@@ -78,6 +78,8 @@ char *getPlayerInput(char str[], int *len_ptr) {
 
 Command parseInput(char *input, int input_len, actionFn *printFn) {
 // TODO What is max input length?
+// 9 is the larges game input... C1:AS->F1
+// But LD <FILENAME> could be larger depending on the file name.
 
     if (input_len > 3) {
         char from[8];

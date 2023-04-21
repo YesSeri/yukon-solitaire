@@ -56,6 +56,13 @@ void print_main_section(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS],
     }
 
 }
+void print_last_command(){
+    printf("LAST command: ")
+}
+
+void print_message(){
+    printf("Message: ")
+}
 
 void print_footer() {
     printf("INPUT > ");
@@ -67,5 +74,7 @@ print_view(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS], Foundation *foundat
     print_header();
     printf("\n");
     print_main_section(columns_arr, foundations_arr);
+    print_last_command();
+    print_message();
     print_footer();
 }
