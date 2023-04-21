@@ -84,6 +84,8 @@ int main() {
 
     char input[16];
     int input_len = 0;
+    char last_input[16]; //Save last input
+
     // Point this at the correct function depending on what action the player should take.
     // This is a function pointer.
 
@@ -91,6 +93,7 @@ int main() {
         print_view(columns_arr, foundations_arr);
         while (input_len == 0) {
             getPlayerInput(input, &input_len);
+
         }
 
         /*

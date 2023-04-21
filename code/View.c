@@ -11,6 +11,9 @@
 #define NUMBER_OF_FOUNDATIONS 4
 #define MIN_HEIGHT_MAIN_SECTION 7
 
+
+
+
 void print_header() {
     for (int i = 1; i < 8; i++) {
         printf("C%d\t", i);
@@ -56,12 +59,13 @@ void print_main_section(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS],
     }
 
 }
-void print_last_command(){
-    printf("LAST command: ")
+
+void print_last_command(char last_command[]){
+    printf("LAST command: %s\n", last_command);
 }
 
 void print_message(){
-    printf("Message: ")
+    printf("Message: ");
 }
 
 void print_footer() {
