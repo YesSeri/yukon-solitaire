@@ -11,27 +11,20 @@ void move_from_col() {
 }
 
 
-//DoublyLinkedList *shuffle_interleaved(DoublyLinkedList *deck, int split_size) {
-//    Node *firstPile = deck->dummy_ptr;
-//    firstPile->prev->next = NULL;
-//    Node *secondPile = get_node_at(deck, split_size);
-//    secondPile->prev->next = NULL;
-//    DoublyLinkedList *start = create_doubly_linked_list();
-//    while (true) {
-//        if (firstPile->next != NULL) {
-//            firstPile = firstPile->next;
-//            append(start, firstPile);
-//        }
-//        if (secondPile->next != NULL) {
-//            secondPile = secondPile->next;
-//            append(start, secondPile);
-//        }
-//        if (firstPile->next == NULL && secondPile->next == NULL) {
-//            break;
-//        }
-//    }
-//}
-//
+// We need double pointer to pile
+// because we change the value of the pointer itself here:
+// (*pile) = (*pile)->next;
+void shuffle_interleaved_insert_card(Node *head, Node **pile) {
+
+    head->next->prev = (*pile);
+    // We use (*pile)->prev as temp variable
+    (*pile)->prev = head->next;
+    head->next = (*pile);
+    (*pile) = (*pile)->next;
+    head->next->next = head->next->prev;
+    head->next->prev = head;
+}
+
 DoublyLinkedList *shuffle_interleaved(DoublyLinkedList *deck, int split_size) {
     // If no argument, or no legal argument is given, we split the deck in the middle.
     if (split_size < 1 || split_size > 51) {
@@ -43,32 +36,22 @@ DoublyLinkedList *shuffle_interleaved(DoublyLinkedList *deck, int split_size) {
     head->next = head;
     head->prev = head;
     deck->length = 0;
+
+    bool firstFinished = false;
+    bool secondFinished = false;
     while (true) {
-        int isFinished = 0;
         if (split_size > 0) {
             split_size--;
-            head->next->prev = firstPile;
-            // We use firstpile->prev as temp variable
-            firstPile->prev = head->next;
-            head->next = firstPile;
-            firstPile = firstPile->next;
-            head->next->next = head->next->prev;
-            head->next->prev = head;
+            shuffle_interleaved_insert_card(head, &firstPile);
         } else {
-            isFinished++;
+            firstFinished = true;
         }
         if (secondPile != head) {
-            head->next->prev = secondPile;
-            // We use secondpile->prev as temp variable
-            secondPile->prev = head->next;
-            head->next = secondPile;
-            secondPile = secondPile->next;
-            head->next->next = head->next->prev;
-            head->next->prev = head;
+            shuffle_interleaved_insert_card(head, &secondPile);
         } else {
-            isFinished++;
+            secondFinished = true;
         }
-        if (isFinished == 2) {
+        if (firstFinished && secondFinished) {
             break;
         }
     }
