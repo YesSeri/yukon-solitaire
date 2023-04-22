@@ -2,6 +2,7 @@
 // Created by henrik on 4/15/23.
 //
 
+#include <stdlib.h>
 #include "Actions.h"
 
 void quit_game() {
@@ -68,4 +69,18 @@ DoublyLinkedList *shuffle_interleaved(DoublyLinkedList *deck, int split_size) {
 
     }
     // TODO if(secondFinished)
+}
+
+
+// SR
+void shuffle_random(DoublyLinkedList *deck) {
+    int cards_left = 53;
+    while (--cards_left) {
+//         This makes random more random. It is initiated with a random seed. If this is not run, seed is always 1.
+        int i = rand() % cards_left;
+        Node *n = get_node_at(deck, i);
+        delete_node_at(deck, i);
+        append(deck, n);
+
+    }
 }

@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 
 // TODO come up with more
@@ -234,11 +235,13 @@ void print_error_message() {
 }
 
 int main() {
-    // run_game();
-
+    // In production, we use random seed from time. In debug don't use this.
+    srand(time(NULL));
     DoublyLinkedList *deck = create_doubly_linked_list();
     create_unsorted_deck(deck);
     debug_print(deck);
-    shuffle_interleaved(deck, 1);
+    shuffle_interleaved(deck, 26);
+    debug_print(deck);
+    shuffle_random(deck);
     debug_print(deck);
 }

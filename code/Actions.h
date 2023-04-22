@@ -22,4 +22,6 @@ typedef enum phase {
 
 DoublyLinkedList *shuffle_interleaved(DoublyLinkedList *, int);
 
+void shuffle_random(DoublyLinkedList *);
+
 #endif

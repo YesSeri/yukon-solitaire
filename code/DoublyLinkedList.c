@@ -76,6 +76,14 @@ void insert_node_between_these_two_nodes(Node *n_before, Node *n_after, Node *n)
     n_after->prev = n;
 }
 
+// Deletes node at index
+void delete_node_at(DoublyLinkedList *dll, int i) {
+    Node *n = get_node_at(dll, i);
+    n->prev->next = n->next;
+    n->next->prev = n->prev;
+    dll->length--;
+}
+
 /**
  * insert at end of deck.
  * @param dll
@@ -84,7 +92,11 @@ void insert_node_between_these_two_nodes(Node *n_before, Node *n_after, Node *n)
 void append(DoublyLinkedList *dll, Node *n_ptr) {
     Node *dummy = dll->dummy_ptr;
     Node *last = dummy->prev;
+
     insert_node_between_these_two_nodes(last, dummy, n_ptr);
+
+    Node *array[60] = {NULL};
+    debug_to_array(dll, array);
     dll->length++;
 }
 
@@ -188,4 +200,17 @@ Node *remove_at(DoublyLinkedList *dll, int index) {
 void move_single_card(DoublyLinkedList *from, DoublyLinkedList *to) {
     Card *card_from = remove_at(from, 0);
     prepend(to, card_from);
+}
+
+Node *debug_to_array(DoublyLinkedList *dll, Node *arr[60]) {
+
+    Node *curr = dll->dummy_ptr->next;
+    int i = 1;
+    arr[0] = NULL;
+    while (curr->card_ptr != NULL) {
+        arr[i] = curr;
+        i++;
+        curr = curr->next;
+    }
+
 }
