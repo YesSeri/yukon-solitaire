@@ -67,4 +67,5 @@ DoublyLinkedList *shuffle_interleaved(DoublyLinkedList *deck, int split_size) {
         head->prev = secondPile;
 
     }
+    // TODO if(secondFinished)
 }
