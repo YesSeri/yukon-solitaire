@@ -1,4 +1,7 @@
 // This includes #define for ace, 1, 2, ... king and for suits heart, club, diamond, spade.
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include "Card.h"
 #include "View.h"
 #include "DoublyLinkedList.h"
@@ -6,11 +9,6 @@
 #include "Cli.h"
 #include "Game.h"
 #include "Actions.h"
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 
 
 // TODO come up with more
@@ -240,8 +238,8 @@ int main() {
     DoublyLinkedList *deck = create_doubly_linked_list();
     create_unsorted_deck(deck);
     debug_print(deck);
-    shuffle_interleaved(deck, 26);
+    shuffle_interleaved(deck, 51);
     debug_print(deck);
-    shuffle_random(deck);
-    debug_print(deck);
+//    shuffle_random(deck);
+//    debug_print(deck);
 }

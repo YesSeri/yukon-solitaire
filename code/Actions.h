@@ -20,7 +20,7 @@ typedef enum phase {
     Play,
 } Phase;
 
-DoublyLinkedList *shuffle_interleaved(DoublyLinkedList *, int);
+void shuffle_interleaved(DoublyLinkedList *, int);
 
 void shuffle_random(DoublyLinkedList *);
 

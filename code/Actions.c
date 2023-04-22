@@ -26,49 +26,57 @@ void shuffle_interleaved_insert_card(Node *head, Node **pile) {
     head->next->prev = head;
 }
 
-DoublyLinkedList *shuffle_interleaved(DoublyLinkedList *deck, int split_size) {
+void shuffle_interleaved(DoublyLinkedList *deck, int split_size) {
     // If no argument, or no legal argument is given, we split the deck in the middle.
     if (split_size < 1 || split_size > 51) {
         split_size = 26;
     }
-    Node *firstPile = deck->dummy_ptr->next;
-    Node *secondPile = get_node_at(deck, split_size);
+    Node *first_pile = deck->dummy_ptr->next;
+    Node *second_pile = get_node_at(deck, split_size);
+    Node *first_pile_last_card = second_pile->prev;
+
     Node *head = deck->dummy_ptr;
     head->next = head;
     head->prev = head;
-    deck->length = 0;
+
 
     bool firstFinished = false;
     bool secondFinished = false;
     while (true) {
         if (split_size > 0) {
             split_size--;
-            shuffle_interleaved_insert_card(head, &firstPile);
+            shuffle_interleaved_insert_card(head, &first_pile);
         } else {
             firstFinished = true;
+            break;
         }
-        if (secondPile != head) {
-            shuffle_interleaved_insert_card(head, &secondPile);
+        if (second_pile != head) {
+            shuffle_interleaved_insert_card(head, &second_pile);
         } else {
             secondFinished = true;
-        }
-        if (firstFinished || secondFinished) {
             break;
         }
     }
     if (firstFinished) {
-        Node *last_first_pile = firstPile;
-        head->prev->next = secondPile;
-        secondPile->prev = head->prev;
+        head->prev->next = second_pile;
+        second_pile->prev = head->prev;
 
-        while (secondPile->next != head) {
-            secondPile = secondPile->next;
+        while (second_pile->next != head) {
+            second_pile = second_pile->next;
         }
-        secondPile->next = head;
-        head->prev = secondPile;
-
+        second_pile->next = head;
+        head->prev = second_pile;
     }
-    // TODO if(secondFinished)
+    if (secondFinished) {
+        head->prev->next = first_pile;
+        first_pile->prev = head->prev;
+
+        while (first_pile != first_pile_last_card) {
+            first_pile = first_pile->next;
+        }
+        first_pile->next = head;
+        head->prev = first_pile;
+    }
 }
 
 
