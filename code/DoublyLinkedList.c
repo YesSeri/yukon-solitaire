@@ -6,6 +6,24 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+void debug_print(DoublyLinkedList *dll) {
+    Node *curr = dll->dummy_ptr->next;
+    int i = 0;
+    while (curr->card_ptr != NULL) {
+        i++;
+        printf("%2d%c", curr->card_ptr->value, curr->card_ptr->suit);
+        curr = curr->next;
+        if (i % 13 == 0) {
+            printf("\n");
+        } else {
+
+            printf(", ");
+        }
+    }
+    printf("\n");
+    fflush(stdout);
+}
+
 Node *create_node(Card *c_ptr) {
     Node *node = malloc(sizeof(Node));
     node->card_ptr = c_ptr;

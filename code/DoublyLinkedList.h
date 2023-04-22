@@ -18,6 +18,8 @@ typedef struct {
     int length;
 } DoublyLinkedList;
 
+void debug_print(DoublyLinkedList *);
+
 Node *create_node(Card *);
 
 Node *search_list_for_node(DoublyLinkedList *dll, Card *c_ptr);

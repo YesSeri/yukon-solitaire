@@ -5,15 +5,13 @@
 #include "Foundation.h"
 #include "Cli.h"
 #include "Game.h"
+#include "Actions.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 
-// 0 means no problem
-// 1 means move problem
-// 2 means illegal command
 // TODO come up with more
 typedef enum err {
     NO_ERROR,
@@ -21,18 +19,9 @@ typedef enum err {
     CMD_ERR,
     WRITE_ERR,
 } ErrorEnum;
-ErrorEnum g_error_code = NO_ERROR;
 
-//void create_unsorted_deck(Deck *list) {
-//    Suit suits[] = {CLUB, DIAMOND, HEART, SPADE};
-//    for (int i = 0; i < 4; i++) {
-//        Suit suit = suits[i];
-//        for (Value v = ACE; v <= KING; v++) {
-//            Card *c = create_card(suit, v, false);
-//            append(list, c);
-//        }
-//    }
-//}
+// Global variable. We set this to error if we encounter one, and then we handle error after switch case in main game loop.
+ErrorEnum g_error_code = NO_ERROR;
 
 bool is_valid_move(Move *, DoublyLinkedList *, DoublyLinkedList *);
 
@@ -149,7 +138,7 @@ bool validate_to_foundation_move() {
     return false;
 }
 
-int main() {
+int run_game() {
     DoublyLinkedList *deck = create_doubly_linked_list();
     create_unsorted_deck(deck);
     DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
@@ -213,6 +202,7 @@ int main() {
                 g_error_code = CMD_ERR;
 
         }
+
         if (g_error_code != NO_ERROR) {
             print_error_message();
             g_error_code = NO_ERROR;
@@ -241,4 +231,14 @@ void print_error_message() {
             exit(-1);
     }
     fprintf(stderr, "\n");
+}
+
+int main() {
+    // run_game();
+
+    DoublyLinkedList *deck = create_doubly_linked_list();
+    create_unsorted_deck(deck);
+    debug_print(deck);
+    shuffle_interleaved(deck, 26);
+    debug_print(deck);
 }
