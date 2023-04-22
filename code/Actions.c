@@ -51,8 +51,20 @@ DoublyLinkedList *shuffle_interleaved(DoublyLinkedList *deck, int split_size) {
         } else {
             secondFinished = true;
         }
-        if (firstFinished && secondFinished) {
+        if (firstFinished || secondFinished) {
             break;
         }
+    }
+    if (firstFinished) {
+        Node *last_first_pile = firstPile;
+        head->prev->next = secondPile;
+        secondPile->prev = head->prev;
+
+        while (secondPile->next != head) {
+            secondPile = secondPile->next;
+        }
+        secondPile->next = head;
+        head->prev = secondPile;
+
     }
 }

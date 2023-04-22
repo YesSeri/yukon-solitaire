@@ -239,6 +239,6 @@ int main() {
     DoublyLinkedList *deck = create_doubly_linked_list();
     create_unsorted_deck(deck);
     debug_print(deck);
-    shuffle_interleaved(deck, 26);
+    shuffle_interleaved(deck, 1);
     debug_print(deck);
 }
