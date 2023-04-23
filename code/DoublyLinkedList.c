@@ -187,6 +187,11 @@ void move_cards(DoublyLinkedList *from, DoublyLinkedList *to, Card *c) {
 }
 
 
+//      B       X       A
+// B-next = X
+// A-prev = X
+// B-next = A
+// A-prev = B
 Node *remove_at(DoublyLinkedList *dll, int index) {
     Node *n = get_node_at(dll, index);
     Node *n_before = n->prev;
@@ -198,8 +203,8 @@ Node *remove_at(DoublyLinkedList *dll, int index) {
 }
 
 void move_single_card(DoublyLinkedList *from, DoublyLinkedList *to) {
-    Card *card_from = remove_at(from, 0);
-    prepend(to, card_from);
+    Node *node_from = remove_at(from, 0);
+    prepend(to, node_from);
 }
 
 Node *debug_to_array(DoublyLinkedList *dll, Node *arr[60]) {

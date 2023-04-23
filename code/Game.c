@@ -37,7 +37,7 @@ void create_columns_arr_from_deck(DoublyLinkedList *deck, DoublyLinkedList *colu
     for (int height = 0; height < 20; height++) {
         for (int col = 0; col < NUMBER_OF_COLUMNS; col++) {
             if (col_heights[col] - height > 0) {
-                // TODO Hide cards from player
+                // TODO make seperate function and call first in to play command
                 bool is_hidden;
                 if (col == 1 && height < 1 || col == 2 && height < 2 || col == 3 && height < 3 ||
                     col == 4 && height < 4 || col == 5 && height < 5 || col == 6 && height < 6)
@@ -76,8 +76,6 @@ void to_play_action(char *input) {
 }
 
 void move_action(Move *move, DoublyLinkedList *from_list, DoublyLinkedList *to_list) {
-// TODO move multiple cards
-// TODO move to and from foundations
     printf("Move to make: ");
     if (move->card == NULL) {
         printf("Moving top card, from: %d, To: %d\n", move->from, move->to);
@@ -140,18 +138,18 @@ bool validate_to_foundation_move() {
 int run_game() {
     DoublyLinkedList *deck = create_doubly_linked_list();
     create_unsorted_deck(deck);
-    DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
+    DoublyLinkedList *cols_arr[NUMBER_OF_COLUMNS];
     Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
 
     for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
-        columns_arr[i] = create_doubly_linked_list();
+        cols_arr[i] = create_doubly_linked_list();
     }
 
     for (int i = 0; i < NUMBER_OF_FOUNDATIONS; i++) {
         foundations_arr[i] = create_stack();
     }
 
-    create_columns_arr_from_deck(deck, columns_arr);
+    create_columns_arr_from_deck(deck, cols_arr);
 
     /*
      * Tobs btw
@@ -166,7 +164,7 @@ int run_game() {
     Command command;
     while (1) {
         char input[16] = "";
-        print_view(columns_arr, foundations_arr);
+        print_view(cols_arr, foundations_arr);
         while (strlen(input) == 0) {
             get_player_input(input);
         }
@@ -174,8 +172,8 @@ int run_game() {
         switch (command.type) {
             case MOVE: {
                 Move *move = parse_move(input);
-                DoublyLinkedList *from = move->is_from_col ? columns_arr[move->from] : foundations_arr[move->from];
-                DoublyLinkedList *to = move->is_to_col ? columns_arr[move->to] : foundations_arr[move->to];
+                DoublyLinkedList *from = move->is_from_col ? cols_arr[move->from] : foundations_arr[move->from];
+                DoublyLinkedList *to = move->is_to_col ? cols_arr[move->to] : foundations_arr[move->to];
                 bool isValid = is_valid_move(move, from, to);
                 if (isValid) {
                     move_action(move, from, to);
@@ -194,9 +192,11 @@ int run_game() {
             case LOAD_DECK:
                 break;
             case TO_PLAY:
+                // TODO hide and show correct cards
                 break;
             case TO_STARTUP:
                 break;
+                // Implement show all cards - SW
             case UNKNOWN:
                 g_error_code = CMD_ERR;
 
@@ -233,13 +233,17 @@ void print_error_message() {
 }
 
 int main() {
-    // In production, we use random seed from time. In debug don't use this.
-    srand(time(NULL));
+//     In production, we use random seed from time. In debug don't use this.
+//    srand(time(NULL));
     DoublyLinkedList *deck = create_doubly_linked_list();
     create_unsorted_deck(deck);
     debug_print(deck);
-    shuffle_interleaved(deck, 51);
     debug_print(deck);
+    shuffle_interleaved(deck, 26);
+    debug_print(deck);
+//    debug_print(deck);
 //    shuffle_random(deck);
 //    debug_print(deck);
+//    run_game();
+
 }

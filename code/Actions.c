@@ -16,7 +16,6 @@ void move_from_col() {
 // because we change the value of the pointer itself here:
 // (*pile) = (*pile)->next;
 void shuffle_interleaved_insert_card(Node *head, Node **pile) {
-
     head->next->prev = (*pile);
     // We use (*pile)->prev as temp variable
     (*pile)->prev = head->next;
@@ -38,7 +37,6 @@ void shuffle_interleaved(DoublyLinkedList *deck, int split_size) {
     Node *head = deck->dummy_ptr;
     head->next = head;
     head->prev = head;
-
 
     bool firstFinished = false;
     bool secondFinished = false;
@@ -89,6 +87,5 @@ void shuffle_random(DoublyLinkedList *deck) {
         Node *n = get_node_at(deck, i);
         delete_node_at(deck, i);
         append(deck, n);
-
     }
 }
