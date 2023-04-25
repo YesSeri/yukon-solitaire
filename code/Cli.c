@@ -66,7 +66,9 @@ Move *parse_move(char *str) {
                &to_i);
 
     }
-//    move->card->value = card_char_to_value(value_c);
+    if(value_c != 0){
+        move->card->value = card_char_to_value(value_c);
+    }
     move->is_from_col = from_col_or_foundation == 'C';
     move->from = from_i - 1;
     move->is_to_col = to_col_or_foundation == 'C';
@@ -89,9 +91,12 @@ int col_index_to_int(char *col_str) {
 void get_player_input(char *str) {
 //     TODO USE THIS IN FINAL PRODUCT
 //    scanf("%s", str);
-    fgets(str, 20, stdin);
 
-    // Remove trailing newline character, if present
+// HOW TO INPUT
+// Input have to include spaces. C6->C3 wont work...
+// C6 -> C3 works and with the new input method, it reads spaces also
+
+    fgets(str, 20, stdin); // 20 = max length (change to the right max length)
     char *newline = strchr(str, '\n');
     if (newline != NULL) {
         *newline = '\0';
@@ -102,6 +107,7 @@ void get_player_input(char *str) {
 //    strcpy(str, "C2:AD -> C5");
 //    strcpy(str, "C3 -> F1");
 //    strcpy(str, "QQ");
+//    strcpy(str, "C3 -> C7");
 
 //    size_t buf_size = 16;
 //    *len_ptr = getline(str, &buf_size, stdin);
