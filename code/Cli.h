@@ -31,6 +31,7 @@ typedef struct command {
     union argument arg;
 } Command;
 
+
 typedef struct {
     int from;
     bool is_from_col;

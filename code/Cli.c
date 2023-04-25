@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "Cli.h"
-#include <malloc.h>
+//#include <malloc.h>
 #include <string.h>
 
 #define MAX_LEN_MOVE_FROM 6
@@ -38,16 +38,16 @@
 //<from> -> <to>
 
 Move *parse_move(char *str) {
-    //TODO Check if parsing is accurate, is not working
+    //TODO Check if parsing is accurate
     Move *move = malloc(sizeof(Move));
 
     char from_col_or_foundation;
     int from_i;
     char to_col_or_foundation;
     int to_i;
+    char value_c;
 
     if (str[2] == ':') {
-        char value_c;
         move->card = malloc(sizeof(Card));
         sscanf(str, "%c%d:%c%c -> %c%d",
                &from_col_or_foundation,
@@ -56,7 +56,6 @@ Move *parse_move(char *str) {
                &move->card->suit,
                &to_col_or_foundation,
                &to_i);
-        move->card->value = card_char_to_value(value_c);
     } else {
         move->card = NULL;
 
@@ -65,7 +64,9 @@ Move *parse_move(char *str) {
                &from_i,
                &to_col_or_foundation,
                &to_i);
+
     }
+//    move->card->value = card_char_to_value(value_c);
     move->is_from_col = from_col_or_foundation == 'C';
     move->from = from_i - 1;
     move->is_to_col = to_col_or_foundation == 'C';
@@ -87,7 +88,14 @@ int col_index_to_int(char *col_str) {
 
 void get_player_input(char *str) {
 //     TODO USE THIS IN FINAL PRODUCT
-    scanf("%s", str);
+//    scanf("%s", str);
+    fgets(str, 20, stdin);
+
+    // Remove trailing newline character, if present
+    char *newline = strchr(str, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
 
 //    For testing
 //    strcpy(str, "C6 -> C3");
@@ -110,6 +118,7 @@ void parse_input_type(char *input, Command *command) {
     char cmd_str[3];
     sscanf(input, "%s", cmd_str);
     int cmd_str_len = strlen(cmd_str);
+
 
     if (input[0] == 'C') {
         command->type = MOVE;
