@@ -13,6 +13,35 @@ void quit_game() {
 void move_from_col() {
 }
 
+void save_deck_to_file(DoublyLinkedList *deck, const char *filename) {
+
+    char filepath[100] = "../decks/";
+    strcat(filepath, filename);
+    FILE *file = fopen(filepath, "w+"); /* should check the result */
+
+    if (file == NULL) {
+        yukon_error.error = WRITE_ERR;
+        return;
+    }
+
+    Node *current = deck->dummy_ptr->next;
+
+    int line_number = 1;
+    while (current->card_ptr != NULL) {
+        char v = card_value_to_char(current->card_ptr->value);
+        Suit s = current->card_ptr->suit;
+
+        putc(v, file);
+        putc(s, file);
+        putc('\n', file);
+
+        line_number++;
+        current = current->next;
+    }
+//    fprintf(fp, "This is testing for fprintf...\n");
+//    fputs("This is testing for fputs...\n", fp);
+    fclose(file);
+}
 
 void read_file_to_deck(DoublyLinkedList *deck, const char *filename) {
     char filepath[100] = "../decks/";
@@ -20,25 +49,28 @@ void read_file_to_deck(DoublyLinkedList *deck, const char *filename) {
     FILE *file = fopen(filepath, "r"); /* should check the result */
     char line[256];
     if (file == NULL) {
-        g_error_codes_enum = READ_ERR;
+        yukon_error.error = READ_ERR;
         return;
     }
+    int line_number = 1;
     while (fgets(line, sizeof(line), file)) {
-        /* note that fgets don't strip the terminating \n, checking its
-           presence would allow to handle lines longer that sizeof(line) */
-
-
         Value v = card_char_to_value(line[0]);
         Suit s = line[1];
 
         Card *c = create_card(s, v, false);
         if (c == NULL) {
-            g_error_codes_enum = INVALID_DECK;
+            yukon_error.error = INVALID_DECK;
+            sprintf(yukon_error.message, "Invalid card in deck: %c%c at line %d", line[0], s, line_number);
             return;
         }
         Node *n = create_node(c);
         append(deck, n);
-
+        line_number++;
+    }
+    if (deck->length != 52) {
+        yukon_error.error = INVALID_DECK;
+        sprintf(yukon_error.message, "Deck must contain 52 cards");
+        return;
     }
     /* may check feof here to make a difference between eof and io failure -- network
        timeout for instance */

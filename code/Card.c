@@ -32,8 +32,9 @@ Card *create_card(Suit suit, Value v, bool is_hidden) {
     return c;
 }
 
-char card_value_to_char(Card *c) {
-    switch (c->value) {
+
+Value card_value_to_char(Value v) {
+    switch (v) {
         case ACE:
             return 'A';
         case TEN:
@@ -45,7 +46,7 @@ char card_value_to_char(Card *c) {
         case KING:
             return 'K';
         default:
-            return c->value + '0';
+            return v + '0';
     }
 }
 
@@ -83,12 +84,13 @@ Value card_char_to_value(char c) {
     }
 }
 
+
 void get_card_string(Card *c, char *str) {
     if (c == NULL || c->is_hidden) {
         strcpy(str, "[]");
         return;
     } else {
-        char c_val = card_value_to_char(c);
+        char c_val = card_value_to_char(c->value);
         str[0] = c_val;
         str[1] = c->suit;
         str[2] = '\0';

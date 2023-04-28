@@ -2,23 +2,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "Card.h"
-#include "View.h"
-#include "DoublyLinkedList.h"
-#include "Foundation.h"
-#include "Cli.h"
 #include "Game.h"
-#include "Actions.h"
 
 
 // TODO come up with more
 
 // Global variable. We set this to error if we encounter one, and then we handle error after switch case in main game loop.
-ErrorEnum g_error_codes_enum = NO_ERROR;
+YukonError yukon_error = {NO_ERROR, "OK"};
 
 
 bool is_valid_move(Move *, DoublyLinkedList *, DoublyLinkedList *);
 
+
+void save_deck_to_file(DoublyLinkedList *deck, union argument *pArgument);
 
 // This adds all the cards from the deck to the columns.
 // The cards are copied,
@@ -164,7 +160,15 @@ int run_game() {
 
     /*
      * Tobs btw
-     * I imagine the flow going like this:
+     * I imagine the flow going like this//        Card *c = create_card(s, v, false);
+//        if (c == NULL) {
+//            yukon_error.error = INVALID_DECK;
+//            sprintf(yukon_error.message, "Invalid card in deck: %c%c at line %d", line[0], s, line_number);
+//            return;
+//        }
+//        Node *n = create_node(c);
+//        append(deck, n);
+:
      * get input
      * figure out type of input in parseInput
      * This function then returns the way to show results in the form of printFn
@@ -174,17 +178,21 @@ int run_game() {
      */
 
     char last_command[2 + ARG_LENGTH + 1] = "";
-    char error_message[64] = "OK";
     Command command;
     while (1) {
         char input[2 + ARG_LENGTH + 1];
         input[0] = '\0';
-        print_view(columns_arr, foundations_arr, last_command, error_message);
+        print_view(columns_arr, foundations_arr, last_command);
+        yukon_error.error = NO_ERROR;
+        if (strlen(input) != 0) {
+            exit(0);
+        }
         while (strlen(input) == 0) {
             get_player_input(input);
         }
         strcpy(last_command, input);
         parse_input_type(input, &command);
+        fflush(stdout);
         switch (command.type) {
             case MOVE: {
                 Move *move = parse_move(input);
@@ -194,7 +202,7 @@ int run_game() {
                 if (isValid) {
                     move_action(move, from, to);
                 } else {
-                    g_error_codes_enum = MOVE_ERR;
+                    yukon_error.error = MOVE_ERR;
                 }
             }
                 break;
@@ -203,15 +211,14 @@ int run_game() {
                 exit(0);
             case SAVE_DECK:
                 if (command.has_arg) {
-                    printf("saving deck to default deck.txt");
+                    save_deck_to_file(deck, command.arg.str);
                 } else {
-                    printf("saving deck to %s", command.arg);
+                    save_deck_to_file(deck, "deck.txt");
                 }
                 break;
             case LOAD_DECK:
                 if (command.has_arg) {
                     read_file_to_deck(deck, &command.arg);
-                    debug_print(deck);
                 } else {
                     create_sorted_deck(deck);
                 }
@@ -221,36 +228,37 @@ int run_game() {
             case TO_STARTUP:
                 break;
             case UNKNOWN:
-                g_error_codes_enum = CMD_ERR;
+                yukon_error.error = CMD_ERR;
 
         }
-        set_error_message(error_message);
-        g_error_codes_enum = NO_ERROR;
+        set_error_message();
+        input[0] = '\0';
 
     }
     return 0;
 }
 
 
-void set_error_message(char *error_message) {
-    switch (g_error_codes_enum) {
+void set_error_message() {
+    switch (yukon_error.error) {
         case NO_ERROR:
-            strcpy(error_message, "OK");
+            strcpy(yukon_error.message, "OK");
             break;
         case MOVE_ERR:
-            strcpy(error_message, "Illegal move");
+            strcpy(yukon_error.message, "Illegal move");
             break;
         case CMD_ERR:
-            strcpy(error_message, "Illegal command.");
+            strcpy(yukon_error.message, "Illegal command.");
             break;
         case WRITE_ERR:
-            strcpy(error_message, "Could not write deck to file.");
+            strcpy(yukon_error.message, "Could not write deck to file.");
             break;
         case INVALID_DECK:
-            strcpy(error_message, "This is not a valid deck.");
+
+            strcat(yukon_error.message, " - This is not a valid deck.");
             break;
         default:
-            strcpy(error_message, "Unknown error.");
+            strcpy(yukon_error.message, "Unknown error.");
             break;
     }
 }
@@ -258,13 +266,10 @@ void set_error_message(char *error_message) {
 void debug_game() {
     DoublyLinkedList *deck = create_doubly_linked_list();
     create_sorted_deck(deck);
-    debug_print(deck);
-    shuffle_interleaved(deck, 51);
-    debug_print(deck);
-    shuffle_random(deck);
-    debug_print(deck);
+    save_deck_to_file(deck, "deck.txt");
 }
 
 int main() {
+//    debug_game();
     run_game();
 }

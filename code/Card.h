@@ -39,6 +39,7 @@ Card *create_card(Suit, Value, bool);
 void get_card_string(Card *, char *);
 
 Value card_char_to_value(char);
+Value card_value_to_char(Value v);
 
 void print_card(Card *c);
 

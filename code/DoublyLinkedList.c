@@ -96,7 +96,7 @@ void append(DoublyLinkedList *dll, Node *n_ptr) {
 
     insert_node_between_these_two_nodes(last, dummy, n_ptr);
 
-    Node *array[60] = {NULL};
+    Node *array[52] = {NULL};
     debug_to_array(dll, array);
     dll->length++;
 }

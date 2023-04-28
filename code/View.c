@@ -1,14 +1,15 @@
 //
 // Created by henrik on 4/12/23.
 //
-
-#include "View.h"
-#include "Card.h"
 #include <stdio.h>
+#include "View.h"
 
 #define NUMBER_OF_COLUMNS 7
 #define NUMBER_OF_FOUNDATIONS 4
 #define MIN_HEIGHT_MAIN_SECTION 7
+
+
+
 
 void print_header() {
     for (int i = 1; i < 8; i++) {
@@ -40,10 +41,8 @@ void print_main_section(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS],
                 Node *current = get_node_at(columns_arr[col], col_length - row - 1);
                 get_card_string(current->card_ptr, card_string);
                 printf("%s", card_string);
-                fflush(stdout);
             }
             printf("\t");
-            fflush(stdout);
         }
         if (row % 2 == 0 && row < MIN_HEIGHT_MAIN_SECTION) {
             Foundation *foundation = foundations_arr[row / 2];
@@ -55,19 +54,18 @@ void print_main_section(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS],
     }
 }
 
-void print_footer(char *last_command, char *error_message) {
-
-
+void print_footer(char *last_command) {
     printf("LAST Command: %s\n", last_command);
-    printf("Message: %s\n", error_message);
+    printf("Message: %s\n", yukon_error.message);
     printf("INPUT > ");
 }
 
 void print_view(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS], Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS],
-                char *last_command, char *error_message) {
+                char *last_command) {
     printf("\n");
     print_header();
     printf("\n");
     print_main_section(columns_arr, foundations_arr);
-    print_footer(last_command, error_message);
+    print_footer(last_command);
+    fflush(stdout);
 }

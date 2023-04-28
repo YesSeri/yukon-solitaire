@@ -96,17 +96,18 @@ void get_player_input(char *str) {
 // Input have to include spaces. C6->C3 wont work...
 // C6 -> C3 works and with the new input method, it reads spaces also
 
-//    fgets(str, 2 + ARG_LENGTH - 1, stdin); // 20 = max length (change to the right max length)
-//    char *newline = strchr(str, '\n');
-//    if (newline != NULL) {
-//        *newline = '\0';
-//    }
+    fgets(str, 2 + ARG_LENGTH - 1, stdin); // 20 = max length (change to the right max length)
+    char *newline = strchr(str, '\n');
+    if (newline != NULL) {
+        *newline = '\0';
+    }
 
 //    For testing
 //    strcpy(str, "C6 -> C3");
 //    strcpy(str, "C2:AD -> C5");
 //    strcpy(str, "C3 -> F1");
-    strcpy(str, "LD d.txt");
+//    strcpy(str, "LD d.txt");
+//    printf("%s", str);
 //    strcpy(str, "C3 -> C7");
 
 //    size_t buf_size = 16;
@@ -123,8 +124,6 @@ void read_string_arg_or_default(char *input, Command *command) {
         char c[15];
         command->has_arg = true;
         sscanf(input, "%s %s", &c, &command->arg.str);
-
-        printf("%s", c);
     } else {
         command->has_arg = false;
         strcpy(command->arg.str, "default arg");

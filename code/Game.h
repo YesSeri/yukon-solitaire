@@ -6,6 +6,13 @@
 #define YUKON_SOLITAIRE_GAME_H
 
 #include "DoublyLinkedList.h"
+#include "Card.h"
+#include "View.h"
+#include "DoublyLinkedList.h"
+#include "Foundation.h"
+#include "Cli.h"
+#include "Game.h"
+#include "Actions.h"
 
 void initiate_columns_and_foundations(DoublyLinkedList **, Foundation **);
 
@@ -38,5 +45,11 @@ typedef enum {
     READ_ERR,
     INVALID_DECK,
 } ErrorEnum;
-extern ErrorEnum g_error_codes_enum;
+
+typedef struct {
+    ErrorEnum error;
+    char message[120];
+} YukonError;
+
+extern YukonError yukon_error;
 #endif //YUKON_SOLITAIRE_GAME_H
