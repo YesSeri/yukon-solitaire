@@ -2,13 +2,49 @@
 // Created by henrik on 4/15/23.
 //
 
+#include <string.h>
 #include <stdlib.h>
 #include "Actions.h"
+
 
 void quit_game() {
 }
 
 void move_from_col() {
+}
+
+
+void read_file_to_deck(DoublyLinkedList *deck, const char *filename) {
+    char filepath[100] = "../decks/";
+    strcat(filepath, filename);
+    FILE *file = fopen(filepath, "r"); /* should check the result */
+    char line[256];
+    if (file == NULL) {
+        g_error_codes_enum = READ_ERR;
+        return;
+    }
+    while (fgets(line, sizeof(line), file)) {
+        /* note that fgets don't strip the terminating \n, checking its
+           presence would allow to handle lines longer that sizeof(line) */
+
+
+        Value v = card_char_to_value(line[0]);
+        Suit s = line[1];
+
+        Card *c = create_card(s, v, false);
+        if (c == NULL) {
+            g_error_codes_enum = INVALID_DECK;
+            return;
+        }
+        Node *n = create_node(c);
+        append(deck, n);
+
+    }
+    /* may check feof here to make a difference between eof and io failure -- network
+       timeout for instance */
+
+    fclose(file);
+
 }
 
 
@@ -79,6 +115,7 @@ void shuffle_interleaved(DoublyLinkedList *deck, int split_size) {
 
 
 // SR
+// initiate srand in main function to make sure the shuffling is random.
 void shuffle_random(DoublyLinkedList *deck) {
     int cards_left = 53;
     while (--cards_left) {

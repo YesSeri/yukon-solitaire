@@ -10,17 +10,15 @@
 #define NUMBER_OF_FOUNDATIONS 4
 #define MIN_HEIGHT_MAIN_SECTION 7
 
-void print_header()
-{
+void print_header() {
     for (int i = 1; i < 8; i++) {
         printf("C%d\t", i);
     }
     printf("\n");
 }
 
-void print_main_section(DoublyLinkedList* columns_arr[NUMBER_OF_COLUMNS],
-    Foundation* foundations_arr[NUMBER_OF_FOUNDATIONS])
-{
+void print_main_section(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS],
+                        Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS]) {
     int max_size = 0;
     //    Node* col_ptr_arr[NUMBER_OF_COLUMNS];
     for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
@@ -39,7 +37,7 @@ void print_main_section(DoublyLinkedList* columns_arr[NUMBER_OF_COLUMNS],
         for (int col = 0; col < NUMBER_OF_COLUMNS; col++) {
             int col_length = columns_arr[col]->length;
             if (row < col_length) {
-                Node* current = get_node_at(columns_arr[col], col_length - row - 1);
+                Node *current = get_node_at(columns_arr[col], col_length - row - 1);
                 get_card_string(current->card_ptr, card_string);
                 printf("%s", card_string);
                 fflush(stdout);
@@ -48,8 +46,8 @@ void print_main_section(DoublyLinkedList* columns_arr[NUMBER_OF_COLUMNS],
             fflush(stdout);
         }
         if (row % 2 == 0 && row < MIN_HEIGHT_MAIN_SECTION) {
-            Foundation* foundation = foundations_arr[row / 2];
-            Card* current = peek(foundation);
+            Foundation *foundation = foundations_arr[row / 2];
+            Card *current = peek(foundation);
             get_card_string(current, card_string);
             printf("\t%s\tF%d", card_string, row / 2 + 1);
         }
@@ -57,16 +55,19 @@ void print_main_section(DoublyLinkedList* columns_arr[NUMBER_OF_COLUMNS],
     }
 }
 
-void print_footer()
-{
+void print_footer(char *last_command, char *error_message) {
+
+
+    printf("LAST Command: %s\n", last_command);
+    printf("Message: %s\n", error_message);
     printf("INPUT > ");
 }
 
-void print_view(DoublyLinkedList* columns_arr[NUMBER_OF_COLUMNS], Foundation* foundations_arr[NUMBER_OF_FOUNDATIONS])
-{
+void print_view(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS], Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS],
+                char *last_command, char *error_message) {
     printf("\n");
     print_header();
     printf("\n");
     print_main_section(columns_arr, foundations_arr);
-    print_footer();
+    print_footer(last_command, error_message);
 }

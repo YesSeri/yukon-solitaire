@@ -12,18 +12,17 @@
 
 
 // TODO come up with more
-typedef enum err {
-    NO_ERROR,
-    MOVE_ERR,
-    CMD_ERR,
-    WRITE_ERR,
-} ErrorEnum;
 
 // Global variable. We set this to error if we encounter one, and then we handle error after switch case in main game loop.
-ErrorEnum g_error_code = NO_ERROR;
+ErrorEnum g_error_codes_enum = NO_ERROR;
+
 
 bool is_valid_move(Move *, DoublyLinkedList *, DoublyLinkedList *);
 
+
+// This adds all the cards from the deck to the columns.
+// The cards are copied,
+// because we need to keep a copy of the deck in case the player wants to return to the startup phase and save deck.
 void create_columns_arr_from_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS]) {
     int col_heights[] = {1, 6, 7, 8, 9, 10, 11};
 
@@ -80,7 +79,7 @@ void move_action(Move *move, DoublyLinkedList *from_list, DoublyLinkedList *to_l
 // TODO move to and from foundations
     printf("Move to make: ");
     if (move->card == NULL) {
-        printf("Moving top card, from: %d, To: %d\n", move->from+1, move->to+1);
+        printf("Moving top card, from: %d, To: %d\n", move->from + 1, move->to + 1);
         move_single_card(from_list, to_list);
 
         free(move);
@@ -133,16 +132,8 @@ bool is_valid_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
     return true;
 }
 
-bool validate_to_foundation_move() {
-    return false;
-}
-
-int run_game() {
-    DoublyLinkedList *deck = create_doubly_linked_list();
-    create_unsorted_deck(deck);
-    DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
-    Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
-
+void initiate_columns_and_foundations(DoublyLinkedList **columns_arr, Foundation **foundations_arr) {
+    // Creates empty linked lists for all columns and foundations
     for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
         columns_arr[i] = create_doubly_linked_list();
     }
@@ -150,8 +141,26 @@ int run_game() {
     for (int i = 0; i < NUMBER_OF_FOUNDATIONS; i++) {
         foundations_arr[i] = create_stack();
     }
+}
 
-    create_columns_arr_from_deck(deck, columns_arr);
+
+bool validate_to_foundation_move() {
+    return false;
+}
+
+
+int run_game() {
+    // srand makes sure the random shuffle is always different each time.
+    // Without this, the random shuffle always uses the same seed,
+    // meaning the shuffling will be exactly the same each time.
+    srand(time(NULL));
+    DoublyLinkedList *deck = create_doubly_linked_list();
+    DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
+    Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
+    initiate_columns_and_foundations(columns_arr, foundations_arr);
+//    create_columns_arr_from_deck(deck, columns_arr);
+//    create_unsorted_deck(deck);
+
 
     /*
      * Tobs btw
@@ -163,13 +172,18 @@ int run_game() {
      * print the output by calling the printFn
      *
      */
+
+    char last_command[2 + ARG_LENGTH + 1] = "";
+    char error_message[64] = "OK";
     Command command;
     while (1) {
-        char input[16] = "";
-        print_view(columns_arr, foundations_arr);
+        char input[2 + ARG_LENGTH + 1];
+        input[0] = '\0';
+        print_view(columns_arr, foundations_arr, last_command, error_message);
         while (strlen(input) == 0) {
             get_player_input(input);
         }
+        strcpy(last_command, input);
         parse_input_type(input, &command);
         switch (command.type) {
             case MOVE: {
@@ -180,7 +194,7 @@ int run_game() {
                 if (isValid) {
                     move_action(move, from, to);
                 } else {
-                    g_error_code = MOVE_ERR;
+                    g_error_codes_enum = MOVE_ERR;
                 }
             }
                 break;
@@ -188,59 +202,69 @@ int run_game() {
                 printf("Quitting game...");
                 exit(0);
             case SAVE_DECK:
-                printf("saving deck");
-                g_error_code = WRITE_ERR;
+                if (command.has_arg) {
+                    printf("saving deck to default deck.txt");
+                } else {
+                    printf("saving deck to %s", command.arg);
+                }
                 break;
             case LOAD_DECK:
+                if (command.has_arg) {
+                    read_file_to_deck(deck, &command.arg);
+                    debug_print(deck);
+                } else {
+                    create_sorted_deck(deck);
+                }
                 break;
             case TO_PLAY:
                 break;
             case TO_STARTUP:
                 break;
             case UNKNOWN:
-                g_error_code = CMD_ERR;
+                g_error_codes_enum = CMD_ERR;
 
         }
-
-        if (g_error_code != NO_ERROR) {
-            print_error_message();
-            g_error_code = NO_ERROR;
-        }
+        set_error_message(error_message);
+        g_error_codes_enum = NO_ERROR;
 
     }
     return 0;
 }
 
 
-void print_error_message() {
-    switch (g_error_code) {
+void set_error_message(char *error_message) {
+    switch (g_error_codes_enum) {
         case NO_ERROR:
+            strcpy(error_message, "OK");
             break;
         case MOVE_ERR:
-            fprintf(stderr, "Illegal move");
+            strcpy(error_message, "Illegal move");
             break;
         case CMD_ERR:
-            fprintf(stderr, "Illegal command.");
+            strcpy(error_message, "Illegal command.");
             break;
         case WRITE_ERR:
-            fprintf(stderr, "Could not write deck to file.");
+            strcpy(error_message, "Could not write deck to file.");
+            break;
+        case INVALID_DECK:
+            strcpy(error_message, "This is not a valid deck.");
             break;
         default:
-            fprintf(stderr, "Unknown error message!\n");
-            exit(-1);
+            strcpy(error_message, "Unknown error.");
+            break;
     }
-    fprintf(stderr, "\n");
 }
 
-int main() {
-    // In production, we use random seed from time. In debug don't use this.
-    srand(time(NULL));
+void debug_game() {
     DoublyLinkedList *deck = create_doubly_linked_list();
-    create_unsorted_deck(deck);
+    create_sorted_deck(deck);
     debug_print(deck);
     shuffle_interleaved(deck, 51);
     debug_print(deck);
+    shuffle_random(deck);
+    debug_print(deck);
+}
+
+int main() {
     run_game();
-//    shuffle_random(deck);
-//    debug_print(deck);
 }

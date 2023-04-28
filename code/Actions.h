@@ -4,6 +4,7 @@
 #include "Cli.h"
 #include "DoublyLinkedList.h"
 #include "Foundation.h"
+#include "Game.h"
 #include <stdio.h>
 
 // Card is null if there is none.
@@ -19,6 +20,8 @@ typedef enum phase {
     Setup,
     Play,
 } Phase;
+
+void read_file_to_deck(DoublyLinkedList *, const char *);
 
 void shuffle_interleaved(DoublyLinkedList *, int);
 

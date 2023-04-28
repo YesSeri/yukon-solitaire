@@ -66,7 +66,7 @@ Move *parse_move(char *str) {
                &to_i);
 
     }
-    if(value_c != 0){
+    if (value_c != 0) {
         move->card->value = card_char_to_value(value_c);
     }
     move->is_from_col = from_col_or_foundation == 'C';
@@ -96,17 +96,17 @@ void get_player_input(char *str) {
 // Input have to include spaces. C6->C3 wont work...
 // C6 -> C3 works and with the new input method, it reads spaces also
 
-    fgets(str, 20, stdin); // 20 = max length (change to the right max length)
-    char *newline = strchr(str, '\n');
-    if (newline != NULL) {
-        *newline = '\0';
-    }
+//    fgets(str, 2 + ARG_LENGTH - 1, stdin); // 20 = max length (change to the right max length)
+//    char *newline = strchr(str, '\n');
+//    if (newline != NULL) {
+//        *newline = '\0';
+//    }
 
 //    For testing
 //    strcpy(str, "C6 -> C3");
 //    strcpy(str, "C2:AD -> C5");
 //    strcpy(str, "C3 -> F1");
-//    strcpy(str, "QQ");
+    strcpy(str, "LD d.txt");
 //    strcpy(str, "C3 -> C7");
 
 //    size_t buf_size = 16;
@@ -118,30 +118,41 @@ void get_player_input(char *str) {
 }
 
 // We return a pointer, pointing to the fn that corresponds to the parsed input.
+void read_string_arg_or_default(char *input, Command *command) {
+    if (strlen(input) > 3) {
+        char c[15];
+        command->has_arg = true;
+        sscanf(input, "%s %s", &c, &command->arg.str);
+
+        printf("%s", c);
+    } else {
+        command->has_arg = false;
+        strcpy(command->arg.str, "default arg");
+    }
+}
+
 void parse_input_type(char *input, Command *command) {
     // TODO What is max input length?
 
-    char cmd_str[3];
-    sscanf(input, "%s", cmd_str);
-    int cmd_str_len = strlen(cmd_str);
-
 
     if (input[0] == 'C') {
+        command->has_arg = false;
         command->type = MOVE;
-    }
-    if (cmd_str_len == 2) {
-        if (input[0] == 'Q' && input[1] == 'Q') {
-            command->type = QUIT;
-        }
-    }
-    if (input[0] == 'S' && input[1] == 'W') {
-        char arg_str[ARG_LENGTH] = "";
-        sscanf(input, "%s %s", cmd_str, arg_str);
+    } else if (input[0] == 'Q' && input[1] == 'Q') {
+        command->has_arg = false;
+        command->type = QUIT;
+    } else if (input[0] == 'S' && input[1] == 'W') {
+        command->has_arg = false;
+        command->type = SHOW_CARDS;
+    } else if (input[0] == 'S' && input[1] == 'D') {
+        read_string_arg_or_default(input, command);
         command->type = SAVE_DECK;
+    } else if (input[0] == 'L' && input[1] == 'D') {
+        read_string_arg_or_default(input, command);
+        command->type = LOAD_DECK;
+    } else {
+        command->type = UNKNOWN;
     }
-//    if (input[0] == 'L' && input[1] == 'W') {
-//        return LOAD_DECK;
-//    }
 //    if (input[0] == 'P') {
 //        return TO_PLAY;
 //    }

@@ -34,7 +34,7 @@ void append(DoublyLinkedList *, Node *);
 
 void prepend(DoublyLinkedList *, Node *);
 
-void create_unsorted_deck(DoublyLinkedList *);
+void create_sorted_deck(DoublyLinkedList *);
 
 DoublyLinkedList *create_doubly_linked_list();
 

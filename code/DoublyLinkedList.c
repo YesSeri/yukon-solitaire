@@ -9,6 +9,7 @@
 void debug_print(DoublyLinkedList *dll) {
     Node *curr = dll->dummy_ptr->next;
     int i = 0;
+    printf("\n\nDEBUG PRINT\n");
     while (curr->card_ptr != NULL) {
         i++;
         printf("%2d%c", curr->card_ptr->value, curr->card_ptr->suit);
@@ -126,7 +127,7 @@ void prepend(DoublyLinkedList *dll, Node *n_ptr) {
 }
 
 
-void create_unsorted_deck(DoublyLinkedList *dll) {
+void create_sorted_deck(DoublyLinkedList *dll) {
     Suit suits[] = {CLUB, DIAMOND, HEART, SPADE};
     for (int i = 0; i < 4; i++) {
         Suit suit = suits[i];

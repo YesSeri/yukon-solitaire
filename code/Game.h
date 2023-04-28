@@ -7,6 +7,8 @@
 
 #include "DoublyLinkedList.h"
 
+void initiate_columns_and_foundations(DoublyLinkedList **, Foundation **);
+
 void show_action(char *input);
 
 void load_action(char *input);
@@ -23,7 +25,18 @@ void error_action(char *input);
 
 bool validate_to_foundation_move();
 
-void print_error_message();
+void set_error_message();
 
-DoublyLinkedList *columns_arr[];
+bool is_valid_move(Move *, DoublyLinkedList *, DoublyLinkedList *);
+
+
+typedef enum {
+    NO_ERROR,
+    MOVE_ERR,
+    CMD_ERR,
+    WRITE_ERR,
+    READ_ERR,
+    INVALID_DECK,
+} ErrorEnum;
+extern ErrorEnum g_error_codes_enum;
 #endif //YUKON_SOLITAIRE_GAME_H

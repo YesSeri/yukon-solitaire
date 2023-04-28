@@ -2,70 +2,88 @@
 #include <stdlib.h>
 #include <string.h>
 
-Card* create_card(Suit suit, Value v, bool is_hidden)
-{
-    Card* c = malloc(sizeof(Card));
-    c->value = v;
-    c->suit = suit;
-    c->is_hidden = is_hidden;
+Card *create_card(Suit suit, Value v, bool is_hidden) {
+    Card *c = malloc(sizeof(Card));
+    if (suit != CLUB && suit != SPADE && suit != HEART && suit != DIAMOND) {
+        return NULL;
+    }
+    switch (v) {
+        case ACE:
+        case TWO:
+        case THREE:
+        case FOUR:
+        case FIVE:
+        case SIX:
+        case SEVEN:
+        case EIGHT:
+        case NINE:
+        case TEN:
+        case JACK:
+        case QUEEN:
+        case KING:
+            c->value = v;
+            c->suit = suit;
+            c->is_hidden = is_hidden;
+            break;
+        default :
+            return NULL;
+    }
+
     return c;
 }
 
-char card_value_to_char(Card* c)
-{
+char card_value_to_char(Card *c) {
     switch (c->value) {
-    case ACE:
-        return 'A';
-    case TEN:
-        return 'T';
-    case JACK:
-        return 'J';
-    case QUEEN:
-        return 'Q';
-    case KING:
-        return 'K';
-    default:
-        return c->value + '0';
+        case ACE:
+            return 'A';
+        case TEN:
+            return 'T';
+        case JACK:
+            return 'J';
+        case QUEEN:
+            return 'Q';
+        case KING:
+            return 'K';
+        default:
+            return c->value + '0';
     }
 }
 
-char suit_from_char(char c)
-{
+char suit_from_char(char c) {
     switch (c) {
-    case ACE:
-        return 'C';
-    case TEN:
-        return 'T';
-    case JACK:
-        return 'J';
-    case QUEEN:
-        return 'Q';
-    case KING:
-        return 'K';
-    default:
-        return c - '0';
-    }
-}
-Value card_char_to_value(char c)
-{
-    switch (c) {
-    case 'A':
-        return ACE;
-    case 'T':
-        return TEN;
-    case 'J':
-        return JACK;
-    case 'Q':
-        return QUEEN;
-    case 'K':
-        return KING;
-    default:
-        return c - '0';
+        case ACE:
+            return 'C';
+        case TEN:
+            return 'T';
+        case JACK:
+            return 'J';
+        case QUEEN:
+            return 'Q';
+        case KING:
+            return 'K';
+        default:
+            return c - '0';
     }
 }
 
-void get_card_string(Card* c, char* str)
-{
+Value card_char_to_value(char c) {
+    switch (c) {
+        case 'A':
+            return ACE;
+        case 'T':
+            return TEN;
+        case 'J':
+            return JACK;
+        case 'Q':
+            return QUEEN;
+        case 'K':
+            return KING;
+        default:
+            return c - '0';
+    }
+}
+
+void get_card_string(Card *c, char *str) {
     if (c == NULL || c->is_hidden) {
         strcpy(str, "[]");
         return;

@@ -16,6 +16,7 @@ enum commandType {
     MOVE,
     SAVE_DECK,
     LOAD_DECK,
+    SHOW_CARDS,
     TO_PLAY,
     TO_STARTUP,
     UNKNOWN,
@@ -23,11 +24,12 @@ enum commandType {
 };
 
 union argument {
-    char str[ARG_LENGTH];
+    const char str[ARG_LENGTH];
     int val;
 };
 typedef struct command {
     enum commandType type;
+    bool has_arg;
     union argument arg;
 } Command;
 
