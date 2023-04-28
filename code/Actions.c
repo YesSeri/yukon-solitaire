@@ -57,7 +57,7 @@ void read_file_to_deck(DoublyLinkedList *deck, const char *filename) {
         Value v = card_char_to_value(line[0]);
         Suit s = line[1];
 
-        Card *c = create_card(s, v, false);
+        Card *c = create_card(s, v, true);
         if (c == NULL) {
             yukon_error.error = INVALID_DECK;
             sprintf(yukon_error.message, "Invalid card in deck: %c%c at line %d", line[0], s, line_number);

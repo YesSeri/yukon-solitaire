@@ -25,6 +25,16 @@ void debug_print(DoublyLinkedList *dll) {
     fflush(stdout);
 }
 
+
+void reveal_all_cards(DoublyLinkedList *dll) {
+    Node *current = dll->dummy_ptr->next;
+    while (current->card_ptr != NULL) {
+        current->card_ptr->is_hidden = false;
+        current = current->next;
+    }
+
+}
+
 Node *create_node(Card *c_ptr) {
     Node *node = malloc(sizeof(Node));
     node->card_ptr = c_ptr;
@@ -132,7 +142,7 @@ void create_sorted_deck(DoublyLinkedList *dll) {
     for (int i = 0; i < 4; i++) {
         Suit suit = suits[i];
         for (Value v = ACE; v <= KING; v++) {
-            Card *c = create_card(suit, v, false);
+            Card *c = create_card(suit, v, true);
             Node *n = create_node(c);
 
             append(dll, n);

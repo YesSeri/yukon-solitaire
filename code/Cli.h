@@ -18,7 +18,7 @@ enum commandType {
     LOAD_DECK,
     SHOW_CARDS,
     TO_PLAY,
-    TO_STARTUP,
+    TO_SETUP,
     UNKNOWN,
     // TODO add all commands
 };

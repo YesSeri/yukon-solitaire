@@ -17,9 +17,11 @@
 void quit_game();
 
 typedef enum phase {
-    Setup,
-    Play,
+    SETUP,
+    PLAY,
 } Phase;
+
+void save_deck_to_file(DoublyLinkedList *, const char *);
 
 void read_file_to_deck(DoublyLinkedList *, const char *);
 

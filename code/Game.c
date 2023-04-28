@@ -14,13 +14,30 @@ YukonError yukon_error = {NO_ERROR, "OK"};
 bool is_valid_move(Move *, DoublyLinkedList *, DoublyLinkedList *);
 
 
-void save_deck_to_file(DoublyLinkedList *deck, union argument *pArgument);
-
 // This adds all the cards from the deck to the columns.
 // The cards are copied,
 // because we need to keep a copy of the deck in case the player wants to return to the startup phase and save deck.
-void create_columns_arr_from_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS]) {
-    int col_heights[] = {1, 6, 7, 8, 9, 10, 11};
+void create_columns_from_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_arr[7], Phase current_phase) {
+    // If current phase is setup then cards get put evenly in columns.
+    // If current phase is play then cards get put in columns according to the rules of the game.
+    int col_heights[7];
+    if (current_phase == SETUP) {
+        col_heights[0] = 8;
+        col_heights[1] = 8;
+        col_heights[2] = 8;
+        col_heights[3] = 7;
+        col_heights[4] = 7;
+        col_heights[5] = 7;
+        col_heights[6] = 7;
+    } else {
+        col_heights[0] = 1;
+        col_heights[1] = 6;
+        col_heights[2] = 7;
+        col_heights[3] = 8;
+        col_heights[4] = 9;
+        col_heights[5] = 10;
+        col_heights[6] = 11;
+    }
 
     // We copy all the cards from deck to the linked lists, instead of just creating new pointers.
     // We don't want to risk that card orders gets changed and then later we need to save deck.
@@ -34,15 +51,17 @@ void create_columns_arr_from_deck(DoublyLinkedList *deck, DoublyLinkedList *colu
             if (col_heights[col] - height > 0) {
                 // TODO Hide cards from player
                 bool is_hidden;
-                if (col == 1 && height < 1 || col == 2 && height < 2 || col == 3 && height < 3 ||
-                    col == 4 && height < 4 || col == 5 && height < 5 || col == 6 && height < 6)
+                if (current_phase == SETUP)
+                    is_hidden = true;
+                else if (col == 1 && height < 1 || col == 2 && height < 2 || col == 3 && height < 3 ||
+                         col == 4 && height < 4 || col == 5 && height < 5 || col == 6 && height < 6)
                     is_hidden = true;
                 else {
                     is_hidden = false;
                 }
 
-                Card *c = create_card(deck_node_ptr->card_ptr->suit, deck_node_ptr->card_ptr->value, is_hidden);
-                col_node_ptr = create_node(c);
+//                Card *c = create_card(deck_node_ptr->card_ptr->suit, deck_node_ptr->card_ptr->value, is_hidden);
+                col_node_ptr = create_node(deck_node_ptr->card_ptr);
                 prepend(columns_arr[col], col_node_ptr);
                 deck_node_ptr = deck_node_ptr->next;
             }
@@ -154,7 +173,7 @@ int run_game() {
     DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
     Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
     initiate_columns_and_foundations(columns_arr, foundations_arr);
-//    create_columns_arr_from_deck(deck, columns_arr);
+//    create_columns_from_deck(deck, columns_arr);
 //    create_unsorted_deck(deck);
 
 
@@ -179,14 +198,12 @@ int run_game() {
 
     char last_command[2 + ARG_LENGTH + 1] = "";
     Command command;
+    Phase phase = SETUP;
     while (1) {
         char input[2 + ARG_LENGTH + 1];
         input[0] = '\0';
         print_view(columns_arr, foundations_arr, last_command);
         yukon_error.error = NO_ERROR;
-        if (strlen(input) != 0) {
-            exit(0);
-        }
         while (strlen(input) == 0) {
             get_player_input(input);
         }
@@ -195,6 +212,10 @@ int run_game() {
         fflush(stdout);
         switch (command.type) {
             case MOVE: {
+                // wrong phase
+                if (phase != PLAY) {
+                    goto PHASE_ERROR_LABEL;
+                }
                 Move *move = parse_move(input);
                 DoublyLinkedList *from = move->is_from_col ? columns_arr[move->from] : foundations_arr[move->from];
                 DoublyLinkedList *to = move->is_to_col ? columns_arr[move->to] : foundations_arr[move->to];
@@ -209,7 +230,15 @@ int run_game() {
             case QUIT:
                 printf("Quitting game...");
                 exit(0);
+            case SHOW_CARDS:
+                if (phase != SETUP) {
+                    goto PHASE_ERROR_LABEL;
+                }
+                reveal_all_cards(deck);
             case SAVE_DECK:
+                if (phase != SETUP) {
+                    goto PHASE_ERROR_LABEL;
+                }
                 if (command.has_arg) {
                     save_deck_to_file(deck, command.arg.str);
                 } else {
@@ -217,23 +246,37 @@ int run_game() {
                 }
                 break;
             case LOAD_DECK:
+                if (phase != SETUP) {
+                    goto PHASE_ERROR_LABEL;
+                }
                 if (command.has_arg) {
                     read_file_to_deck(deck, &command.arg);
                 } else {
                     create_sorted_deck(deck);
                 }
+                create_columns_from_deck(deck, columns_arr, SETUP);
                 break;
             case TO_PLAY:
+                if (phase == PLAY) {
+                    goto PHASE_ERROR_LABEL;
+                }
+                phase = PLAY;
                 break;
-            case TO_STARTUP:
+            case TO_SETUP:
+                if (phase == SETUP) {
+                    goto PHASE_ERROR_LABEL;
+                }
+                phase = SETUP;
                 break;
             case UNKNOWN:
                 yukon_error.error = CMD_ERR;
 
         }
+        if (false) {
+            PHASE_ERROR_LABEL:
+            yukon_error.error = PHASE_ERR;
+        }
         set_error_message();
-        input[0] = '\0';
-
     }
     return 0;
 }
@@ -254,11 +297,16 @@ void set_error_message() {
             strcpy(yukon_error.message, "Could not write deck to file.");
             break;
         case INVALID_DECK:
-
             strcat(yukon_error.message, " - This is not a valid deck.");
             break;
         default:
             strcpy(yukon_error.message, "Unknown error.");
+            break;
+        case READ_ERR:
+            strcpy(yukon_error.message, "Could not read file.");
+            break;
+        case PHASE_ERR:
+            strcpy(yukon_error.message, "You must switch phase for this command.");
             break;
     }
 }

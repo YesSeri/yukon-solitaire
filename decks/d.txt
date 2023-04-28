@@ -1,7 +1,7 @@
-1H
-1D
-1C
-1S
+AH
+AD
+AC
+AS
 2H
 2D
 2C
@@ -49,3 +49,4 @@ QS
 KH
 KD
 KC
+KS

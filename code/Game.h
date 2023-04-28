@@ -43,6 +43,7 @@ typedef enum {
     CMD_ERR,
     WRITE_ERR,
     READ_ERR,
+    PHASE_ERR,
     INVALID_DECK,
 } ErrorEnum;
 

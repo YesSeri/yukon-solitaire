@@ -28,6 +28,8 @@ Card *get_card_at(DoublyLinkedList *, int);
 
 Node *get_node_at(DoublyLinkedList *, int);
 
+void reveal_all_cards(DoublyLinkedList *);
+
 void delete_node_at(DoublyLinkedList *dll, int i);
 
 void append(DoublyLinkedList *, Node *);

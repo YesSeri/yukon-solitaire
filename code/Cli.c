@@ -6,8 +6,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include "Cli.h"
-//#include <malloc.h>
-#include <string.h>
 
 #define MAX_LEN_MOVE_FROM 6
 #define MAX_LEN_MOVE_TO 3
@@ -149,6 +147,12 @@ void parse_input_type(char *input, Command *command) {
     } else if (input[0] == 'L' && input[1] == 'D') {
         read_string_arg_or_default(input, command);
         command->type = LOAD_DECK;
+    } else if (input[0] == 'P') {
+        command->has_arg = false;
+        command->type = TO_PLAY;
+    } else if (input[0] == 'Q') {
+        command->has_arg = false;
+        command->type = TO_SETUP;
     } else {
         command->type = UNKNOWN;
     }
@@ -156,7 +160,7 @@ void parse_input_type(char *input, Command *command) {
 //        return TO_PLAY;
 //    }
 //    if (input[0] == 'Q') {
-//        return TO_STARTUP;
+//        return TO_SETUP;
 //    }
 //
 
