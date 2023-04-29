@@ -13,4 +13,6 @@
 
 void print_view(DoublyLinkedList *[NUMBER_OF_COLUMNS], Foundation *[NUMBER_OF_FOUNDATIONS], char *);
 
+void print_main_section(DoublyLinkedList *[NUMBER_OF_COLUMNS], Foundation *[NUMBER_OF_FOUNDATIONS]);
+
 #endif // CODE_VIEW_H

@@ -48,13 +48,12 @@ void free_list_nodes(DoublyLinkedList *dll) {
 }
 
 
-void reveal_all_cards(DoublyLinkedList *dll) {
+void set_cards_are_hidden(DoublyLinkedList *dll, bool is_hidden) {
     Node *current = dll->dummy_ptr->next;
     while (current->card_ptr != NULL) {
-        current->card_ptr->is_hidden = false;
+        current->card_ptr->is_hidden = is_hidden;
         current = current->next;
     }
-
 }
 
 Node *create_node(Card *c_ptr) {

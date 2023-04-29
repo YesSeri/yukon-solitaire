@@ -6,50 +6,27 @@
 
 
 // TODO come up with more
+// TODO Biggest thing left is validations of moves to and from columns and foundations.
 
 // Global variable. We set this to error if we encounter one, and then we handle error after switch case in main game loop.
 YukonError yukon_error = {NO_ERROR, "OK"};
 
 
-bool is_valid_move(Move *, DoublyLinkedList *, DoublyLinkedList *);
-
-
-void free_columns(DoublyLinkedList *columns_arr[7]) {
-    for (int i = 0; i < 7; i++) {
+void free_columns_foundations(DoublyLinkedList **columns_arr, Foundation **foundations_arr) {
+    for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
         free_list_nodes(columns_arr[i]);
-        columns_arr[i]->dummy_ptr->next = columns_arr[i]->dummy_ptr;
-        columns_arr[i]->dummy_ptr->prev = columns_arr[i]->dummy_ptr;
+    }
+    for (int i = 0; i < NUMBER_OF_FOUNDATIONS; i++) {
+        free_list_nodes(foundations_arr[i]);
     }
 }
 
 // This adds all the cards from the deck to the columns.
 // The cards are copied,
 // because we need to keep a copy of the deck in case the player wants to return to the startup phase and save deck.
-void create_columns_from_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_arr[7], Phase current_phase) {
-    // If current phase is setup then cards get put evenly in columns.
-    // If current phase is play then cards get put in columns according to the rules of the game.
-    int col_heights[7];
-    if (current_phase == SETUP) {
-        col_heights[0] = 8;
-        col_heights[1] = 8;
-        col_heights[2] = 8;
-        col_heights[3] = 7;
-        col_heights[4] = 7;
-        col_heights[5] = 7;
-        col_heights[6] = 7;
-    } else {
-        col_heights[0] = 1;
-        col_heights[1] = 6;
-        col_heights[2] = 7;
-        col_heights[3] = 8;
-        col_heights[4] = 9;
-        col_heights[5] = 10;
-        col_heights[6] = 11;
-    }
-
-    // We copy all the cards from deck to the linked lists, instead of just creating new pointers.
-    // We don't want to risk that card orders gets changed and then later we need to save deck.
-    // This way we can make sure deck stays intact.
+void create_columns_from_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_arr[7], int col_heights[7]) {
+    // We create pointers to cards in deck from the linked lists in the columns.
+    // The linked lists in the columns and the linked list in the deck share the same cards.
 
     Node *deck_node_ptr = deck->dummy_ptr->next;
     Node *col_node_ptr;
@@ -58,19 +35,18 @@ void create_columns_from_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_
         for (int col = 0; col < NUMBER_OF_COLUMNS; col++) {
             if (col_heights[col] - height > 0) {
                 // TODO Hide cards from player
-                bool is_hidden;
-                if (current_phase == SETUP)
-                    is_hidden = true;
-                else if (col == 1 && height < 1 || col == 2 && height < 2 || col == 3 && height < 3 ||
-                         col == 4 && height < 4 || col == 5 && height < 5 || col == 6 && height < 6)
-                    is_hidden = true;
-                else {
-                    is_hidden = false;
-                }
-
+//                bool is_hidden;
+//                if (current_phase == SETUP)
+//                    is_hidden = true;
+//                else if (col == 1 && height < 1 || col == 2 && height < 2 || col == 3 && height < 3 ||
+//                         col == 4 && height < 4 || col == 5 && height < 5 || col == 6 && height < 6)
+//                    is_hidden = true;
+//                else {
+//                    is_hidden = false;
+//                }
 //                Card *c = create_card(deck_node_ptr->card_ptr->suit, deck_node_ptr->card_ptr->value, is_hidden);
+//                deck_node_ptr->card_ptr->is_hidden = is_hidden;
                 col_node_ptr = create_node(deck_node_ptr->card_ptr);
-                deck_node_ptr->card_ptr->is_hidden = is_hidden;
                 prepend(columns_arr[col], col_node_ptr);
                 deck_node_ptr = deck_node_ptr->next;
             }
@@ -154,6 +130,22 @@ bool is_valid_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
     }
     // TODO empty columns can only be filled with a king
     return true;
+}
+
+// Sets correct visibility for columns in play phase.
+// First hide all in deck, then show top card in all columns.
+void set_correct_visibility_for_columns(DoublyLinkedList *deck, DoublyLinkedList **columns_arr) {
+    set_cards_are_hidden(deck, true);
+    columns_arr[0]->dummy_ptr->next->card_ptr->is_hidden = false;
+    for (int i = 1; i < NUMBER_OF_COLUMNS; i++) {
+        for (int j = 0; j < 5; j++) {
+            Card *c = get_card_at(columns_arr[i], j);
+            if (c) {
+                c->is_hidden = false;
+            }
+        }
+    }
+
 }
 
 void initiate_columns_and_foundations(DoublyLinkedList **columns_arr, Foundation **foundations_arr) {
@@ -243,7 +235,7 @@ int run_game() {
                 if (phase != SETUP) {
                     goto PHASE_ERROR_LABEL;
                 }
-                reveal_all_cards(deck);
+                set_cards_are_hidden(deck, false);
             case SAVE_DECK:
                 if (phase != SETUP) {
                     goto PHASE_ERROR_LABEL;
@@ -254,11 +246,11 @@ int run_game() {
                     save_deck_to_file(deck, "deck.txt");
                 }
                 break;
-            case LOAD_DECK:
+            case LOAD_DECK: {
                 if (phase != SETUP) {
                     goto PHASE_ERROR_LABEL;
                 }
-                free_columns(columns_arr);
+                free_columns_foundations(columns_arr, foundations_arr);
                 free_list_cards(deck);
                 free_list_nodes(deck);
                 if (command.has_arg) {
@@ -266,18 +258,28 @@ int run_game() {
                 } else {
                     create_sorted_deck(deck);
                 }
-                create_columns_from_deck(deck, columns_arr, SETUP);
+                int col_heights[NUMBER_OF_COLUMNS] = {8, 8, 8, 7, 7, 7, 7};
+                create_columns_from_deck(deck, columns_arr, col_heights);
                 break;
-            case TO_PLAY:
+            }
+            case TO_PLAY: {
                 if (phase == PLAY) {
                     goto PHASE_ERROR_LABEL;
                 }
+                free_columns_foundations(columns_arr, foundations_arr);
+                set_correct_visibility_for_columns(deck, columns_arr);
+                int col_heights[NUMBER_OF_COLUMNS] = {1, 6, 7, 8, 9, 10, 11};
+                create_columns_from_deck(deck, columns_arr, col_heights);
                 phase = PLAY;
                 break;
+
+            }
             case TO_SETUP:
                 if (phase == SETUP) {
                     goto PHASE_ERROR_LABEL;
                 }
+                free_columns_foundations(columns_arr, foundations_arr);
+                set_cards_are_hidden(deck, true);
                 phase = SETUP;
                 break;
             case UNKNOWN:
@@ -326,16 +328,19 @@ void set_error_message() {
 void debug_game() {
     DoublyLinkedList *deck = create_doubly_linked_list();
     read_file_to_deck(deck, "deck.txt");
-    debug_print(deck);
-    read_file_to_deck(deck, "d.txt");
-    debug_print(deck);
-//    DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
-//    Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
-//    initiate_columns_and_foundations(columns_arr, foundations_arr);
-    printf("Deck: ");
+    DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
+    Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
+    initiate_columns_and_foundations(columns_arr, foundations_arr);
+
+    free_columns_foundations(columns_arr, foundations_arr);
+    int col_heights[NUMBER_OF_COLUMNS] = {1, 6, 7, 8, 9, 10, 11};
+    create_columns_from_deck(deck, columns_arr, col_heights);
+    set_cards_are_hidden(deck, true);
+    set_correct_visibility_for_columns(deck, columns_arr);
+    print_main_section(columns_arr, foundations_arr);
 }
 
 int main() {
-//    debug_game();
-    run_game();
+    debug_game();
+//    run_game();
 }

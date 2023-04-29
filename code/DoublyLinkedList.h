@@ -28,7 +28,7 @@ Card *get_card_at(DoublyLinkedList *, int);
 
 Node *get_node_at(DoublyLinkedList *, int);
 
-void reveal_all_cards(DoublyLinkedList *);
+void set_cards_are_hidden(DoublyLinkedList *dll, bool);
 
 void free_list_nodes(DoublyLinkedList *);
 
