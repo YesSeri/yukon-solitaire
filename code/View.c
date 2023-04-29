@@ -2,6 +2,7 @@
 // Created by henrik on 4/12/23.
 //
 #include <stdio.h>
+#include <stdlib.h>
 #include "View.h"
 
 #define NUMBER_OF_COLUMNS 7
@@ -62,6 +63,8 @@ void print_footer(char *last_command) {
 
 void print_view(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS], Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS],
                 char *last_command) {
+    // Clears screen, so only the current view is shown.
+    printf("\e[1;1H\e[2J");
     printf("\n");
     print_header();
     printf("\n");

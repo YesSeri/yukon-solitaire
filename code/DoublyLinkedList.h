@@ -30,6 +30,10 @@ Node *get_node_at(DoublyLinkedList *, int);
 
 void reveal_all_cards(DoublyLinkedList *);
 
+void free_list_nodes(DoublyLinkedList *);
+
+void free_list_cards(DoublyLinkedList *dll);
+
 void delete_node_at(DoublyLinkedList *dll, int i);
 
 void append(DoublyLinkedList *, Node *);

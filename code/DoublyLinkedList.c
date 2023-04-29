@@ -26,6 +26,28 @@ void debug_print(DoublyLinkedList *dll) {
 }
 
 
+
+void free_list_cards(DoublyLinkedList *dll) {
+    Node *current = dll->dummy_ptr->next;
+    while (current->card_ptr != NULL) {
+        free(current->card_ptr);
+        current = current->next;
+    }
+}
+
+void free_list_nodes(DoublyLinkedList *dll) {
+    Node *current = dll->dummy_ptr->next;
+    while (current->card_ptr != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+    dll->dummy_ptr->next = dll->dummy_ptr;
+    dll->dummy_ptr->prev = dll->dummy_ptr;
+    dll->length = 0;
+}
+
+
 void reveal_all_cards(DoublyLinkedList *dll) {
     Node *current = dll->dummy_ptr->next;
     while (current->card_ptr != NULL) {
@@ -107,7 +129,6 @@ void append(DoublyLinkedList *dll, Node *n_ptr) {
     insert_node_between_these_two_nodes(last, dummy, n_ptr);
 
     Node *array[52] = {NULL};
-    debug_to_array(dll, array);
     dll->length++;
 }
 

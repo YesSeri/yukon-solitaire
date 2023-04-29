@@ -44,6 +44,8 @@ void save_deck_to_file(DoublyLinkedList *deck, const char *filename) {
 }
 
 void read_file_to_deck(DoublyLinkedList *deck, const char *filename) {
+    free_list_cards(deck);
+    free_list_nodes(deck);
     char filepath[100] = "../decks/";
     strcat(filepath, filename);
     FILE *file = fopen(filepath, "r"); /* should check the result */

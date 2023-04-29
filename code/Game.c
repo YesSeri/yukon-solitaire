@@ -14,6 +14,14 @@ YukonError yukon_error = {NO_ERROR, "OK"};
 bool is_valid_move(Move *, DoublyLinkedList *, DoublyLinkedList *);
 
 
+void free_columns(DoublyLinkedList *columns_arr[7]) {
+    for (int i = 0; i < 7; i++) {
+        free_list_nodes(columns_arr[i]);
+        columns_arr[i]->dummy_ptr->next = columns_arr[i]->dummy_ptr;
+        columns_arr[i]->dummy_ptr->prev = columns_arr[i]->dummy_ptr;
+    }
+}
+
 // This adds all the cards from the deck to the columns.
 // The cards are copied,
 // because we need to keep a copy of the deck in case the player wants to return to the startup phase and save deck.
@@ -62,6 +70,7 @@ void create_columns_from_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_
 
 //                Card *c = create_card(deck_node_ptr->card_ptr->suit, deck_node_ptr->card_ptr->value, is_hidden);
                 col_node_ptr = create_node(deck_node_ptr->card_ptr);
+                deck_node_ptr->card_ptr->is_hidden = is_hidden;
                 prepend(columns_arr[col], col_node_ptr);
                 deck_node_ptr = deck_node_ptr->next;
             }
@@ -249,8 +258,11 @@ int run_game() {
                 if (phase != SETUP) {
                     goto PHASE_ERROR_LABEL;
                 }
+                free_columns(columns_arr);
+                free_list_cards(deck);
+                free_list_nodes(deck);
                 if (command.has_arg) {
-                    read_file_to_deck(deck, &command.arg);
+                    read_file_to_deck(deck, command.arg.str);
                 } else {
                     create_sorted_deck(deck);
                 }
@@ -313,8 +325,14 @@ void set_error_message() {
 
 void debug_game() {
     DoublyLinkedList *deck = create_doubly_linked_list();
-    create_sorted_deck(deck);
-    save_deck_to_file(deck, "deck.txt");
+    read_file_to_deck(deck, "deck.txt");
+    debug_print(deck);
+    read_file_to_deck(deck, "d.txt");
+    debug_print(deck);
+//    DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
+//    Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
+//    initiate_columns_and_foundations(columns_arr, foundations_arr);
+    printf("Deck: ");
 }
 
 int main() {
