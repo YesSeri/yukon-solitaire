@@ -5,10 +5,11 @@
 #include "Game.h"
 
 
-// TODO come up with more
 // TODO Biggest thing left is validations of moves to and from columns and foundations.
+// TODO Game over check
 
 // Global variable. We set this to error if we encounter one, and then we handle error after switch case in main game loop.
+// We use this so we can easily set the errors anywhere they occur.
 YukonError yukon_error = {NO_ERROR, "OK"};
 
 
@@ -21,12 +22,11 @@ void free_columns_foundations(DoublyLinkedList **columns_arr, Foundation **found
     }
 }
 
-// This adds all the cards from the deck to the columns.
-// The cards are copied,
-// because we need to keep a copy of the deck in case the player wants to return to the startup phase and save deck.
 void create_columns_from_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_arr[7], int col_heights[7]) {
+    // This adds all the cards from the deck to the columns.
     // We create pointers to cards in deck from the linked lists in the columns.
     // The linked lists in the columns and the linked list in the deck share the same cards.
+    // Depending on if we are in setup phase or in play phase we use different column heights.
 
     Node *deck_node_ptr = deck->dummy_ptr->next;
     Node *col_node_ptr;
@@ -34,18 +34,6 @@ void create_columns_from_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_
     for (int height = 0; height < 20; height++) {
         for (int col = 0; col < NUMBER_OF_COLUMNS; col++) {
             if (col_heights[col] - height > 0) {
-                // TODO Hide cards from player
-//                bool is_hidden;
-//                if (current_phase == SETUP)
-//                    is_hidden = true;
-//                else if (col == 1 && height < 1 || col == 2 && height < 2 || col == 3 && height < 3 ||
-//                         col == 4 && height < 4 || col == 5 && height < 5 || col == 6 && height < 6)
-//                    is_hidden = true;
-//                else {
-//                    is_hidden = false;
-//                }
-//                Card *c = create_card(deck_node_ptr->card_ptr->suit, deck_node_ptr->card_ptr->value, is_hidden);
-//                deck_node_ptr->card_ptr->is_hidden = is_hidden;
                 col_node_ptr = create_node(deck_node_ptr->card_ptr);
                 prepend(columns_arr[col], col_node_ptr);
                 deck_node_ptr = deck_node_ptr->next;
@@ -77,15 +65,10 @@ void to_play_action(char *input) {
 void move_action(Move *move, DoublyLinkedList *from_list, DoublyLinkedList *to_list) {
 // TODO move multiple cards
 // TODO move to and from foundations
-    printf("Move to make: ");
     if (move->card == NULL) {
-        printf("Moving top card, from: %d, To: %d\n", move->from + 1, move->to + 1);
         move_single_card(from_list, to_list);
-
         free(move);
     } else {
-        printf("From: %d, To: %d, Card: %c%d\n", move->from, move->to, move->card->suit, move->card->value);
-        fflush(stdout);
         move_cards(from_list, to_list, move->card);
         free(move->card);
         free(move);
@@ -104,29 +87,37 @@ void move_action(Move *move, DoublyLinkedList *from_list, DoublyLinkedList *to_l
 
 bool is_valid_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
 
+    Card *card_from = NULL;
+    Card *card_to = get_node_at(to, 0)->card_ptr;
+    if (move->card == NULL) {
+        card_from = get_node_at(from, 0)->card_ptr;
+        // If card_ptr is empty the dummy ptr points to itself, meaning there are no cards in this column or foundation.
+    } else {
+        card_from = search_list_for_card(from, move->card)->card_ptr;
+    }
     // Move multiple cards
     // You can never move several cards to a column.
     if (move->is_to_col) {
         // Move one card
-
-        Card *card_from = NULL;
-        Card *card_to = get_node_at(to, 0)->card_ptr;
-        if (move->card == NULL) {
-            card_from = get_node_at(from, 0)->card_ptr;
-            // If card_ptr is empty the dummy ptr points to itself, meaning there are no cards in this column or foundation.
-        } else {
-            card_from = search_list_for_node(from, move->card)->card_ptr;
-        }
         // Card must exist in column
         if (card_from == NULL) {
+            return false;
+        }
+
+        // King can be moved to empty column
+        if (card_from->value == KING && card_to == NULL) {
+            return true;
+        } else if (card_from->value != KING && card_to == NULL) {
             return false;
         }
         // Card must be one lower than the col it is moving to and of a different suit
         if (!(card_from->value == card_to->value - 1 || card_from->suit == card_to->suit)) {
             return false;
         }
-    } else {
-        return validate_to_foundation_move();
+
+
+    } else if (!move->is_to_col && move->card == NULL) {
+        return validate_to_foundation_move(move, from, to);
     }
     // TODO empty columns can only be filled with a king
     return true;
@@ -160,7 +151,20 @@ void initiate_columns_and_foundations(DoublyLinkedList **columns_arr, Foundation
 }
 
 
-bool validate_to_foundation_move() {
+bool validate_to_foundation_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
+
+    Card *from_card = from->dummy_ptr->next->card_ptr;
+    Card *to_card = to->dummy_ptr->next->card_ptr;
+    // If trying to move several cards at once to foundation it fails.
+    if (move->card != NULL) return false;
+    // If foundation is empty and card is ace it is a valid move.
+    if (to->length == 0) {
+        return from_card->value == ACE;
+    }
+    // If foundation is not empty and card is one higher than top card in foundation and of same suit it is a valid move.
+    if (from_card->value - 1 == to_card->value && from_card->suit == to_card->suit) {
+        return true;
+    }
     return false;
 }
 
@@ -267,9 +271,9 @@ int run_game() {
                     goto PHASE_ERROR_LABEL;
                 }
                 free_columns_foundations(columns_arr, foundations_arr);
-                set_correct_visibility_for_columns(deck, columns_arr);
                 int col_heights[NUMBER_OF_COLUMNS] = {1, 6, 7, 8, 9, 10, 11};
                 create_columns_from_deck(deck, columns_arr, col_heights);
+                set_correct_visibility_for_columns(deck, columns_arr);
                 phase = PLAY;
                 break;
 
@@ -311,10 +315,8 @@ void set_error_message() {
             strcpy(yukon_error.message, "Could not write deck to file.");
             break;
         case INVALID_DECK:
+            // We set the message to a custom error depending on the deck error and append the default message
             strcat(yukon_error.message, " - This is not a valid deck.");
-            break;
-        default:
-            strcpy(yukon_error.message, "Unknown error.");
             break;
         case READ_ERR:
             strcpy(yukon_error.message, "Could not read file.");
@@ -322,25 +324,87 @@ void set_error_message() {
         case PHASE_ERR:
             strcpy(yukon_error.message, "You must switch phase for this command.");
             break;
+        default:
+            strcpy(yukon_error.message, "Unknown error.");
+            break;
     }
 }
 
 void debug_game() {
+    srand(time(NULL));
     DoublyLinkedList *deck = create_doubly_linked_list();
     read_file_to_deck(deck, "deck.txt");
     DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
     Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
     initiate_columns_and_foundations(columns_arr, foundations_arr);
 
-    free_columns_foundations(columns_arr, foundations_arr);
     int col_heights[NUMBER_OF_COLUMNS] = {1, 6, 7, 8, 9, 10, 11};
+
     create_columns_from_deck(deck, columns_arr, col_heights);
-    set_cards_are_hidden(deck, true);
     set_correct_visibility_for_columns(deck, columns_arr);
+    set_cards_are_hidden(deck, false);
     print_main_section(columns_arr, foundations_arr);
+
+    printf("\n");
+
+    Move *move = parse_move("C5:5S -> C2");
+    DoublyLinkedList *from = move->is_from_col ? columns_arr[move->from] : foundations_arr[move->from];
+    DoublyLinkedList *to = move->is_to_col ? columns_arr[move->to] : foundations_arr[move->to];
+    bool isValid = is_valid_move(move, from, to);
+    if (isValid) {
+        move_action(move, from, to);
+    }
+    print_main_section(columns_arr, foundations_arr);
+    printf("\n");
 }
 
+void run_tests();
+
 int main() {
-    debug_game();
-//    run_game();
+//    debug_game();
+
+//    run_tests();
+    run_game();
+}
+
+
+void init_default_deck_and_columns(DoublyLinkedList *deck, DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS],
+                                   Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS]);
+
+void test_interleaved_shuffling() {
+    printf("Testing interleaved shuffling\n");
+    DoublyLinkedList *deck = create_doubly_linked_list();
+    create_sorted_deck(deck);
+    printf("Before shuffling.\n");
+    debug_print(deck);
+    printf("Shuffling with arg 13.\n");
+    shuffle_interleaved(deck, 13);
+    debug_print(deck);
+    printf("\n\n");
+}
+
+void test_random_shuffling() {
+    printf("Testing random shuffling\n");
+    DoublyLinkedList *deck = create_doubly_linked_list();
+    create_sorted_deck(deck);
+    printf("Before shuffling.\n");
+    debug_print(deck);
+    printf("Shuffled:\n");
+    shuffle_random(deck);
+    debug_print(deck);
+    printf("\n\n");
+}
+
+void
+init_default_deck_and_columns(DoublyLinkedList *deck, DoublyLinkedList **columns_arr, Foundation **foundations_arr) {
+    create_sorted_deck(deck);
+    initiate_columns_and_foundations(columns_arr, foundations_arr);
+    int col_heights[NUMBER_OF_COLUMNS] = {1, 6, 7, 8, 9, 10, 11};
+    create_columns_from_deck(deck, columns_arr, col_heights);
+    set_correct_visibility_for_columns(deck, columns_arr);
+}
+
+void run_tests() {
+    test_interleaved_shuffling();
+    test_random_shuffling();
 }

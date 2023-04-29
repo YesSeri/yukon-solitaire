@@ -9,7 +9,6 @@
 void debug_print(DoublyLinkedList *dll) {
     Node *curr = dll->dummy_ptr->next;
     int i = 0;
-    printf("\n\nDEBUG PRINT\n");
     while (curr->card_ptr != NULL) {
         i++;
         printf("%2d%c", curr->card_ptr->value, curr->card_ptr->suit);
@@ -21,10 +20,8 @@ void debug_print(DoublyLinkedList *dll) {
             printf(", ");
         }
     }
-    printf("\n");
     fflush(stdout);
 }
-
 
 
 void free_list_cards(DoublyLinkedList *dll) {
@@ -73,7 +70,7 @@ Node *create_node(Card *c_ptr) {
  * @param c_ptr
  * @return
  */
-Node *search_list_for_node(DoublyLinkedList *dll, Card *c_ptr) {
+Node *search_list_for_card(DoublyLinkedList *dll, Card *c_ptr) {
     Node *current = dll->dummy_ptr->next;
     // When we encounter a hidden card, or reach end of column, we stop searching.
     while (current != dll->dummy_ptr && !current->card_ptr->is_hidden) {
@@ -196,25 +193,29 @@ DoublyLinkedList *create_doubly_linked_list() {
  */
 void move_cards(DoublyLinkedList *from, DoublyLinkedList *to, Card *c) {
     // TODO Implement
-    Node *last_card_to_move = search_list_for_node(from, c);
+    Node *last_card_to_move = search_list_for_card(from, c);
     Node *first_card_to_move = from->dummy_ptr->next;
 
-    Node *n = first_card_to_move;
+    Node *new_first_card = last_card_to_move->next;
+
+    Node *n;
     int len = 1;
     while (n != last_card_to_move) {
         len++;
-        n = n->next;
+        n = first_card_to_move->next;
     }
 
-    from->dummy_ptr = last_card_to_move->next;
+    to->dummy_ptr->next->prev = last_card_to_move;
     last_card_to_move->next = to->dummy_ptr->next;
-    last_card_to_move->next->prev = last_card_to_move;
-//    to->dummy_ptr->next->prev = last_card_to_move;
-    to->dummy_ptr->next = first_card_to_move;
     first_card_to_move->prev = to->dummy_ptr;
+    to->dummy_ptr->next = first_card_to_move;
 
-    to->length += len;
+    from->dummy_ptr->next = new_first_card;
+    new_first_card->prev = from->dummy_ptr;
+
     from->length -= len;
+    to->length += len;
+
 }
 
 
@@ -229,6 +230,8 @@ Node *remove_at(DoublyLinkedList *dll, int index) {
     Node *n_after = n->next;
     n_before->next = n_after;
     n_after->prev = n_before;
+    n->next = NULL;
+    n->prev = NULL;
     dll->length--;
     return n;
 }

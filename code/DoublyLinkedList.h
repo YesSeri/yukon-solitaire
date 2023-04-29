@@ -22,7 +22,7 @@ void debug_print(DoublyLinkedList *);
 
 Node *create_node(Card *);
 
-Node *search_list_for_node(DoublyLinkedList *dll, Card *c_ptr);
+Node *search_list_for_card(DoublyLinkedList *dll, Card *c_ptr);
 
 Card *get_card_at(DoublyLinkedList *, int);
 

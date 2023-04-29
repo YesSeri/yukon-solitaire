@@ -30,7 +30,7 @@ void move_action(Move *, DoublyLinkedList *, DoublyLinkedList *);
 
 void error_action(char *input);
 
-bool validate_to_foundation_move();
+bool validate_to_foundation_move(Move *, DoublyLinkedList *, DoublyLinkedList *);
 
 void set_error_message();
 
@@ -38,8 +38,6 @@ void set_error_message();
 void free_columns_foundations(DoublyLinkedList *[7], Foundation *[4]);
 
 void set_correct_visibility_for_columns(DoublyLinkedList *, DoublyLinkedList **);
-
-bool is_valid_move(Move *, DoublyLinkedList *, DoublyLinkedList *);
 
 bool is_valid_move(Move *, DoublyLinkedList *, DoublyLinkedList *);
 

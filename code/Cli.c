@@ -44,6 +44,7 @@ Move *parse_move(char *str) {
     char to_col_or_foundation;
     int to_i;
     char value_c;
+    char suit_c;
 
     if (str[2] == ':') {
         move->card = malloc(sizeof(Card));
@@ -51,7 +52,7 @@ Move *parse_move(char *str) {
                &from_col_or_foundation,
                &from_i,
                &value_c,
-               &move->card->suit,
+               &suit_c,
                &to_col_or_foundation,
                &to_i);
     } else {
@@ -64,8 +65,10 @@ Move *parse_move(char *str) {
                &to_i);
 
     }
-    if (value_c != 0) {
+//    if (value_c != 0) {
+    if (move->card != NULL) {
         move->card->value = card_char_to_value(value_c);
+        move->card->suit = suit_c;
     }
     move->is_from_col = from_col_or_foundation == 'C';
     move->from = from_i - 1;
