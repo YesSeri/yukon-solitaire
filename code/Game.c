@@ -1,5 +1,6 @@
 // This includes #define for ace, 1, 2, ... king and for suits heart, club, diamond, spade.
 #include "Game.h"
+#include "Tests.h"
 
 
 // TODO Biggest thing left is validations of moves to and from columns and foundations, especially from foundation to column.
@@ -361,8 +362,8 @@ void debug_game() {
 
 
 int main() {
-    debug_game();
-//    run_tests();
+//    debug_game();
+    run_tests();
 //    run_game();
 }
 
