@@ -5,8 +5,9 @@
 #include "Game.h"
 
 
-// TODO Biggest thing left is validations of moves to and from columns and foundations.
+// TODO Biggest thing left is validations of moves to and from columns and foundations, especially from foundation to column.
 // TODO Game over check
+// TODO go through REQUIREMENTS.md and see what is left to do.
 
 // Global variable. We set this to error if we encounter one, and then we handle error after switch case in main game loop.
 // We use this so we can easily set the errors anywhere they occur.
@@ -63,8 +64,6 @@ void to_play_action(char *input) {
 }
 
 void move_action(Move *move, DoublyLinkedList *from_list, DoublyLinkedList *to_list) {
-// TODO move multiple cards
-// TODO move to and from foundations
     if (move->card == NULL) {
         move_single_card(from_list, to_list);
         free(move);
@@ -119,7 +118,6 @@ bool is_valid_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
     } else if (!move->is_to_col && move->card == NULL) {
         return validate_to_foundation_move(move, from, to);
     }
-    // TODO empty columns can only be filled with a king
     return true;
 }
 
@@ -342,29 +340,34 @@ void debug_game() {
 
     create_columns_from_deck(deck, columns_arr, col_heights);
     set_correct_visibility_for_columns(deck, columns_arr);
-    set_cards_are_hidden(deck, false);
     print_main_section(columns_arr, foundations_arr);
 
     printf("\n");
+    char *moves[] = {{"C5:5S -> C2"},
+                     {"C1 -> F1"},
+                     {"C5 -> F2"}};
 
-    Move *move = parse_move("C5:5S -> C2");
-    DoublyLinkedList *from = move->is_from_col ? columns_arr[move->from] : foundations_arr[move->from];
-    DoublyLinkedList *to = move->is_to_col ? columns_arr[move->to] : foundations_arr[move->to];
-    bool isValid = is_valid_move(move, from, to);
-    if (isValid) {
-        move_action(move, from, to);
+    for (int i = 0; i < 3; i++) {
+        Move *move = parse_move(moves[i]);
+        DoublyLinkedList *from = move->is_from_col ? columns_arr[move->from] : foundations_arr[move->from];
+        DoublyLinkedList *to = move->is_to_col ? columns_arr[move->to] : foundations_arr[move->to];
+        bool isValid = is_valid_move(move, from, to);
+        if (isValid) {
+            move_action(move, from, to);
+        }
+        print_main_section(columns_arr, foundations_arr);
+        printf("\n");
+
     }
-    print_main_section(columns_arr, foundations_arr);
-    printf("\n");
+
 }
 
 void run_tests();
 
 int main() {
-//    debug_game();
-
+    debug_game();
 //    run_tests();
-    run_game();
+//    run_game();
 }
 
 

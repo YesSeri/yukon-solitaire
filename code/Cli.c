@@ -36,7 +36,8 @@
 //<from> -> <to>
 
 Move *parse_move(char *str) {
-    //TODO Check if parsing is accurate
+    //TODO Check if parsing is accurate, and make more error proof.
+
     Move *move = malloc(sizeof(Move));
 
     char from_col_or_foundation;

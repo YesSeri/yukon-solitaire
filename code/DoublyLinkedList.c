@@ -192,7 +192,6 @@ DoublyLinkedList *create_doubly_linked_list() {
  *
  */
 void move_cards(DoublyLinkedList *from, DoublyLinkedList *to, Card *c) {
-    // TODO Implement
     Node *last_card_to_move = search_list_for_card(from, c);
     Node *first_card_to_move = from->dummy_ptr->next;
 
