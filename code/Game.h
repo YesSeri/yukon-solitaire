@@ -5,6 +5,9 @@
 #ifndef YUKON_SOLITAIRE_GAME_H
 #define YUKON_SOLITAIRE_GAME_H
 
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include "DoublyLinkedList.h"
 #include "Card.h"
 #include "View.h"

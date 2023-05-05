@@ -1,7 +1,4 @@
 // This includes #define for ace, 1, 2, ... king and for suits heart, club, diamond, spade.
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include "Game.h"
 
 
@@ -362,7 +359,6 @@ void debug_game() {
 
 }
 
-void run_tests();
 
 int main() {
     debug_game();
@@ -374,30 +370,6 @@ int main() {
 void init_default_deck_and_columns(DoublyLinkedList *deck, DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS],
                                    Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS]);
 
-void test_interleaved_shuffling() {
-    printf("Testing interleaved shuffling\n");
-    DoublyLinkedList *deck = create_doubly_linked_list();
-    create_sorted_deck(deck);
-    printf("Before shuffling.\n");
-    debug_print(deck);
-    printf("Shuffling with arg 13.\n");
-    shuffle_interleaved(deck, 13);
-    debug_print(deck);
-    printf("\n\n");
-}
-
-void test_random_shuffling() {
-    printf("Testing random shuffling\n");
-    DoublyLinkedList *deck = create_doubly_linked_list();
-    create_sorted_deck(deck);
-    printf("Before shuffling.\n");
-    debug_print(deck);
-    printf("Shuffled:\n");
-    shuffle_random(deck);
-    debug_print(deck);
-    printf("\n\n");
-}
-
 void
 init_default_deck_and_columns(DoublyLinkedList *deck, DoublyLinkedList **columns_arr, Foundation **foundations_arr) {
     create_sorted_deck(deck);
@@ -407,7 +379,3 @@ init_default_deck_and_columns(DoublyLinkedList *deck, DoublyLinkedList **columns
     set_correct_visibility_for_columns(deck, columns_arr);
 }
 
-void run_tests() {
-    test_interleaved_shuffling();
-    test_random_shuffling();
-}
