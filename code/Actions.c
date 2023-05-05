@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include "Actions.h"
 
-
 void quit_game() {
 }
 
@@ -62,7 +61,7 @@ void read_file_to_deck(DoublyLinkedList *deck, const char *filename) {
         Card *c = create_card(s, v, true);
         if (c == NULL) {
             yukon_error.error = INVALID_DECK;
-            sprintf(yukon_error.message, "Invalid card in deck: %c%c at line %d", line[0], s, line_number);
+            sprintf(yukon_error.message, "Invalid card in deck: %c%c at line %d - ", line[0], s, line_number);
             return;
         }
         Node *n = create_node(c);
@@ -71,7 +70,7 @@ void read_file_to_deck(DoublyLinkedList *deck, const char *filename) {
     }
     if (deck->length != 52) {
         yukon_error.error = INVALID_DECK;
-        sprintf(yukon_error.message, "Deck must contain 52 cards");
+        sprintf(yukon_error.message, "Deck must contain 52 cards - ");
         return;
     }
     /* may check feof here to make a difference between eof and io failure -- network

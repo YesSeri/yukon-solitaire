@@ -18,7 +18,6 @@ typedef struct {
     int length;
 } DoublyLinkedList;
 
-void debug_print(DoublyLinkedList *);
 
 Node *create_node(Card *);
 

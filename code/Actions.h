@@ -17,7 +17,7 @@
 void quit_game();
 
 typedef enum phase {
-    SETUP,
+    STARTUP,
     PLAY,
 } Phase;
 

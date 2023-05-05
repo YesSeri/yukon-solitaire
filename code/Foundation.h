@@ -14,4 +14,6 @@ Card *pop(Foundation *);
 
 Foundation *create_stack();
 
+bool is_gameover(Foundation **);
+
 #endif

@@ -2,7 +2,6 @@
 // Created by henrik on 4/12/23.
 //
 #include <stdio.h>
-#include <stdlib.h>
 #include "View.h"
 
 #define NUMBER_OF_COLUMNS 7
