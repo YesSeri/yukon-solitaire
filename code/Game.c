@@ -123,6 +123,8 @@ bool is_valid_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
 
     } else if (!move->is_to_col && move->card == NULL) {
         return validate_to_foundation_move(move, from, to);
+    } else if (!move->is_from_col && move->is_to_col) {
+        return validate_from_foundation_move(move, from, to);
     }
     return true;
 }
@@ -168,6 +170,19 @@ bool validate_to_foundation_move(Move *move, DoublyLinkedList *from, DoublyLinke
     // If foundation is not empty and card is one higher than top card in foundation and of same suit it is a valid move.
     if (from_card->value - 1 == to_card->value && from_card->suit == to_card->suit) {
         return true;
+    }
+    return false;
+}
+
+bool validate_from_foundation_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
+    Card *from_card = from->dummy_ptr->next->card_ptr;
+    Card *to_card = to->dummy_ptr->next->card_ptr;
+    // if value of card is ACE and the column is empty, move is valid
+    if (from_card->value == ACE && to_card == NULL) {
+        return true;
+        // If value of card from foundation is not 1 less than cardvalue in column, or it's the same suit, move is illegal
+    } else if (from_card->value != to_card->value - 1 || from_card->suit == to_card->suit) {
+        return false;
     }
     return false;
 }

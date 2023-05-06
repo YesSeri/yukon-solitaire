@@ -134,7 +134,7 @@ void read_string_arg_or_default(char *input, Command *command) {
 void parse_input_type(char *input, Command *command) {
     // TODO What is max input length?
     command->has_arg = false;
-    if (input[0] == 'C') {
+    if (input[0] == 'C' || input[0] == 'F') {
         command->type = MOVE;
     } else if (input[0] == 'Q' && input[1] == 'Q') {
         command->type = QUIT;

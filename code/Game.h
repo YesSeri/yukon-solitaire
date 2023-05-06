@@ -35,8 +35,9 @@ void error_action(char *input);
 
 bool validate_to_foundation_move(Move *, DoublyLinkedList *, DoublyLinkedList *);
 
-void set_error_message();
+bool validate_from_foundation_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to);
 
+void set_error_message();
 
 void free_columns_foundations(DoublyLinkedList *[7], Foundation *[4]);
 
