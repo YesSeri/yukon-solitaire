@@ -1,6 +1,7 @@
 // This includes #define for ace, 1, 2, ... king and for suits heart, club, diamond, spade.
 #include "Game.h"
 #include "Tests.h"
+#include "History.h"
 
 int col_heights_startup[NUMBER_OF_COLUMNS] = {8, 8, 8, 7, 7, 7, 7};
 int col_heights_play[NUMBER_OF_COLUMNS] = {1, 6, 7, 8, 9, 10, 11};
@@ -66,11 +67,8 @@ void to_play_action(char *input) {
 void move_action(Move *move, DoublyLinkedList *from_list, DoublyLinkedList *to_list) {
     if (move->card == NULL) {
         move_single_card(from_list, to_list);
-        free(move);
     } else {
         move_cards(from_list, to_list, move->card);
-        free(move->card);
-        free(move);
     }
     // Once we have moved cards we make top card in from list visible.
     Card *c = get_card_at(from_list, 0);
@@ -375,42 +373,23 @@ void set_error_message() {
 }
 
 void debug_game() {
-    srand(time(NULL));
-    DoublyLinkedList *deck = create_doubly_linked_list();
-    read_file_to_deck(deck, "deck.txt");
-    DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
-    Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
-    initiate_columns_and_foundations(columns_arr, foundations_arr);
+//    srand(time(NULL));
+    HistoryList *historyList = create_history_list();
+    char *input = "C1 -> C3";
+    Move *move = parse_move(input);
+    add_move_to_history(move, historyList);
 
-    create_columns_from_deck(deck, columns_arr, col_heights_play);
-    set_correct_visibility_for_columns(deck, columns_arr);
-    print_main_section(columns_arr, foundations_arr);
 
-    printf("\n");
-    char *moves[] = {{"C2:7D -> C5"},
+    printf("done");
 
-    };
-
-    for (int i = 0; i < 1; i++) {
-        Move *move = parse_move(moves[i]);
-        DoublyLinkedList *from = move->is_from_col ? columns_arr[move->from] : foundations_arr[move->from];
-        DoublyLinkedList *to = move->is_to_col ? columns_arr[move->to] : foundations_arr[move->to];
-        bool isValid = is_valid_move(move, from, to);
-        if (isValid) {
-            move_action(move, from, to);
-        }
-        print_main_section(columns_arr, foundations_arr);
-        printf("\n");
-
-    }
 
 }
 
 
 int main() {
-//    debug_game();
+    debug_game();
 //    run_tests();
-    run_game();
+//    run_game();
 }
 
 void init_default_deck_and_columns(DoublyLinkedList *deck, DoublyLinkedList **columns_arr, Foundation **foundations_arr,
