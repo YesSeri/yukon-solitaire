@@ -19,6 +19,8 @@ enum commandType {
     SHOW_CARDS,
     TO_PLAY,
     TO_SETUP,
+    SHUFFLE_RANDOM,
+    SHUFFLE_INTERLEAVED,
     UNKNOWN,
     // TODO add all commands
 };

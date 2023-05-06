@@ -2,6 +2,8 @@
 #include "Game.h"
 #include "Tests.h"
 
+int col_heights_startup[NUMBER_OF_COLUMNS] = {8, 8, 8, 7, 7, 7, 7};
+int col_heights_play[NUMBER_OF_COLUMNS] = {1, 6, 7, 8, 9, 10, 11};
 
 // TODO Biggest thing left is validations of moves to and from columns and foundations, especially from foundation to column.
 // TODO Game over check
@@ -181,8 +183,7 @@ void setup_startup_phase_deck(DoublyLinkedList *deck, DoublyLinkedList **columns
     } else {
         create_sorted_deck(deck);
     }
-    int col_heights[NUMBER_OF_COLUMNS] = {8, 8, 8, 7, 7, 7, 7};
-    create_columns_from_deck(deck, columns_arr, col_heights);
+    create_columns_from_deck(deck, columns_arr, col_heights_startup);
 }
 
 void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLinkedList **columns_arr,
@@ -209,12 +210,35 @@ void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLi
         case QUIT:
             printf("Quitting game...");
             exit(0);
+
         case SHOW_CARDS:
             if (*phase != STARTUP) {
                 yukon_error.error = PHASE_ERR;
                 return;
             }
             set_cards_are_hidden(deck, false);
+
+            break;
+        case SHUFFLE_INTERLEAVED:
+            if (*phase != STARTUP) {
+                yukon_error.error = PHASE_ERR;
+                return;
+            }
+            shuffle_interleaved(deck, 26);
+            free_columns_foundations(columns_arr, foundations_arr);
+            create_columns_from_deck(deck, columns_arr, col_heights_startup);
+
+            break;
+        case SHUFFLE_RANDOM:
+            if (*phase != STARTUP) {
+                yukon_error.error = PHASE_ERR;
+                return;
+            }
+            shuffle_random(deck);
+            free_columns_foundations(columns_arr, foundations_arr);
+            create_columns_from_deck(deck, columns_arr, col_heights_startup);
+            break;
+
         case SAVE_DECK:
             if (*phase != STARTUP) {
                 yukon_error.error = PHASE_ERR;
@@ -231,16 +255,6 @@ void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLi
                 yukon_error.error = PHASE_ERR;
                 return;
             }
-//            free_columns_foundations(columns_arr, foundations_arr);
-//            free_list_cards(deck);
-//            free_list_nodes(deck);
-//            if (command->has_arg) {
-//                read_file_to_deck(deck, command->arg.str);
-//            } else {
-//                create_sorted_deck(deck);
-//            }
-//            int col_heights[NUMBER_OF_COLUMNS] = {8, 8, 8, 7, 7, 7, 7};
-//            create_columns_from_deck(deck, columns_arr, col_heights);
             setup_startup_phase_deck(deck, columns_arr, foundations_arr, command);
             break;
         }
@@ -256,8 +270,7 @@ void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLi
             }
             strcpy(yukon_error.message, "Play Phase entered - ");
             free_columns_foundations(columns_arr, foundations_arr);
-            int col_heights[NUMBER_OF_COLUMNS] = {1, 6, 7, 8, 9, 10, 11};
-            create_columns_from_deck(deck, columns_arr, col_heights);
+            create_columns_from_deck(deck, columns_arr, col_heights_play);
             set_correct_visibility_for_columns(deck, columns_arr);
             *phase = PLAY;
             break;
@@ -269,8 +282,6 @@ void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLi
                 return;
             }
             strcpy(yukon_error.message, "Setup Phase entered - ");
-//            free_columns_foundations(columns_arr, foundations_arr);
-//            set_cards_are_hidden(deck, true);
             *phase = STARTUP;
             setup_startup_phase_deck(deck, columns_arr, foundations_arr, command);
             break;
@@ -371,9 +382,7 @@ void debug_game() {
     Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
     initiate_columns_and_foundations(columns_arr, foundations_arr);
 
-    int col_heights[NUMBER_OF_COLUMNS] = {1, 6, 7, 8, 9, 10, 11};
-
-    create_columns_from_deck(deck, columns_arr, col_heights);
+    create_columns_from_deck(deck, columns_arr, col_heights_play);
     set_correct_visibility_for_columns(deck, columns_arr);
     print_main_section(columns_arr, foundations_arr);
 
@@ -404,15 +413,10 @@ int main() {
     run_game();
 }
 
-
-void init_default_deck_and_columns(DoublyLinkedList *deck, DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS],
-                                   Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS]);
-
-void
-init_default_deck_and_columns(DoublyLinkedList *deck, DoublyLinkedList **columns_arr, Foundation **foundations_arr) {
+void init_default_deck_and_columns(DoublyLinkedList *deck, DoublyLinkedList **columns_arr, Foundation **foundations_arr,
+                                   int *col_heights) {
     create_sorted_deck(deck);
     initiate_columns_and_foundations(columns_arr, foundations_arr);
-    int col_heights[NUMBER_OF_COLUMNS] = {1, 6, 7, 8, 9, 10, 11};
     create_columns_from_deck(deck, columns_arr, col_heights);
     set_correct_visibility_for_columns(deck, columns_arr);
 }

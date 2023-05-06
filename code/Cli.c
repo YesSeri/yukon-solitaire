@@ -154,6 +154,12 @@ void parse_input_type(char *input, Command *command) {
     } else if (input[0] == 'P') {
         command->has_arg = false;
         command->type = TO_PLAY;
+    } else if (input[0] == 'S' && input[1] == 'I') {
+        command->has_arg = false;
+        command->type = SHUFFLE_INTERLEAVED;
+    } else if (input[0] == 'S' && input[1] == 'R') {
+        command->has_arg = false;
+        command->type = SHUFFLE_RANDOM;
     } else if (input[0] == 'Q') {
         command->has_arg = false;
         command->type = TO_SETUP;
