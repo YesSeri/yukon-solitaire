@@ -159,3 +159,24 @@ void shuffle_random(DoublyLinkedList *deck) {
         append(deck, n);
     }
 }
+
+
+void make_move(Move *move, DoublyLinkedList **columns_arr, DoublyLinkedList **foundations_arr) {
+    DoublyLinkedList *from = move->is_from_col ? columns_arr[move->from] : foundations_arr[move->from];
+    DoublyLinkedList *to = move->is_to_col ? columns_arr[move->to] : foundations_arr[move->to];
+    bool isValid = is_valid_move(move, from, to);
+    if (isValid) {
+        if (move->card == NULL) {
+            move_single_card(from, to);
+        } else {
+            move_cards(from, to, move->card);
+        }
+        // Once we have moved cards we make top card in from list visible.
+        Card *c = get_card_at(from, 0);
+        if (c) {
+            c->is_hidden = false;
+        }
+    } else {
+        yukon_error.error = MOVE_ERR;
+    }
+}

@@ -26,9 +26,9 @@ HistoryList *create_history_list() {
 
 
 void add_move_to_history(Move *move, HistoryList *historyList) {
-    // Delete all moves after current move when making move but future history alread exists
     if (historyList->current->next->move_ptr != NULL) {
-
+        // If there is future history when we try to add new history we need to delete it and replace it with new history
+        exit(1);
     }
     HistNode *node = create_history_node(move);
     node->next = historyList->current->next;
@@ -36,4 +36,12 @@ void add_move_to_history(Move *move, HistoryList *historyList) {
     historyList->current->next = node;
     node->prev = historyList->current;
     historyList->current = node;
+}
+
+void undo_move(DoublyLinkedList **columns_arr, Foundation **foundations_arr) {
+
+}
+
+void redo_move(DoublyLinkedList **columns_arr, Foundation **foundations_arr) {
+
 }

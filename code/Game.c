@@ -64,24 +64,6 @@ void to_play_action(char *input) {
     printf("Switching to play phase...\n");
 }
 
-void move_action(Move *move, DoublyLinkedList *from_list, DoublyLinkedList *to_list) {
-    if (move->card == NULL) {
-        move_single_card(from_list, to_list);
-    } else {
-        move_cards(from_list, to_list, move->card);
-    }
-    // Once we have moved cards we make top card in from list visible.
-    Card *c = get_card_at(from_list, 0);
-    if (c) {
-        c->is_hidden = false;
-    }
-
-
-    // Free pointers after move
-
-
-}
-
 bool is_valid_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
 
     if (move->is_to_col == move->is_from_col) {
