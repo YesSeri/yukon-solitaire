@@ -127,23 +127,18 @@ void read_string_arg_or_default(char *input, Command *command) {
         command->has_arg = true;
         sscanf(input, "%s %s", &c, &command->arg.str);
     } else {
-        command->has_arg = false;
         strcpy(command->arg.str, "default arg");
     }
 }
 
 void parse_input_type(char *input, Command *command) {
     // TODO What is max input length?
-
-
+    command->has_arg = false;
     if (input[0] == 'C') {
-        command->has_arg = false;
         command->type = MOVE;
     } else if (input[0] == 'Q' && input[1] == 'Q') {
-        command->has_arg = false;
         command->type = QUIT;
     } else if (input[0] == 'S' && input[1] == 'W') {
-        command->has_arg = false;
         command->type = SHOW_CARDS;
     } else if (input[0] == 'S' && input[1] == 'D') {
         read_string_arg_or_default(input, command);
@@ -152,30 +147,18 @@ void parse_input_type(char *input, Command *command) {
         read_string_arg_or_default(input, command);
         command->type = LOAD_DECK;
     } else if (input[0] == 'P') {
-        command->has_arg = false;
         command->type = TO_PLAY;
+    } else if (input[0] == 'S' && input[1] == 'I') {
+        command->has_arg = true;
+        sscanf(input, "%*s %d", &command->arg);
+        command->type = SHUFFLE_INTERLEAVED;
+    } else if (input[0] == 'S' && input[1] == 'I') {
+        command->type = SHUFFLE_RANDOM;
     } else if (input[0] == 'Q') {
-        command->has_arg = false;
         command->type = TO_SETUP;
     } else {
         command->type = UNKNOWN;
     }
-//    if (input[0] == 'P') {
-//        return TO_PLAY;
-//    }
-//    if (input[0] == 'Q') {
-//        return TO_SETUP;
-//    }
-//
-
-    // If there is no matching command there must be an error.
-//    return ERROR;
-    //    SW
-    //    LD
-    //    P
-    //    Q
-    //    MOVE
-    //    ERROR
 }
 
 
