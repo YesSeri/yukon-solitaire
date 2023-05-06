@@ -224,7 +224,8 @@ void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLi
                 yukon_error.error = PHASE_ERR;
                 return;
             }
-            shuffle_interleaved(deck, 26);
+            int split_size = command->arg.val;
+            shuffle_interleaved(deck, split_size);
             free_columns_foundations(columns_arr, foundations_arr);
             create_columns_from_deck(deck, columns_arr, col_heights_startup);
 
@@ -285,7 +286,6 @@ void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLi
             *phase = STARTUP;
             setup_startup_phase_deck(deck, columns_arr, foundations_arr, command);
             break;
-
         case UNKNOWN:
         default:
             yukon_error.error = CMD_ERR;
