@@ -9,36 +9,34 @@
 
 // TODO create if statement that actually tests if things are working. Now I am just looking at it manually.
 void test_random_shuffling() {
-    /*printf("Testing random shuffling:\n");
 
+    /*printf("Testing saving deck to file:\n");
     DoublyLinkedList *deck = create_doubly_linked_list();
     create_sorted_deck(deck);
-    printf("Before shuffling:\n");
-    debug_print(deck);
-    shuffle_random(deck);
-    printf("Shuffled deck:\n");
-    debug_print(deck);
-    const char *temp_savename = "test_deck_for_random_shuffling.txt";
+    const char *temp_savename = "test_deck.txt";
     save_deck_to_file(deck, temp_savename);
 
-    FILE *expected_file = fopen("../decks/sorted_deck.txt", "r");
     char expected_output[1000];
-    fgets(expected_output, 1000, expected_file);
-    fclose(expected_file);
-
-    FILE *temp_save = fopen(temp_savename, "r");
     char temp_output[1000];
-    fgets(temp_output, 1000, temp_save);
-    fclose(temp_save);
 
-    if(strcmp(expected_output, temp_output) == 0) {
-        printf("Random shuffling deck test failed!\n");
+    FILE *expected_file = fopen("../decks/sorted_deck.txt", "r");
+    FILE *temp_file = fopen("../decks/test_deck.txt", "r");
+    int i = 0;
+    while((fgets(expected_output, 1000, expected_file) != NULL) && (fgets(temp_output, 1000, temp_file) != NULL)) {
 
-    } else {
-        printf("Random shuffling deck test passed!\n");
+        if(strcmp(expected_output, temp_output) == 0) {
+            i++;
+            if(i == 52) {
+                printf("Saving deck test passed!\n");
+            }
+        } else {
+            printf("Saving deck test failed!\n");
+            break;
+        }
     }
-    printf("\n");
-    //remove("../decks/test_deck_for_random_shuffling.txt");*/
+    fclose(temp_file);
+    fclose(expected_file);
+    remove("../decks/test_deck.txt");*/
 
 
     printf("Testing random shuffling\n");
@@ -115,14 +113,14 @@ void test_save_deck_to_file() {
     printf("Testing saving deck to file:\n");
     DoublyLinkedList *deck = create_doubly_linked_list();
     create_sorted_deck(deck);
-    const char *temp_savename = "test_deck.txt";
+    const char *temp_savename = "test_deck_for_saving_to_file.txt";
     save_deck_to_file(deck, temp_savename);
 
     char expected_output[1000];
     char temp_output[1000];
 
     FILE *expected_file = fopen("../decks/sorted_deck.txt", "r");
-    FILE *temp_file = fopen("../decks/test_deck.txt", "r");
+    FILE *temp_file = fopen("../decks/test_deck_for_saving_to_file.txt", "r");
     int i = 0;
     while((fgets(expected_output, 1000, expected_file) != NULL) && (fgets(temp_output, 1000, temp_file) != NULL)) {
 
