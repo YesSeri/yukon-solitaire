@@ -29,4 +29,6 @@ void shuffle_interleaved(DoublyLinkedList *, int);
 
 void shuffle_random(DoublyLinkedList *);
 
+void move_action(Move *, DoublyLinkedList **, DoublyLinkedList **);
+
 #endif

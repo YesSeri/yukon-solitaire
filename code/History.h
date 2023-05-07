@@ -6,6 +6,10 @@
 #define YUKON_SOLITAIRE_HISTORY_H
 
 #include "Cli.h"
+#include "DoublyLinkedList.h"
+#include "Foundation.h"
+#include "Game.h"
+
 
 typedef struct history_node {
     struct history_node *next;
@@ -14,7 +18,7 @@ typedef struct history_node {
 } HistNode;
 
 typedef struct {
-    HistNode *current;
+    HistNode **current;
 } HistoryList;
 
 
@@ -22,6 +26,14 @@ HistNode *create_history_node(Move *);
 
 HistoryList *create_history_list();
 
-void add_move_to_history(Move *move, HistoryList *historyList);
+
+void debug_print_history(HistNode **);
+
+void add_move_to_history(Move *, HistNode **);
+
+//void undo_move(DoublyLinkedList **, Foundation **, HistoryList *);
+void undo_move(DoublyLinkedList **, Foundation **, HistNode **);
+
+void redo_move(DoublyLinkedList **, Foundation **, HistNode **);
 
 #endif //YUKON_SOLITAIRE_HISTORY_H

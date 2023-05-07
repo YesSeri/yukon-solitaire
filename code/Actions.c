@@ -161,7 +161,7 @@ void shuffle_random(DoublyLinkedList *deck) {
 }
 
 
-void make_move(Move *move, DoublyLinkedList **columns_arr, DoublyLinkedList **foundations_arr) {
+void move_action(Move *move, DoublyLinkedList **columns_arr, DoublyLinkedList **foundations_arr) {
     DoublyLinkedList *from = move->is_from_col ? columns_arr[move->from] : foundations_arr[move->from];
     DoublyLinkedList *to = move->is_to_col ? columns_arr[move->to] : foundations_arr[move->to];
     bool isValid = is_valid_move(move, from, to);

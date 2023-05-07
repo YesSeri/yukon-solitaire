@@ -177,14 +177,7 @@ void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLi
                 return;
             }
             Move *move = parse_move(input);
-            DoublyLinkedList *from = move->is_from_col ? columns_arr[move->from] : foundations_arr[move->from];
-            DoublyLinkedList *to = move->is_to_col ? columns_arr[move->to] : foundations_arr[move->to];
-            bool isValid = is_valid_move(move, from, to);
-            if (isValid) {
-                move_action(move, from, to);
-            } else {
-                yukon_error.error = MOVE_ERR;
-            }
+            move_action(move, columns_arr, foundations_arr);
         }
             break;
         case QUIT:
@@ -355,15 +348,67 @@ void set_error_message() {
 }
 
 void debug_game() {
-//    srand(time(NULL));
-    HistoryList *historyList = create_history_list();
-    char *input = "C1 -> C3";
-    Move *move = parse_move(input);
-    add_move_to_history(move, historyList);
+    srand(time(NULL));
 
+    DoublyLinkedList *deck = create_doubly_linked_list();
+    create_sorted_deck(deck);
+    DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
+    Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
+    initiate_columns_and_foundations(columns_arr, foundations_arr);
+    free_columns_foundations(columns_arr, foundations_arr);
+    create_columns_from_deck(deck, columns_arr, col_heights_play);
+    set_correct_visibility_for_columns(deck, columns_arr);
 
+    char last_command[2 + ARG_LENGTH + 1] = "";
+    Command command;
+    Phase phase = PLAY;
+//    Historylist *historylist = create_history_list();
+
+    HistNode **currentMoveInHistory;
+    HistNode *dummy_ptr = create_history_node(NULL);
+    currentMoveInHistory = &dummy_ptr;
+    dummy_ptr->next = dummy_ptr;
+    dummy_ptr->prev = dummy_ptr;
+
+    char *input[3] = {"C1 -> F3", "C2:7D -> C5", "C7 -> C1"};
+    Move *move[3];
+    move[0] = parse_move(input[0]);
+    move[1] = parse_move(input[1]);
+    move[2] = parse_move(input[2]);
+    move_action(move[0], columns_arr, foundations_arr);
+    add_move_to_history(move[0], currentMoveInHistory);
+    undo_move(columns_arr,foundations_arr, currentMoveInHistory);
+    redo_move(columns_arr,foundations_arr, currentMoveInHistory);
+
+    for (int i = 0; i < 7; ++i) {
+        printf("\n%d - len %d\n", i, columns_arr[i]->length);
+        debug_print(columns_arr[i]);
+    }
+//    printf("\n----------\n");
+//    move_action(move[1], columns_arr, foundations_arr);
+//    add_move_to_history(move[1], currentMoveInHistory);
+//    for (int i = 0; i < 7; ++i) {
+//        printf("\n%d - len %d\n", i, columns_arr[i]->length);
+//        debug_print(columns_arr[i]);
+//    }
+//
+//    printf("\n----------\n");
+//    move_action(move[2], columns_arr, foundations_arr);
+//    add_move_to_history(move[2], currentMoveInHistory);
+//    undo_move(columns_arr,foundations_arr, currentMoveInHistory);
+//
+//    for (int i = 0; i < 7; ++i) {
+//        printf("\n%d - len %d\n", i, columns_arr[i]->length);
+//        debug_print(columns_arr[i]);
+//    }
+//    char *input = "C1 -> C3";
+//    Move *move = parse_move(input);
+//    move_action(move, columns_arr, foundations_arr);
+//    add_move_to_history(move, historyList);
+//
+//
     printf("done");
-
+//
 
 }
 
