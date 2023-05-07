@@ -152,7 +152,7 @@ void parse_input_type(char *input, Command *command) {
         command->has_arg = true;
         sscanf(input, "%*s %d", &command->arg);
         command->type = SHUFFLE_INTERLEAVED;
-    } else if (input[0] == 'S' && input[1] == 'I') {
+    } else if (input[0] == 'S' && input[1] == 'R') {
         command->type = SHUFFLE_RANDOM;
     } else if (input[0] == 'Q') {
         command->type = TO_SETUP;

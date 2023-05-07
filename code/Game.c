@@ -423,8 +423,8 @@ void debug_game() {
 
 
 int main() {
-//    debug_game();
-//    run_tests();
+    //debug_game();
+    //run_tests();
     run_game();
 }
 
