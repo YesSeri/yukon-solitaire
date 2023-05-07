@@ -74,10 +74,36 @@ void test_game_over() {
     printf("\n\n");
 }
 
+void test_save_deck_to_file() {
+    printf("Testing saving deck to file:\n");
+    DoublyLinkedList *deck = create_doubly_linked_list();
+    create_sorted_deck(deck);
+    const char *temp_savename = "test_deck.txt";
+    save_deck_to_file(deck, temp_savename);
+
+    FILE *expected_file = fopen("../decks/sorted_deck.txt", "r");
+    char expected_output[1000];
+    fgets(expected_output, 1000, expected_file);
+    fclose(expected_file);
+
+    FILE *temp_save = fopen(temp_savename, "r");
+    char temp_output[1000];
+    fgets(temp_output, 1000, temp_save);
+    fclose(temp_save);
+
+    if(strcmp(expected_output, temp_output) == 0) {
+        printf("Saving deck test passed!\n");
+    } else {
+        printf("Saving deck test failed!\n");
+    }
+    remove("../decks/test_deck.txt");
+}
+
 void run_tests() {
     test_interleaved_shuffling();
     test_random_shuffling();
     test_game_over();
+    test_save_deck_to_file();
 }
 
 
