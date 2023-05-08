@@ -15,7 +15,6 @@ int col_heights_play[NUMBER_OF_COLUMNS] = {1, 6, 7, 8, 9, 10, 11};
 YukonError yukon_error = {NO_ERROR, "OK"};
 
 
-void save_game_to_file(DoublyLinkedList *deck, char str[64]);
 
 void free_columns_foundations(DoublyLinkedList **columns_arr, Foundation **foundations_arr) {
     for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
@@ -244,9 +243,9 @@ void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLi
             return;
         case SAVE_GAME:
             if (command->has_arg) {
-                save_game_to_file(deck, command->arg.str);
+                save_game_to_file(deck,foundations_arr,currentMoveInHistory,columns_arr, command->arg.str);
             } else {
-                save_game_to_file(deck, "deck.txt");
+                save_game_to_file(deck,foundations_arr,currentMoveInHistory,columns_arr, "game.txt");
             }
         case LOAD_DECK: {
             if (*phase != STARTUP) {
