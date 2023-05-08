@@ -19,7 +19,7 @@
 #include "Actions.h"
 
 
-void initiate_columns_and_foundations(DoublyLinkedList **, Foundation **);
+void initiate_columns_and_foundations(DoublyLinkedList *[7], Foundation *[4]);
 
 bool validate_to_foundation_move(Move *, DoublyLinkedList *, DoublyLinkedList *);
 
@@ -29,7 +29,7 @@ void set_error_message();
 
 void free_columns_foundations(DoublyLinkedList *[7], Foundation *[4]);
 
-void set_correct_visibility_for_columns(DoublyLinkedList *, DoublyLinkedList **);
+void set_correct_visibility_for_columns(DoublyLinkedList *, DoublyLinkedList *[7]);
 
 bool is_valid_move(Move *, DoublyLinkedList *, DoublyLinkedList *);
 

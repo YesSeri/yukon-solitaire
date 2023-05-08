@@ -1,7 +1,6 @@
 // This includes #define for ace, 1, 2, ... king and for suits heart, club, diamond, spade.
 
 #include "View.h"
-#include "Tests.h"
 
 int col_heights_startup[NUMBER_OF_COLUMNS] = {8, 8, 8, 7, 7, 7, 7};
 int col_heights_play[NUMBER_OF_COLUMNS] = {1, 6, 7, 8, 9, 10, 11};
@@ -15,7 +14,8 @@ int col_heights_play[NUMBER_OF_COLUMNS] = {1, 6, 7, 8, 9, 10, 11};
 YukonError yukon_error = {NO_ERROR, "OK"};
 
 
-void free_columns_foundations(DoublyLinkedList **columns_arr, Foundation **foundations_arr) {
+void free_columns_foundations(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS],
+                              Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS]) {
     for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
         free_list_nodes(columns_arr[i]);
     }
@@ -32,7 +32,8 @@ void free_columns_foundations(DoublyLinkedList **columns_arr, Foundation **found
  * @param deck the current deck
  * @param phase pointer to the current phase
  */
-void to_play_phase(DoublyLinkedList **column_arr, Foundation **foundation_arr, DoublyLinkedList *deck, Phase *phase) {
+void to_play_phase(DoublyLinkedList *column_arr[NUMBER_OF_COLUMNS], Foundation *foundation_arr[NUMBER_OF_FOUNDATIONS],
+                   DoublyLinkedList *deck, Phase *phase) {
     strcpy(yukon_error.message, "Play Phase entered - ");
     free_columns_foundations(column_arr, foundation_arr);
     create_columns_from_deck(deck, column_arr, col_heights_play);
@@ -40,7 +41,8 @@ void to_play_phase(DoublyLinkedList **column_arr, Foundation **foundation_arr, D
     *phase = PLAY;
 }
 
-void create_columns_from_deck(DoublyLinkedList *deck, DoublyLinkedList **columns_arr, int *col_heights) {
+void
+create_columns_from_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS], int col_heights[7]) {
     // This adds all the cards from the deck to the columns.
     // We create pointers to cards in deck from the linked lists in the columns.
     // The linked lists in the columns and the linked list in the deck share the same cards.
@@ -107,7 +109,7 @@ bool is_valid_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
 
 // Sets correct visibility for columns in play phase.
 // First hide all in deck, then show top card in all columns.
-void set_correct_visibility_for_columns(DoublyLinkedList *deck, DoublyLinkedList **columns_arr) {
+void set_correct_visibility_for_columns(DoublyLinkedList *deck, DoublyLinkedList *columns_arr[7]) {
     set_cards_are_hidden(deck, true);
     columns_arr[0]->dummy_ptr->next->card_ptr->is_hidden = false;
     for (int i = 1; i < NUMBER_OF_COLUMNS; i++) {
@@ -121,7 +123,7 @@ void set_correct_visibility_for_columns(DoublyLinkedList *deck, DoublyLinkedList
 
 }
 
-void initiate_columns_and_foundations(DoublyLinkedList **columns_arr, Foundation **foundations_arr) {
+void initiate_columns_and_foundations(DoublyLinkedList *columns_arr[7], Foundation *foundations_arr[4]) {
     // Creates empty linked lists for all columns and foundations
     for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
         columns_arr[i] = create_doubly_linked_list();
@@ -166,7 +168,7 @@ bool validate_from_foundation_move(Move *move, DoublyLinkedList *from, DoublyLin
     return false;
 }
 
-void setup_startup_phase_deck(DoublyLinkedList *deck, DoublyLinkedList **columns_arr, Foundation **foundations_arr,
+void setup_startup_phase_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_arr[7], Foundation *foundations_arr[4],
                               Command *command) {
 
     free_columns_foundations(columns_arr, foundations_arr);
@@ -180,8 +182,8 @@ void setup_startup_phase_deck(DoublyLinkedList *deck, DoublyLinkedList **columns
     create_columns_from_deck(deck, columns_arr, col_heights_startup);
 }
 
-void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLinkedList **columns_arr,
-                 Foundation **foundations_arr, Phase *phase, struct history_node **currentMoveInHistory) {
+void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLinkedList *columns_arr[7],
+                 Foundation *foundations_arr[4], Phase *phase, struct history_node **currentMoveInHistory) {
     switch (command->type) {
         case MOVE: {
             // wrong phase
@@ -300,16 +302,7 @@ void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLi
 }
 
 /*
- * Tobs btw
- * I imagine the flow going like this//        Card *c = create_card(s, v, false);
-//        if (c == NULL) {
-//            yukon_error.error = INVALID_DECK;
-//            sprintf(yukon_error.message, "Invalid card in deck: %c%c at line %d", line[0], s, line_number);
-//            return;
-//        }
-//        Node *n = create_node(c);
-//        append(deck, n);
-:
+ * I imagine the flow going like this
  * get input
  * figure out type of input in parseInput
  * This function then returns the way to show results in the form of printFn
@@ -389,33 +382,30 @@ void set_error_message() {
     }
 }
 
-void debug_game() {
-    srand(time(NULL));
-
-    DoublyLinkedList *deck = create_doubly_linked_list();
-    create_sorted_deck(deck);
-    DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
-    Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
-    initiate_columns_and_foundations(columns_arr, foundations_arr);
-    free_columns_foundations(columns_arr, foundations_arr);
-    set_cards_are_hidden(deck, false);
-    columns_arr[0] = deck;
-    print_main_section(columns_arr, foundations_arr);
-//
-
-}
-
-
-int main() {
-    //debug_game();
-    //run_tests();
-    run_game();
-}
-
-void init_default_deck_and_columns(DoublyLinkedList *deck, DoublyLinkedList **columns_arr, Foundation **foundations_arr,
-                                   int *col_heights) {
+void debug_init_default_deck_and_columns(DoublyLinkedList *deck, DoublyLinkedList *columns_arr[7],
+                                         Foundation *foundations_arr[4], int *col_heights) {
     create_sorted_deck(deck);
     initiate_columns_and_foundations(columns_arr, foundations_arr);
     create_columns_from_deck(deck, columns_arr, col_heights);
     set_correct_visibility_for_columns(deck, columns_arr);
 }
+
+void debug_game() {
+    srand(time(NULL));
+    DoublyLinkedList *deck = create_doubly_linked_list();
+    DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
+    Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
+
+    debug_init_default_deck_and_columns(deck, columns_arr, foundations_arr, col_heights_play);
+    print_view(columns_arr, foundations_arr, "");
+
+
+}
+
+
+int main() {
+//    debug_game();
+//    run_tests();
+    run_game();
+}
+
