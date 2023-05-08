@@ -145,13 +145,16 @@ void test_read_file_to_deck() {
     DoublyLinkedList *deck2 = create_doubly_linked_list();
     create_sorted_deck(deck2);
 
-    Node *curr1 = deck1->dummy_ptr;
-    Node *curr2 = deck2->dummy_ptr;
+    Node *curr1 = create_node(deck1->dummy_ptr);
+    Node *curr2 = create_node(deck2->dummy_ptr);
+
     int i = 0;
     while (curr1 != NULL && curr2 != NULL) {
         Card *card1 = curr1->card_ptr;
         Card *card2 = curr2->card_ptr;
         if (card1->value != card2->value || card1->suit != card2->suit) {
+            debug_print(deck1);
+            debug_print(deck2);
             printf("Read from file to deck test failed!");
             break;
         }
@@ -159,6 +162,7 @@ void test_read_file_to_deck() {
         curr2 = curr2->next;
         i++;
     }
+
     if (i == 52) {
         printf("Read from file to deck test passed!\n");
     }
@@ -188,7 +192,6 @@ void test_read_file_to_deck() {
     fclose(expected_file);
     remove("../decks/test_deck.txt");*/
 }
-
 
 
 void run_tests() {
