@@ -33,6 +33,8 @@ void set_correct_visibility_for_columns(DoublyLinkedList *, DoublyLinkedList **)
 
 bool is_valid_move(Move *, DoublyLinkedList *, DoublyLinkedList *);
 
+void create_columns_from_deck(DoublyLinkedList *, DoublyLinkedList *[7], int [7]);
+
 typedef enum {
     NO_ERROR,
     UNDO_REDO_ERROR,

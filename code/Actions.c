@@ -7,11 +7,6 @@
 #include <stdio.h>
 #include "Actions.h"
 
-void quit_game() {
-}
-
-void move_from_col() {
-}
 
 void save_deck_to_file(DoublyLinkedList *deck, const char *filename) {
 
@@ -165,15 +160,14 @@ void shuffle_random(DoublyLinkedList *deck) {
 /**
  * Make a move on the board and add that move to the history.
  * @param move move we want to make
- * @param columns_arr game columns
- * @param foundations_arr foundations
+ * @param column_arr game columns
+ * @param foundation_arr foundations
  * @param currentMoveInHistory a pointer to current History Node. Move is added to history if it is valid.
  */
 
-void move_action(Move *move, DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS],
-                 DoublyLinkedList *foundations_arr[NUMBER_OF_FOUNDATIONS], struct history_node **currentMoveInHistory) {
-    DoublyLinkedList *from = move->is_from_col ? columns_arr[move->from] : foundations_arr[move->from];
-    DoublyLinkedList *to = move->is_to_col ? columns_arr[move->to] : foundations_arr[move->to];
+void move_action(Move *move, DoublyLinkedList *column_arr[NUMBER_OF_COLUMNS], DoublyLinkedList *foundation_arr[NUMBER_OF_FOUNDATIONS], struct history_node **currentMoveInHistory) {
+    DoublyLinkedList *from = move->is_from_col ? column_arr[move->from] : foundation_arr[move->from];
+    DoublyLinkedList *to = move->is_to_col ? column_arr[move->to] : foundation_arr[move->to];
     bool isValid = is_valid_move(move, from, to);
     if (isValid) {
         if (move->card == NULL) {

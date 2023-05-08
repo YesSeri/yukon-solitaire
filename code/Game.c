@@ -24,7 +24,23 @@ void free_columns_foundations(DoublyLinkedList **columns_arr, Foundation **found
     }
 }
 
-void create_columns_from_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_arr[7], int col_heights[7]) {
+/**
+ * @brief Initiates the columns and foundations, to the state they should be in when starting the play phase.
+ *
+ * @param column_arr array of columns, each column is a linked list
+ * @param foundation_arr array of foundations, each foundation is a linked list
+ * @param deck the current deck
+ * @param phase pointer to the current phase
+ */
+void to_play_phase(DoublyLinkedList **column_arr, Foundation **foundation_arr, DoublyLinkedList *deck, Phase *phase) {
+    strcpy(yukon_error.message, "Play Phase entered - ");
+    free_columns_foundations(column_arr, foundation_arr);
+    create_columns_from_deck(deck, column_arr, col_heights_play);
+    set_correct_visibility_for_columns(deck, column_arr);
+    *phase = PLAY;
+}
+
+void create_columns_from_deck(DoublyLinkedList *deck, DoublyLinkedList **columns_arr, int *col_heights) {
     // This adds all the cards from the deck to the columns.
     // We create pointers to cards in deck from the linked lists in the columns.
     // The linked lists in the columns and the linked list in the deck share the same cards.
@@ -42,26 +58,6 @@ void create_columns_from_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_
             }
         }
     }
-}
-
-void show_action(char *input) {
-    printf("Showing cards...\n");
-}
-
-void load_action(char *input) {
-    printf("Loading data...\n");
-}
-
-void quit_action(char *input) {
-    printf("Quitting game...\n");
-}
-
-void to_startup_action(char *input) {
-    printf("Switching to startup phase...\n");
-}
-
-void to_play_action(char *input) {
-    printf("Switching to play phase...\n");
 }
 
 bool is_valid_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
@@ -138,11 +134,14 @@ void initiate_columns_and_foundations(DoublyLinkedList **columns_arr, Foundation
 
 
 bool validate_to_foundation_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
-
     Card *from_card = from->dummy_ptr->next->card_ptr;
     Card *to_card = to->dummy_ptr->next->card_ptr;
     // If trying to move several cards at once to foundation it fails.
     if (move->card != NULL) return false;
+    // If there is no card in from column we can't make move.
+    if (from->length == 0) {
+        return false;
+    }
     // If foundation is empty and card is ace it is a valid move.
     if (to->length == 0) {
         return from_card->value == ACE;
@@ -409,8 +408,8 @@ void debug_game() {
 
 int main() {
     //debug_game();
-    run_tests();
-    //run_game();
+    //run_tests();
+    run_game();
 }
 
 void init_default_deck_and_columns(DoublyLinkedList *deck, DoublyLinkedList **columns_arr, Foundation **foundations_arr,
