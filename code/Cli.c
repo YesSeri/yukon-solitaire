@@ -133,7 +133,7 @@ void read_string_arg_or_default(char *input, Command *command) {
 void parse_input_type(char *input, Command *command) {
     // TODO What is max input length?
     command->has_arg = false;
-    if (input[0] == 'C') {
+    if (input[0] == 'C' || input[0] == 'F') {
         command->type = MOVE;
     } else if (input[0] == 'Q' && input[1] == 'Q') {
         command->type = QUIT;
@@ -151,7 +151,7 @@ void parse_input_type(char *input, Command *command) {
         command->has_arg = true;
         sscanf(input, "%*s %d", &(command->arg.val));
         command->type = SHUFFLE_INTERLEAVED;
-    } else if (input[0] == 'S' && input[1] == 'I') {
+    } else if (input[0] == 'S' && input[1] == 'R') {
         command->type = SHUFFLE_RANDOM;
     } else if (input[0] == 'Q') {
         command->type = TO_SETUP;
