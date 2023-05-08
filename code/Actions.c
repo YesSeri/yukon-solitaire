@@ -22,7 +22,7 @@ void print_card(Node *cardNode, FILE *file){
     putc(s, file);
     putc('\n', file);
 }
-void save_game_to_file(DoublyLinkedList *deck, Foundation *foundationArr, struct history_node **historyNode, DoublyLinkedList *collumnArr, const char *filename){
+void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struct history_node **historyNode, DoublyLinkedList **collumnArr, const char *filename){
     char filepath[100] = "../decks/";
     strcat(filepath, filename);
     FILE *file = fopen(filepath, "w+"); /* should check the result */
@@ -43,7 +43,7 @@ void save_game_to_file(DoublyLinkedList *deck, Foundation *foundationArr, struct
     //foundation saving
 
     for (int i = 0; i < 4; ++i) {
-        Node *foundationPtr = get_node_at(foundationArr,i);
+        Node *foundationPtr = get_node_at(*foundationArr,i);
         while (foundationPtr->card_ptr != NULL) {
             print_card(foundationPtr,file);
             foundationPtr = foundationPtr->next;
@@ -91,7 +91,7 @@ void save_game_to_file(DoublyLinkedList *deck, Foundation *foundationArr, struct
     //save collumns
     //TODO do all collumns and foundations get printed (off by one ??)
     for (int i = 0; i < 8; ++i) {
-        Node *collumn = get_node_at(collumnArr,i);
+        Node *collumn = get_node_at(*collumnArr,i);
         while(collumn->card_ptr!=NULL){
             print_card(collumn,file);
             collumn = collumn->next;
