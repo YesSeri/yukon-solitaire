@@ -139,10 +139,18 @@ void parse_input_type(char *input, Command *command) {
         command->type = QUIT;
     } else if (input[0] == 'S' && input[1] == 'W') {
         command->type = SHOW_CARDS;
+    } else if (input[0]=='S'&&input[1]=='D'&&input[2]=='2') {
+        read_string_arg_or_default(input, command);
+        command->type = SAVE_GAME;
     } else if (input[0] == 'S' && input[1] == 'D') {
         read_string_arg_or_default(input, command);
         command->type = SAVE_DECK;
-    } else if (input[0] == 'L' && input[1] == 'D') {
+    }
+    else if (input[0] == 'L' && input[1] == 'D'&&input[2]=='2') {
+        read_string_arg_or_default(input, command);
+        command->type = LOAD_GAME;
+    }
+    else if (input[0] == 'L' && input[1] == 'D') {
         read_string_arg_or_default(input, command);
         command->type = LOAD_DECK;
     } else if (input[0] == 'P') {
