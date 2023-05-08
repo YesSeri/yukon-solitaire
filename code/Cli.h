@@ -24,6 +24,8 @@ enum commandType {
     UNDO,
     REDO,
     UNKNOWN,
+    SAVE_GAME,
+    LOAD_GAME
     // TODO add all commands
 };
 

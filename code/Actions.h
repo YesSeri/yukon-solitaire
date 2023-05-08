@@ -20,6 +20,8 @@ typedef enum phase {
 
 void save_deck_to_file(DoublyLinkedList *, const char *);
 
+void save_game_to_file(DoublyLinkedList *, Foundation *, struct history_node **, DoublyLinkedList *, const char *);
+
 void read_file_to_deck(DoublyLinkedList *, const char *);
 
 void shuffle_interleaved(DoublyLinkedList *, int);

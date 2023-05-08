@@ -13,6 +13,97 @@ void quit_game() {
 void move_from_col() {
 }
 
+
+void print_card(Node *cardNode, FILE *file){
+    char v = card_value_to_char(cardNode->card_ptr->value);
+    Suit s = cardNode->card_ptr->suit;
+
+    putc(v, file);
+    putc(s, file);
+    putc('\n', file);
+}
+void save_game_to_file(DoublyLinkedList *deck, Foundation *foundationArr, struct history_node **historyNode, DoublyLinkedList *collumnArr, const char *filename){
+    char filepath[100] = "../decks/";
+    strcat(filepath, filename);
+    FILE *file = fopen(filepath, "w+"); /* should check the result */
+    if (file == NULL) {
+        yukon_error.error = WRITE_ERR;
+        return;
+    }
+    putc(';',file);
+    putc('\n', file);
+    //deck saving
+    Node *current = deck->dummy_ptr->next;
+    while (current->card_ptr != NULL) {
+        print_card(current,file);
+        current = current->next;
+    }
+    putc(';',file);
+    putc('\n', file);
+    //foundation saving
+
+    for (int i = 0; i < 4; ++i) {
+        Node *foundationPtr = get_node_at(foundationArr,i);
+        while (foundationPtr->card_ptr != NULL) {
+            print_card(foundationPtr,file);
+            foundationPtr = foundationPtr->next;
+        }
+        putc(':',file);
+        putc('\n', file);
+    }
+    putc(';',file);
+    putc('\n', file);
+    //history saving
+    struct history_node *curr_f = *(historyNode);
+    //curr move
+    printf("%d->%d ", curr_f->move_ptr->from, curr_f->move_ptr->to);
+    putc(curr_f->move_ptr->from,file);
+    putc('>',file);
+    putc(curr_f->move_ptr->to,file);
+    putc('\n',file);
+    putc(':',file);
+    putc('\n',file);
+
+    //redo moves
+    struct history_node *curr_p = curr_f->prev;
+    curr_f = curr_f->next;
+
+    while (curr_f->move_ptr != NULL) {
+        putc(curr_f->move_ptr->from,file);
+        putc('>',file);
+        putc(curr_f->move_ptr->to,file);
+        putc('\n',file);
+        curr_f = curr_f->next;
+    }
+    putc(':',file);
+    putc('\n',file);
+
+    //undo moves
+    while (curr_p->move_ptr != NULL) {
+        putc(curr_p->move_ptr->from,file);
+        putc('>',file);
+        putc(curr_p->move_ptr->to,file);
+        putc('\n',file);
+        curr_p = curr_p->prev;
+    }
+    putc(';',file);
+    putc('\n',file);
+    //save collumns
+    //TODO do all collumns and foundations get printed (off by one ??)
+    for (int i = 0; i < 8; ++i) {
+        Node *collumn = get_node_at(collumnArr,i);
+        while(collumn->card_ptr!=NULL){
+            print_card(collumn,file);
+            collumn = collumn->next;
+        }
+        putc(':',file);
+        putc('\n', file);
+    }
+
+
+    fclose(file);
+}
+
 void save_deck_to_file(DoublyLinkedList *deck, const char *filename) {
 
     char filepath[100] = "../decks/";
