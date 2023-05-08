@@ -77,22 +77,6 @@ void read_file_to_deck(DoublyLinkedList *deck, const char *filename) {
 }
 
 
-/**
- * @brief Initiates the columns and foundations, to the state they should be in when starting the play phase.
- *
- * @param column_arr array of columns, each column is a linked list
- * @param foundation_arr array of foundations, each foundation is a linked list
- * @param deck the current deck
- * @param phase pointer to the current phase
- */
-void to_play_phase(DoublyLinkedList **column_arr, Foundation **foundation_arr, DoublyLinkedList *deck, Phase *phase) {
-    strcpy(yukon_error.message, "Play Phase entered - ");
-    free_columns_foundations(column_arr, foundation_arr);
-    create_columns_from_deck(deck, column_arr, col_heights_play);
-    set_correct_visibility_for_columns(deck, column_arr);
-    *phase = PLAY;
-}
-
 // We need double pointer to pile
 // because we change the value of the pointer itself here:
 // (*pile) = (*pile)->next;
@@ -181,8 +165,7 @@ void shuffle_random(DoublyLinkedList *deck) {
  * @param currentMoveInHistory a pointer to current History Node. Move is added to history if it is valid.
  */
 
-void move_action(Move *move, DoublyLinkedList *column_arr[NUMBER_OF_COLUMNS],
-                 DoublyLinkedList *foundation_arr[NUMBER_OF_FOUNDATIONS], struct history_node **currentMoveInHistory) {
+void move_action(Move *move, DoublyLinkedList *column_arr[NUMBER_OF_COLUMNS], DoublyLinkedList *foundation_arr[NUMBER_OF_FOUNDATIONS], struct history_node **currentMoveInHistory) {
     DoublyLinkedList *from = move->is_from_col ? column_arr[move->from] : foundation_arr[move->from];
     DoublyLinkedList *to = move->is_to_col ? column_arr[move->to] : foundation_arr[move->to];
     bool isValid = is_valid_move(move, from, to);

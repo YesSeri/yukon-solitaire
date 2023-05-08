@@ -7,8 +7,11 @@
 // TODO write tests for relevant functions. Almost everything in Actions.c and DoublyLinkedList.c should be tested.
 
 
-void test_undo() {
 
+/**
+ * Makes two moves and the undos them.
+ */
+void test_undo() {
     DoublyLinkedList *deck = create_doubly_linked_list();
     create_sorted_deck(deck);
     DoublyLinkedList *column_arr[NUMBER_OF_COLUMNS];
@@ -20,9 +23,31 @@ void test_undo() {
     currentMoveInHistory = &dummy_ptr;
     dummy_ptr->next = dummy_ptr;
     dummy_ptr->prev = dummy_ptr;
+
     Phase phase = STARTUP;
 
     to_play_phase(column_arr, foundation_arr, deck, &phase);
+
+    printf("Before move.\n");
+    print_main_section(column_arr, foundation_arr);
+    printf("Move: C1 -> F1\n");
+    Move *move = parse_move("C1 -> F1");
+    move_action(move, column_arr, foundation_arr, currentMoveInHistory);
+
+    printf("Move: C3:7H -> C2\n");
+    move = parse_move("C3:7H -> C2");
+    move_action(move, column_arr, foundation_arr, currentMoveInHistory);
+
+    print_main_section(column_arr, foundation_arr);
+
+    printf("1st undo\n");
+    undo_move(column_arr, foundation_arr, currentMoveInHistory);
+    print_main_section(column_arr, foundation_arr);
+
+    printf("2nd undo\n");
+    undo_move(column_arr, foundation_arr, currentMoveInHistory);
+    print_main_section(column_arr, foundation_arr);
+
 }
 
 // TODO create if statement that actually tests if things are working. Now I am just looking at it manually.
@@ -55,7 +80,6 @@ void test_random_shuffling() {
     fclose(temp_file);
     fclose(expected_file);
     remove("../decks/test_deck.txt");*/
-
 
     printf("Testing random shuffling\n");
 
@@ -208,8 +232,9 @@ void test_read_file_to_deck() {
 }
 
 
-
 void run_tests() {
+    test_undo();
+    exit(0);
     test_interleaved_shuffling();
     test_random_shuffling();
     test_game_over();

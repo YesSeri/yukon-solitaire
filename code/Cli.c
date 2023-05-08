@@ -35,7 +35,16 @@
 
 //<from> -> <to>
 
-Move *parse_move(char *str) {
+/**
+ * @brief Parses the user input and returns a move.
+ *
+ * A move is on the form <from>(:<value><suit) -> <to>.
+ * The part in the parenthesis is optional, and used if the player wants to move multiple cards.
+ *
+ * @param user_input user input in move form. Example: C3 -> F1 or C3:4C -> C5
+ * @return the move that the player has made.
+ */
+Move *parse_move(char *user_input) {
     //TODO Check if parsing is accurate, and make more error proof.
 
     Move *move = malloc(sizeof(Move));
@@ -47,9 +56,10 @@ Move *parse_move(char *str) {
     char value_c;
     char suit_c;
 
-    if (str[2] == ':') {
+    // If the third char is a colon, then we have a move on the form C3:4C -> C5
+    if (user_input[2] == ':') {
         move->card = malloc(sizeof(Card));
-        sscanf(str, "%c%d:%c%c -> %c%d",
+        sscanf(user_input, "%c%d:%c%c -> %c%d",
                &from_col_or_foundation,
                &from_i,
                &value_c,
@@ -59,7 +69,7 @@ Move *parse_move(char *str) {
     } else {
         move->card = NULL;
 
-        sscanf(str, "%c%d -> %c%d",
+        sscanf(user_input, "%c%d -> %c%d",
                &from_col_or_foundation,
                &from_i,
                &to_col_or_foundation,
