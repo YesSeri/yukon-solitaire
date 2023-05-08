@@ -302,7 +302,7 @@ void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLi
 }
 
 /*
- * I imagine the flow going like this
+ * Order of things
  * get input
  * figure out type of input in parseInput
  * This function then returns the way to show results in the form of printFn
@@ -343,6 +343,9 @@ int run_game() {
         run_command(&command, input, deck, columns_arr, foundations_arr, &phase, currentMoveInHistory);
         set_error_message();
     }
+
+    yukon_error.error = NO_ERROR;
+    strcpy(yukon_error.message, "You won!");
     print_view(columns_arr, foundations_arr, last_command);
     return 0;
 }

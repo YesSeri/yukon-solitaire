@@ -88,25 +88,10 @@ Move *parse_move(char *user_input) {
     return move;
 }
 
-int col_index_to_int(char *col_str) {
-    char col = col_str[0];
-    char col_index = col_str[1];
-    if (col == 'C') {
-        return col_index - '0';
-    } else if (col == 'F') {
-        return col_index - '0' + 7;
-    } else {
-        return -1;
-    }
-}
-
 void get_player_input(char *str) {
-//     TODO USE THIS IN FINAL PRODUCT
-//    scanf("%s", str);
-
-// HOW TO INPUT
-// Input have to include spaces. C6->C3 wont work...
-// C6 -> C3 works and with the new input method, it reads spaces also
+//    HOW TO INPUT
+//    Input have to include spaces. C6->C3 wont work...
+//    C6 -> C3 works and with the new input method, it reads spaces also
 
     fgets(str, 2 + ARG_LENGTH - 1, stdin); // 20 = max length (change to the right max length)
     char *newline = strchr(str, '\n');
@@ -114,20 +99,6 @@ void get_player_input(char *str) {
         *newline = '\0';
     }
 
-//    For testing
-//    strcpy(str, "C6 -> C3");
-//    strcpy(str, "C2:AD -> C5");
-//    strcpy(str, "C3 -> F1");
-//    strcpy(str, "LD d.txt");
-//    printf("%s", str);
-//    strcpy(str, "C3 -> C7");
-
-//    size_t buf_size = 16;
-//    *len_ptr = getline(str, &buf_size, stdin);
-
-//    size_t bufsize = 80;
-
-//    getline(&str, &bufsize, stdin);
 }
 
 void read_string_arg_or_default(char *input, Command *command) {

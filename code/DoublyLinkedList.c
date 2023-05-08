@@ -46,12 +46,13 @@ Node *create_node(Card *c_ptr) {
 
 
 /**
- * PRIVATE FUNCTION. Use move cards instead. This function does not, and SHOULD not free the pointer.
+ * Find a card in the list, or return NULL if not found.
+ * This function does not, and SHOULD not free the pointer.
  * That is  done in move_cards.
  *
- * @param dll
- * @param c_ptr
- * @return
+ * @param dll The list to search in
+ * @param c_ptr The card to search for. c_ptr and the card in the list are different pointers. They do not point to the same card.
+ * @return node if found else NULL
  */
 Node *search_list_for_card(DoublyLinkedList *dll, Card *c_ptr) {
     Node *current = dll->dummy_ptr->next;
@@ -88,7 +89,11 @@ void insert_node_between_these_two_nodes(Node *n_before, Node *n_after, Node *n)
     n_after->prev = n;
 }
 
-// Deletes node at index
+/**
+ * Deletes node at index and adjusts length of list.
+ * @param dll
+ * @param i
+ */
 void delete_node_at(DoublyLinkedList *dll, int i) {
     Node *n = get_node_at(dll, i);
     n->prev->next = n->next;
@@ -97,9 +102,9 @@ void delete_node_at(DoublyLinkedList *dll, int i) {
 }
 
 /**
- * insert at end of deck.
- * @param dll
- * @param n_ptr
+ * insert at end of list.
+ * @param dll the doubly linked list
+ * @param n_ptr the node that should be added to end of list.
  */
 void append(DoublyLinkedList *dll, Node *n_ptr) {
     Node *dummy = dll->dummy_ptr;
@@ -126,6 +131,11 @@ void append(DoublyLinkedList *dll, Node *n_ptr) {
 // / Henrik
 //
 
+/**
+ * Prepend, add to start, of list.
+ * @param dll the doubly linked list
+ * @param n_ptr the node that should be added to start of list.
+ */
 void prepend(DoublyLinkedList *dll, Node *n_ptr) {
     Node *dummy = dll->dummy_ptr;
     Node *first = dummy->next;
@@ -148,6 +158,10 @@ void create_sorted_deck(DoublyLinkedList *dll) {
 }
 
 
+/**
+ * Creates a circular doubly linked list.
+ * @return a doubly linked list with a dummy pointer
+ */
 DoublyLinkedList *create_doubly_linked_list() {
     DoublyLinkedList *dll = malloc(sizeof(DoublyLinkedList));
     Node *dummy_ptr = create_node(NULL);

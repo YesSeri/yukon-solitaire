@@ -148,7 +148,6 @@ void shuffle_interleaved(DoublyLinkedList *deck, int split_size) {
 void shuffle_random(DoublyLinkedList *deck) {
     int cards_left = 53;
     while (--cards_left) {
-//         This makes random more random. It is initiated with a random seed. If this is not run, seed is always 1.
         int i = rand() % cards_left;
         Node *n = get_node_at(deck, i);
         delete_node_at(deck, i);
@@ -165,7 +164,8 @@ void shuffle_random(DoublyLinkedList *deck) {
  * @param currentMoveInHistory a pointer to current History Node. Move is added to history if it is valid.
  */
 
-void move_action(Move *move, DoublyLinkedList *column_arr[NUMBER_OF_COLUMNS], DoublyLinkedList *foundation_arr[NUMBER_OF_FOUNDATIONS], struct history_node **currentMoveInHistory) {
+void move_action(Move *move, DoublyLinkedList *column_arr[NUMBER_OF_COLUMNS],
+                 DoublyLinkedList *foundation_arr[NUMBER_OF_FOUNDATIONS], struct history_node **currentMoveInHistory) {
     DoublyLinkedList *from = move->is_from_col ? column_arr[move->from] : foundation_arr[move->from];
     DoublyLinkedList *to = move->is_to_col ? column_arr[move->to] : foundation_arr[move->to];
     bool isValid = is_valid_move(move, from, to);
