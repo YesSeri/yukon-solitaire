@@ -42,7 +42,7 @@ void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struc
     putc('\n', file);
     //foundation saving
 
-    for (int i = 0; i < 4; ++i) {
+    /*for (int i = 1; i < 5; ++i) {
         Node *foundationPtr = get_node_at(*foundationArr,i);
         while (foundationPtr->card_ptr != NULL) {
             print_card_to_file(foundationPtr, file);
@@ -50,16 +50,15 @@ void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struc
         }
         putc(':',file);
         putc('\n', file);
-    }
+    }*/
     putc(';',file);
     putc('\n', file);
     //history saving
     struct history_node *curr_f = *(historyNode);
     //curr move
-    printf("%d->%d ", curr_f->move_ptr->from, curr_f->move_ptr->to);
-    putc(curr_f->move_ptr->from,file);
+   // putc(curr_f->move_ptr->from,file);
     putc('>',file);
-    putc(curr_f->move_ptr->to,file);
+   // putc(curr_f->move_ptr->to,file);
     putc('\n',file);
     putc(':',file);
     putc('\n',file);
@@ -90,7 +89,7 @@ void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struc
     putc('\n',file);
     //save collumns
     //TODO do all collumns and foundations get printed (off by one ??)
-    for (int i = 0; i < 8; ++i) {
+    /*for (int i = 1; i < 9; ++i) {
         Node *collumn = get_node_at(*collumnArr,i);
         while(collumn->card_ptr!=NULL){
             print_card_to_file(collumn, file);
@@ -98,7 +97,7 @@ void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struc
         }
         putc(':',file);
         putc('\n', file);
-    }
+    }*/
 
 
     fclose(file);
