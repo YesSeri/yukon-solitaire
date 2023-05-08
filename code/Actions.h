@@ -26,6 +26,8 @@ void shuffle_interleaved(DoublyLinkedList *, int);
 
 void shuffle_random(DoublyLinkedList *);
 
-void move_action(Move *, DoublyLinkedList *[7], DoublyLinkedList *[4], struct history_node**);
+void move_action(Move *, DoublyLinkedList *[7], DoublyLinkedList *[4], struct history_node **);
+
+void to_play_phase(DoublyLinkedList *[7], Foundation *[4], DoublyLinkedList *, Phase *);
 
 #endif

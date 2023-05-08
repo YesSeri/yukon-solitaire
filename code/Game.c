@@ -44,26 +44,6 @@ void create_columns_from_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_
     }
 }
 
-void show_action(char *input) {
-    printf("Showing cards...\n");
-}
-
-void load_action(char *input) {
-    printf("Loading data...\n");
-}
-
-void quit_action(char *input) {
-    printf("Quitting game...\n");
-}
-
-void to_startup_action(char *input) {
-    printf("Switching to startup phase...\n");
-}
-
-void to_play_action(char *input) {
-    printf("Switching to play phase...\n");
-}
-
 bool is_valid_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
 
     if (move->is_to_col == move->is_from_col) {

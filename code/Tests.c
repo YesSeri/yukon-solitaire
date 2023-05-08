@@ -7,6 +7,24 @@
 // TODO write tests for relevant functions. Almost everything in Actions.c and DoublyLinkedList.c should be tested.
 
 
+void test_undo() {
+
+    DoublyLinkedList *deck = create_doubly_linked_list();
+    create_sorted_deck(deck);
+    DoublyLinkedList *column_arr[NUMBER_OF_COLUMNS];
+    Foundation *foundation_arr[NUMBER_OF_FOUNDATIONS];
+    initiate_columns_and_foundations(column_arr, foundation_arr);
+
+    struct history_node **currentMoveInHistory;
+    struct history_node *dummy_ptr = create_history_node(NULL);
+    currentMoveInHistory = &dummy_ptr;
+    dummy_ptr->next = dummy_ptr;
+    dummy_ptr->prev = dummy_ptr;
+    Phase phase = STARTUP;
+
+    to_play_phase(column_arr, foundation_arr, deck, &phase);
+}
+
 // TODO create if statement that actually tests if things are working. Now I am just looking at it manually.
 void test_random_shuffling() {
 
