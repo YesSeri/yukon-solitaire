@@ -326,27 +326,27 @@ int run_game() {
     dummy_ptr->next = dummy_ptr;
     dummy_ptr->prev = dummy_ptr;
 
-    char last_command[2 + ARG_LENGTH + 1] = "";
+    char prev_command[2 + ARG_LENGTH + 1] = "";
     Command command;
     Phase phase = STARTUP;
     while (!is_gameover(foundations_arr)) {
         char input[2 + ARG_LENGTH + 1];
         input[0] = '\0';
-        print_view(columns_arr, foundations_arr, last_command);
+        print_view(columns_arr, foundations_arr, prev_command);
         yukon_error.error = NO_ERROR;
         strcpy(yukon_error.message, "");
         while (strlen(input) == 0) {
             get_player_input(input);
         }
-        strcpy(last_command, input);
+        strcpy(prev_command, input);
         parse_input_type(input, &command);
         run_command(&command, input, deck, columns_arr, foundations_arr, &phase, currentMoveInHistory);
         set_error_message();
     }
 
-    yukon_error.error = NO_ERROR;
+    yukon_error.error = GAME_OVER;
     strcpy(yukon_error.message, "You won!");
-    print_view(columns_arr, foundations_arr, last_command);
+    print_view(columns_arr, foundations_arr, prev_command);
     return 0;
 }
 
@@ -401,8 +401,6 @@ void debug_game() {
 
     debug_init_default_deck_and_columns(deck, columns_arr, foundations_arr, col_heights_play);
     print_view(columns_arr, foundations_arr, "");
-
-
 }
 
 

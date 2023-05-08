@@ -47,20 +47,23 @@ void print_main_section(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS],
     }
 }
 
-void print_footer(char *last_command) {
-    printf("LAST Command: %s\n", last_command);
+void print_footer(char *prev_command) {
+    printf("LAST Command: %s\n", prev_command);
     printf("Message: %s\n", yukon_error.message);
-    printf("INPUT > ");
+    if(yukon_error.error != GAME_OVER){
+        printf("INPUT > ");
+    }
+
 }
 
 void print_view(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS], Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS],
-                char *last_command) {
+                char *prev_command) {
     // Clears screen, so only the current view is shown.
     printf("\e[1;1H\e[2J");
     printf("\n");
     print_header();
     printf("\n");
     print_main_section(columns_arr, foundations_arr);
-    print_footer(last_command);
+    print_footer(prev_command);
     fflush(stdout);
 }

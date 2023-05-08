@@ -43,7 +43,8 @@ typedef enum {
     WRITE_ERR,
     READ_ERR,
     PHASE_ERR,
-    INVALID_DECK
+    INVALID_DECK,
+    GAME_OVER
 } ErrorEnum;
 
 typedef struct {
