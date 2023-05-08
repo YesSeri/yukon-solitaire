@@ -21,12 +21,14 @@ enum commandType {
     TO_SETUP,
     SHUFFLE_RANDOM,
     SHUFFLE_INTERLEAVED,
+    UNDO,
+    REDO,
     UNKNOWN,
     // TODO add all commands
 };
 
 union argument {
-    const char str[ARG_LENGTH];
+    char str[ARG_LENGTH];
     int val;
 };
 typedef struct command {

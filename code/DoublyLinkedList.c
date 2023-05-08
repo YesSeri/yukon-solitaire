@@ -7,7 +7,6 @@
 #include <stdio.h>
 
 
-
 void free_list_cards(DoublyLinkedList *dll) {
     Node *current = dll->dummy_ptr->next;
     while (current->card_ptr != NULL) {
@@ -105,10 +104,7 @@ void delete_node_at(DoublyLinkedList *dll, int i) {
 void append(DoublyLinkedList *dll, Node *n_ptr) {
     Node *dummy = dll->dummy_ptr;
     Node *last = dummy->prev;
-
     insert_node_between_these_two_nodes(last, dummy, n_ptr);
-
-    Node *array[52] = {NULL};
     dll->length++;
 }
 
@@ -222,17 +218,4 @@ Node *remove_at(DoublyLinkedList *dll, int index) {
 void move_single_card(DoublyLinkedList *from, DoublyLinkedList *to) {
     Node *node_from = remove_at(from, 0);
     prepend(to, node_from);
-}
-
-Node *debug_to_array(DoublyLinkedList *dll, Node *arr[60]) {
-
-    Node *curr = dll->dummy_ptr->next;
-    int i = 1;
-    arr[0] = NULL;
-    while (curr->card_ptr != NULL) {
-        arr[i] = curr;
-        i++;
-        curr = curr->next;
-    }
-
 }

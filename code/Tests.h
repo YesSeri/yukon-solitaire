@@ -11,4 +11,6 @@ void run_tests();
 
 void debug_print(DoublyLinkedList *);
 
+void debug_to_array(DoublyLinkedList *, Node *[60]);
+
 #endif //YUKON_SOLITAIRE_TESTS_H

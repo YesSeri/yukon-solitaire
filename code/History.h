@@ -5,9 +5,6 @@
 #ifndef YUKON_SOLITAIRE_HISTORY_H
 #define YUKON_SOLITAIRE_HISTORY_H
 
-#include "Cli.h"
-#include "DoublyLinkedList.h"
-#include "Foundation.h"
 #include "Game.h"
 
 
@@ -19,21 +16,21 @@
  * If there is redo_history, we first delete the redo history and then we add the move to history and move our .
  */
 
-typedef struct history_node {
+struct history_node {
     struct history_node *next;
     struct history_node *prev;
     Move *move_ptr;
-} HistNode;
+};
 
-HistNode *create_history_node(Move *);
+struct history_node *create_history_node(Move *);
 
-void debug_print_history(HistNode **);
+void debug_print_history(struct history_node **);
 
-void add_move_to_history(Move *, HistNode **);
+void add_move_to_history(Move *, struct history_node **);
 
 //void undo_move(DoublyLinkedList **, Foundation **, HistoryList *);
-void undo_move(DoublyLinkedList **, Foundation **, HistNode **);
+void undo_move(DoublyLinkedList **, Foundation **, struct history_node **);
 
-void redo_move(DoublyLinkedList **, Foundation **, HistNode **);
+void redo_move(DoublyLinkedList **, Foundation **, struct history_node **);
 
 #endif //YUKON_SOLITAIRE_HISTORY_H

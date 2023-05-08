@@ -1,11 +1,6 @@
 #ifndef ACTIONS_H_INCLUDED
 #define ACTIONS_H_INCLUDED
 
-#include "Cli.h"
-#include "DoublyLinkedList.h"
-#include "Foundation.h"
-#include "Game.h"
-#include <stdio.h>
 
 // Card is null if there is none.
 //
@@ -13,6 +8,8 @@
 
 // is_from_col is true if we are moving from column, else we are moving from foundation
 
+
+#include "History.h"
 
 void quit_game();
 
@@ -29,6 +26,6 @@ void shuffle_interleaved(DoublyLinkedList *, int);
 
 void shuffle_random(DoublyLinkedList *);
 
-void move_action(Move *, DoublyLinkedList **, DoublyLinkedList **);
+void move_action(Move *, DoublyLinkedList *[7], DoublyLinkedList *[4], struct history_node**);
 
 #endif

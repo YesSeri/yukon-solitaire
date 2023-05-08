@@ -120,12 +120,11 @@ void get_player_input(char *str) {
 //    getline(&str, &bufsize, stdin);
 }
 
-// We return a pointer, pointing to the fn that corresponds to the parsed input.
 void read_string_arg_or_default(char *input, Command *command) {
     if (strlen(input) > 3) {
         char c[15];
         command->has_arg = true;
-        sscanf(input, "%s %s", &c, &command->arg.str);
+        sscanf(input, "%s %s", &(*c), &(*command->arg.str));
     } else {
         strcpy(command->arg.str, "default arg");
     }
@@ -150,12 +149,16 @@ void parse_input_type(char *input, Command *command) {
         command->type = TO_PLAY;
     } else if (input[0] == 'S' && input[1] == 'I') {
         command->has_arg = true;
-        sscanf(input, "%*s %d", &command->arg);
+        sscanf(input, "%*s %d", &(command->arg.val));
         command->type = SHUFFLE_INTERLEAVED;
     } else if (input[0] == 'S' && input[1] == 'I') {
         command->type = SHUFFLE_RANDOM;
     } else if (input[0] == 'Q') {
         command->type = TO_SETUP;
+    } else if (input[0] == 'R') {
+        command->type = REDO;
+    } else if (input[0] == 'U') {
+        command->type = UNDO;
     } else {
         command->type = UNKNOWN;
     }

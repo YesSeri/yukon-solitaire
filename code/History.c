@@ -6,8 +6,8 @@
 #include <stdlib.h>
 #include "History.h"
 
-HistNode *create_history_node(Move *move_ptr) {
-    HistNode *node = malloc(sizeof(HistNode));
+struct history_node *create_history_node(Move *move_ptr) {
+    struct history_node *node = malloc(sizeof(struct history_node));
     node->move_ptr = move_ptr;
     node->next = NULL;
     node->prev = NULL;
@@ -15,18 +15,9 @@ HistNode *create_history_node(Move *move_ptr) {
 }
 
 
-HistoryList *create_history_list() {
-    HistoryList *historyList = malloc(sizeof(HistoryList));
-    HistNode *dummy_ptr = create_history_node(NULL);
-    historyList->current = &dummy_ptr;
-    dummy_ptr->next = dummy_ptr;
-    dummy_ptr->prev = dummy_ptr;
-}
-
-
-void add_move_to_history(Move *move, HistNode **current_ptr) {
-    HistNode *current = *current_ptr;
-    HistNode *to_delete = current->next;
+void add_move_to_history(Move *move, struct history_node **current_ptr) {
+    struct history_node *current = *current_ptr;
+    struct history_node *to_delete = current->next;
 
     // Delete, and free, from current to last, to delete future history.
     while (to_delete->move_ptr != NULL) {
@@ -37,7 +28,7 @@ void add_move_to_history(Move *move, HistNode **current_ptr) {
         to_delete = to_delete->next;
 //        free(to_delete->prev);
     }
-    HistNode *node = create_history_node(move);
+    struct history_node *node = create_history_node(move);
     node->next = current->next;
     node->prev = current;
     node->next->prev = node;
@@ -45,52 +36,53 @@ void add_move_to_history(Move *move, HistNode **current_ptr) {
     *current_ptr = node;
 }
 
-void undo_move(DoublyLinkedList **columns_arr, Foundation **foundations_arr, HistNode **currentMoveInHistory) {
-    HistNode *undoHistNode = *currentMoveInHistory;
+void
+undo_move(DoublyLinkedList **columns_arr, Foundation **foundations_arr, struct history_node **currentMoveInHistory) {
+    struct history_node *undoHistNode = *currentMoveInHistory;
     if (undoHistNode->move_ptr == NULL) {
         yukon_error.error = UNDO_REDO_ERROR;
         strcpy(yukon_error.message, "Could not undo, since you are at move 0 - ");
-    }
-    Move *undoMove = undoHistNode->move_ptr;
-    *currentMoveInHistory = undoHistNode->prev;
-
-
-    DoublyLinkedList *to = undoMove->is_from_col ? columns_arr[undoMove->from] : foundations_arr[undoMove->from];
-    DoublyLinkedList *from = undoMove->is_to_col ? columns_arr[undoMove->to] : foundations_arr[undoMove->to];
-    if (undoMove->card == NULL) {
-        move_single_card(from, to);
     } else {
-        move_cards(from, to, undoMove->card);
+        Move *undoMove = undoHistNode->move_ptr;
+        *currentMoveInHistory = undoHistNode->prev;
+
+
+        DoublyLinkedList *to = undoMove->is_from_col ? columns_arr[undoMove->from] : foundations_arr[undoMove->from];
+        DoublyLinkedList *from = undoMove->is_to_col ? columns_arr[undoMove->to] : foundations_arr[undoMove->to];
+        if (undoMove->card == NULL) {
+            move_single_card(from, to);
+        } else {
+            move_cards(from, to, undoMove->card);
+        }
     }
 }
 
-void redo_move(DoublyLinkedList **columns_arr, Foundation **foundations_arr, HistNode **currentMoveInHistory) {
-    HistNode *undoHistNode = *currentMoveInHistory;
+void
+redo_move(DoublyLinkedList **columns_arr, Foundation **foundations_arr, struct history_node **currentMoveInHistory) {
+    struct history_node *undoHistNode = *currentMoveInHistory;
     Move *redoMove = undoHistNode->next->move_ptr;
 
     if (redoMove == NULL) {
         yukon_error.error = UNDO_REDO_ERROR;
         strcpy(yukon_error.message, "Could not redo, since you are at last move - ");
-    }
-
-    *currentMoveInHistory = undoHistNode->next;
-
-
-    DoublyLinkedList *from = redoMove->is_from_col ? columns_arr[redoMove->from] : foundations_arr[redoMove->from];
-    DoublyLinkedList *to = redoMove->is_to_col ? columns_arr[redoMove->to] : foundations_arr[redoMove->to];
-    if (redoMove->card == NULL) {
-        move_single_card(from, to);
     } else {
-        move_cards(from, to, redoMove->card);
+        *currentMoveInHistory = undoHistNode->next;
+        DoublyLinkedList *from = redoMove->is_from_col ? columns_arr[redoMove->from] : foundations_arr[redoMove->from];
+        DoublyLinkedList *to = redoMove->is_to_col ? columns_arr[redoMove->to] : foundations_arr[redoMove->to];
+        if (redoMove->card == NULL) {
+            move_single_card(from, to);
+        } else {
+            move_cards(from, to, redoMove->card);
+        }
     }
 
 }
 
-void debug_print_history(HistNode **currentMoveInHistory) {
-    HistNode *curr_f = *(currentMoveInHistory);
+void debug_print_history(struct history_node **currentMoveInHistory) {
+    struct history_node *curr_f = *(currentMoveInHistory);
     printf(" curr move: ");
     printf("%d->%d ", curr_f->move_ptr->from, curr_f->move_ptr->to);
-    HistNode *curr_p = curr_f->prev;
+    struct history_node *curr_p = curr_f->prev;
     curr_f = curr_f->next;
     printf("\nredo moves: ");
     while (curr_f->move_ptr != NULL) {

@@ -97,3 +97,16 @@ void debug_print(DoublyLinkedList *dll) {
     }
     fflush(stdout);
 }
+
+
+void debug_to_array(DoublyLinkedList *dll, Node **arr) {
+    Node *curr = dll->dummy_ptr->next;
+    int i = 1;
+    arr[0] = NULL;
+    while (curr->card_ptr != NULL) {
+        arr[i] = curr;
+        i++;
+        curr = curr->next;
+    }
+
+}

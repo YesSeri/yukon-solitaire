@@ -6,11 +6,7 @@
 
 typedef DoublyLinkedList Foundation;
 
-void push(Foundation *, Node *);
-
 Card *peek(Foundation *stack);
-
-Card *pop(Foundation *);
 
 Foundation *create_stack();
 

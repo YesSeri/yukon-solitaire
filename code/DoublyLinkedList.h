@@ -49,6 +49,4 @@ Node *remove_at(DoublyLinkedList *, int);
 
 void move_single_card(DoublyLinkedList *, DoublyLinkedList *);
 
-Node *debug_to_array(DoublyLinkedList *, Node *[60]);
-
 #endif //CODE_DOUBLYLINKEDLIST_H

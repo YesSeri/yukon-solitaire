@@ -8,7 +8,6 @@
 #include "Game.h"
 #include "Foundation.h"
 
-#define NUMBER_OF_CARDS 52
 #define NUMBER_OF_COLUMNS 7
 #define NUMBER_OF_FOUNDATIONS 4
 

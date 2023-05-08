@@ -1,7 +1,7 @@
 // This includes #define for ace, 1, 2, ... king and for suits heart, club, diamond, spade.
-#include "Game.h"
+
+#include "View.h"
 #include "Tests.h"
-#include "History.h"
 
 int col_heights_startup[NUMBER_OF_COLUMNS] = {8, 8, 8, 7, 7, 7, 7};
 int col_heights_play[NUMBER_OF_COLUMNS] = {1, 6, 7, 8, 9, 10, 11};
@@ -167,19 +167,19 @@ void setup_startup_phase_deck(DoublyLinkedList *deck, DoublyLinkedList **columns
 }
 
 void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLinkedList **columns_arr,
-                 Foundation **foundations_arr, Phase *phase,
-                 char string[67]) {
+                 Foundation **foundations_arr, Phase *phase, struct history_node **currentMoveInHistory) {
     switch (command->type) {
         case MOVE: {
             // wrong phase
             if (*phase != PLAY) {
+                strcpy(yukon_error.message, "You can only make a move in play phase - ");
                 yukon_error.error = PHASE_ERR;
                 return;
             }
             Move *move = parse_move(input);
-            move_action(move, columns_arr, foundations_arr);
+            move_action(move, columns_arr, foundations_arr, currentMoveInHistory);
         }
-            break;
+            return;
         case QUIT:
             printf("Quitting game...");
             exit(0);
@@ -187,13 +187,15 @@ void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLi
         case SHOW_CARDS:
             if (*phase != STARTUP) {
                 yukon_error.error = PHASE_ERR;
+                strcpy(yukon_error.message, "You can't SW(show cards) in play phase - ");
                 return;
             }
             set_cards_are_hidden(deck, false);
 
-            break;
+            return;
         case SHUFFLE_INTERLEAVED:
             if (*phase != STARTUP) {
+                strcpy(yukon_error.message, "You can't shuffle in play phase - ");
                 yukon_error.error = PHASE_ERR;
                 return;
             }
@@ -202,44 +204,43 @@ void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLi
             free_columns_foundations(columns_arr, foundations_arr);
             create_columns_from_deck(deck, columns_arr, col_heights_startup);
 
-            break;
+            return;
         case SHUFFLE_RANDOM:
             if (*phase != STARTUP) {
                 yukon_error.error = PHASE_ERR;
+                strcpy(yukon_error.message, "You can't shuffle in play phase - ");
                 return;
             }
             shuffle_random(deck);
             free_columns_foundations(columns_arr, foundations_arr);
             create_columns_from_deck(deck, columns_arr, col_heights_startup);
-            break;
+            return;
 
         case SAVE_DECK:
-            if (*phase != STARTUP) {
-                yukon_error.error = PHASE_ERR;
-                return;
-            }
             if (command->has_arg) {
                 save_deck_to_file(deck, command->arg.str);
             } else {
                 save_deck_to_file(deck, "deck.txt");
             }
-            break;
+            return;
         case LOAD_DECK: {
             if (*phase != STARTUP) {
+                strcpy(yukon_error.message, "You can only load a deck in startup phase - ");
                 yukon_error.error = PHASE_ERR;
                 return;
             }
             setup_startup_phase_deck(deck, columns_arr, foundations_arr, command);
-            break;
+            return;
         }
         case TO_PLAY: {
             if (deck->length != 52) {
                 yukon_error.error = INVALID_DECK;
-                strcpy(yukon_error.message, "Please pick a deck before starting - ");
+                strcpy(yukon_error.message, "Please pick a deck before starting game - ");
                 return;
             }
             if (*phase == PLAY) {
                 yukon_error.error = PHASE_ERR;
+                strcpy(yukon_error.message, "You are already in play phase - ");
                 return;
             }
             strcpy(yukon_error.message, "Play Phase entered - ");
@@ -247,21 +248,39 @@ void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLi
             create_columns_from_deck(deck, columns_arr, col_heights_play);
             set_correct_visibility_for_columns(deck, columns_arr);
             *phase = PLAY;
-            break;
+            return;
 
         }
         case TO_SETUP:
             if (*phase == STARTUP) {
                 yukon_error.error = PHASE_ERR;
+                strcpy(yukon_error.message, "You are already in startup phase - ");
                 return;
             }
             strcpy(yukon_error.message, "Setup Phase entered - ");
             *phase = STARTUP;
             setup_startup_phase_deck(deck, columns_arr, foundations_arr, command);
-            break;
+            return;
+        case UNDO:
+            if (*phase == STARTUP) {
+                yukon_error.error = PHASE_ERR;
+                strcpy(yukon_error.message, "You can't undo in startup phase - ");
+                return;
+            }
+            undo_move(columns_arr, foundations_arr, currentMoveInHistory);
+            return;
+        case REDO:
+            if (*phase == STARTUP) {
+                yukon_error.error = PHASE_ERR;
+                strcpy(yukon_error.message, "You can't redo in startup phase - ");
+                return;
+            }
+            redo_move(columns_arr, foundations_arr, currentMoveInHistory);
+            return;
         case UNKNOWN:
         default:
             yukon_error.error = CMD_ERR;
+            return;
 
     }
 }
@@ -294,6 +313,12 @@ int run_game() {
     Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
     initiate_columns_and_foundations(columns_arr, foundations_arr);
 
+    struct history_node **currentMoveInHistory;
+    struct history_node *dummy_ptr = create_history_node(NULL);
+    currentMoveInHistory = &dummy_ptr;
+    dummy_ptr->next = dummy_ptr;
+    dummy_ptr->prev = dummy_ptr;
+
     char last_command[2 + ARG_LENGTH + 1] = "";
     Command command;
     Phase phase = STARTUP;
@@ -308,7 +333,7 @@ int run_game() {
         }
         strcpy(last_command, input);
         parse_input_type(input, &command);
-        run_command(&command, input, deck, columns_arr, foundations_arr, &phase, input);
+        run_command(&command, input, deck, columns_arr, foundations_arr, &phase, currentMoveInHistory);
         set_error_message();
     }
     print_view(columns_arr, foundations_arr, last_command);
@@ -321,29 +346,32 @@ void set_error_message() {
         // We use strcat when we have a custom error message in the error enum.
         case NO_ERROR:
             strcat(yukon_error.message, "OK");
-            break;
+            return;
         case MOVE_ERR:
             strcat(yukon_error.message, "Illegal move");
-            break;
+            return;
         case CMD_ERR:
             strcat(yukon_error.message, "Illegal command.");
-            break;
+            return;
         case WRITE_ERR:
             strcat(yukon_error.message, "Could not write deck to file.");
-            break;
+            return;
         case INVALID_DECK:
             // We set the message to a custom error depending on the deck error and append the default message
             strcat(yukon_error.message, "This is not a valid deck.");
-            break;
+            return;
         case READ_ERR:
             strcat(yukon_error.message, "Could not read file.");
-            break;
+            return;
         case PHASE_ERR:
-            strcat(yukon_error.message, "You must switch phase for this command.");
-            break;
+            strcat(yukon_error.message, "Phase error.");
+            return;
+        case UNDO_REDO_ERROR:
+            strcat(yukon_error.message, "Redo/Undo error.");
+            return;
         default:
             strcat(yukon_error.message, "Unknown error.");
-            break;
+            return;
     }
 }
 
@@ -364,8 +392,8 @@ void debug_game() {
     Phase phase = PLAY;
 //    Historylist *historylist = create_history_list();
 
-    HistNode **currentMoveInHistory;
-    HistNode *dummy_ptr = create_history_node(NULL);
+    struct history_node **currentMoveInHistory;
+    struct history_node *dummy_ptr = create_history_node(NULL);
     currentMoveInHistory = &dummy_ptr;
     dummy_ptr->next = dummy_ptr;
     dummy_ptr->prev = dummy_ptr;
@@ -376,13 +404,11 @@ void debug_game() {
     move[1] = parse_move(input[1]);
     move[2] = parse_move(input[2]);
 
-    move_action(move[0], columns_arr, foundations_arr);
-    add_move_to_history(move[0], currentMoveInHistory);
+    move_action(move[0], columns_arr, foundations_arr, currentMoveInHistory);
 
-    undo_move(columns_arr,foundations_arr, currentMoveInHistory);
+    undo_move(columns_arr, foundations_arr, currentMoveInHistory);
 
-    move_action(move[1], columns_arr, foundations_arr);
-    add_move_to_history(move[1], currentMoveInHistory);
+    move_action(move[1], columns_arr, foundations_arr, currentMoveInHistory);
 
     for (int i = 0; i < 7; ++i) {
         printf("\n%d - len %d\n", i, columns_arr[i]->length);
@@ -418,9 +444,9 @@ void debug_game() {
 
 
 int main() {
-    debug_game();
+//    debug_game();
 //    run_tests();
-//    run_game();
+    run_game();
 }
 
 void init_default_deck_and_columns(DoublyLinkedList *deck, DoublyLinkedList **columns_arr, Foundation **foundations_arr,

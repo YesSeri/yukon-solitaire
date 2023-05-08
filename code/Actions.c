@@ -4,8 +4,8 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "Actions.h"
-#include "History.h"
 
 void quit_game() {
 }
@@ -162,18 +162,26 @@ void shuffle_random(DoublyLinkedList *deck) {
 }
 
 
-void
-move_action(Move *move, DoublyLinkedList **columns_arr, DoublyLinkedList **foundations_arr, HistoryList historyList) {
+/**
+ * Make a move on the board and add that move to the history.
+ * @param move move we want to make
+ * @param columns_arr game columns
+ * @param foundations_arr foundations
+ * @param currentMoveInHistory a pointer to current History Node. Move is added to history if it is valid.
+ */
+
+void move_action(Move *move, DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS],
+                 DoublyLinkedList *foundations_arr[NUMBER_OF_FOUNDATIONS], struct history_node **currentMoveInHistory) {
     DoublyLinkedList *from = move->is_from_col ? columns_arr[move->from] : foundations_arr[move->from];
     DoublyLinkedList *to = move->is_to_col ? columns_arr[move->to] : foundations_arr[move->to];
     bool isValid = is_valid_move(move, from, to);
     if (isValid) {
         if (move->card == NULL) {
             move_single_card(from, to);
-            add_move_to_history(move[0], currentMoveInHistory);
         } else {
             move_cards(from, to, move->card);
         }
+        add_move_to_history(move, currentMoveInHistory);
         // Once we have moved cards we make top card in from list visible.
         Card *c = get_card_at(from, 0);
         if (c) {
