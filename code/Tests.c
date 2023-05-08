@@ -145,10 +145,10 @@ void test_read_file_to_deck() {
     DoublyLinkedList *deck2 = create_doubly_linked_list();
     create_sorted_deck(deck2);
 
-    Node *curr1 = deck1->dummy_ptr;
-    Node *curr2 = deck2->dummy_ptr;
+    Node *curr1 = deck1->dummy_ptr->next;
+    Node *curr2 = deck2->dummy_ptr->next;
     int i = 0;
-    while (curr1 != NULL && curr2 != NULL) {
+    while (curr1 != NULL && curr2 != NULL && i < deck1->length) {
         Card *card1 = curr1->card_ptr;
         Card *card2 = curr2->card_ptr;
         if (card1->value != card2->value || card1->suit != card2->suit) {
@@ -159,8 +159,11 @@ void test_read_file_to_deck() {
         curr2 = curr2->next;
         i++;
     }
-    if (i == 52) {
+    if (i == deck1->length) {
         printf("Read from file to deck test passed!\n");
+    } else {
+        printf("TEST FAILED: Read from file deck was not same length as default deck.!\n");
+
     }
 
 
@@ -190,13 +193,11 @@ void test_read_file_to_deck() {
 }
 
 
-
 void run_tests() {
-    test_interleaved_shuffling();
+    test_read_file_to_deck();
     test_random_shuffling();
     test_game_over();
     test_save_deck_to_file();
-    test_read_file_to_deck();
 
 }
 

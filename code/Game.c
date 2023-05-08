@@ -409,8 +409,8 @@ void debug_game() {
 
 int main() {
     //debug_game();
-    //run_tests();
-    run_game();
+    run_tests();
+//    run_game();
 }
 
 void init_default_deck_and_columns(DoublyLinkedList *deck, DoublyLinkedList **columns_arr, Foundation **foundations_arr,
