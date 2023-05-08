@@ -242,6 +242,7 @@ void run_tests() {
     test_random_shuffling();
     test_game_over();
     test_save_deck_to_file();
+    test_read_file_to_deck();
 
 }
 
