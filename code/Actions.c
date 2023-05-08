@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "Actions.h"
+#include "History.h"
 
 void quit_game() {
 }
@@ -161,13 +162,15 @@ void shuffle_random(DoublyLinkedList *deck) {
 }
 
 
-void move_action(Move *move, DoublyLinkedList **columns_arr, DoublyLinkedList **foundations_arr) {
+void
+move_action(Move *move, DoublyLinkedList **columns_arr, DoublyLinkedList **foundations_arr, HistoryList historyList) {
     DoublyLinkedList *from = move->is_from_col ? columns_arr[move->from] : foundations_arr[move->from];
     DoublyLinkedList *to = move->is_to_col ? columns_arr[move->to] : foundations_arr[move->to];
     bool isValid = is_valid_move(move, from, to);
     if (isValid) {
         if (move->card == NULL) {
             move_single_card(from, to);
+            add_move_to_history(move[0], currentMoveInHistory);
         } else {
             move_cards(from, to, move->card);
         }

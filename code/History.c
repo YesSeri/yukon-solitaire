@@ -26,9 +26,16 @@ HistoryList *create_history_list() {
 
 void add_move_to_history(Move *move, HistNode **current_ptr) {
     HistNode *current = *current_ptr;
-    if (current->next->move_ptr != NULL) {
-        // If there is future history when we try to add new history we need to delete it and replace it with new history
-        exit(1);
+    HistNode *to_delete = current->next;
+
+    // Delete, and free, from current to last, to delete future history.
+    while (to_delete->move_ptr != NULL) {
+        free(to_delete->move_ptr->card);
+        free(to_delete->move_ptr);
+        to_delete->prev->next = to_delete->next;
+        to_delete->next->prev = to_delete->prev;
+        to_delete = to_delete->next;
+//        free(to_delete->prev);
     }
     HistNode *node = create_history_node(move);
     node->next = current->next;

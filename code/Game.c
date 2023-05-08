@@ -375,10 +375,14 @@ void debug_game() {
     move[0] = parse_move(input[0]);
     move[1] = parse_move(input[1]);
     move[2] = parse_move(input[2]);
+
     move_action(move[0], columns_arr, foundations_arr);
     add_move_to_history(move[0], currentMoveInHistory);
+
     undo_move(columns_arr,foundations_arr, currentMoveInHistory);
-    redo_move(columns_arr,foundations_arr, currentMoveInHistory);
+
+    move_action(move[1], columns_arr, foundations_arr);
+    add_move_to_history(move[1], currentMoveInHistory);
 
     for (int i = 0; i < 7; ++i) {
         printf("\n%d - len %d\n", i, columns_arr[i]->length);
