@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "Actions.h"
 
+void write_card_to_file(FILE *file, char val, char suit);
 
 void save_deck_to_file(DoublyLinkedList *deck, const char *filename) {
 
@@ -184,4 +185,60 @@ void move_action(Move *move, DoublyLinkedList *column_arr[NUMBER_OF_COLUMNS],
     } else {
         yukon_error.error = MOVE_ERR;
     }
+}
+
+/*
+ * Save the current state of the game to a file.
+ * we use x as delimiter
+ */
+void save_state(DoublyLinkedList *deck, DoublyLinkedList **column_arr, DoublyLinkedList **foundation_arr,
+                struct history_node **currentMoveInHistory, const char *filename) {
+
+
+    save_deck_to_file(deck, filename);
+    char filepath[100] = "../save_state/";
+    strcat(filepath, filename);
+    FILE *file = fopen(filepath, "w+");
+
+    if (file == NULL) {
+        yukon_error.error = WRITE_ERR;
+        return;
+    }
+
+    Node *deck_ptr = deck->dummy_ptr->next;
+
+    int line_number = 1;
+    while (deck_ptr->card_ptr != NULL) {
+        char v = card_value_to_char(deck_ptr->card_ptr->value);
+        Suit s = deck_ptr->card_ptr->suit;
+
+        putc(v, file);
+        putc(s, file);
+        putc('\n', file);
+
+        line_number++;
+        deck_ptr = deck_ptr->next;
+    }
+    putc('X', file);
+    putc('\n', file);
+
+    Node *col_ptr = column_arr[0]->dummy_ptr->next;
+
+    for (int i = 0; i < NUMBER_OF_COLUMNS; ++i) {
+        while (col_ptr->card_ptr != NULL) {
+            char v = card_value_to_char(col_ptr->card_ptr->value);
+            Suit s = col_ptr->card_ptr->suit;
+
+            write_card_to_file(file, v, s);
+            col_ptr = col_ptr->next;
+        }
+    }
+    fclose(file);
+}
+
+
+void write_card_to_file(FILE *file, char val, char suit) {
+    putc(val, file);
+    putc(suit, file);
+    putc('\n', file);
 }
