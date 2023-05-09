@@ -13,7 +13,7 @@ void save_deck_to_file(DoublyLinkedList *deck, const char *filename) {
 
     char filepath[100] = "../decks/";
     strcat(filepath, filename);
-    FILE *file = fopen(filepath, "w+"); /* should check the result */
+    FILE *file = fopen(filepath, "w+");
 
     if (file == NULL) {
         yukon_error.error = WRITE_ERR;
@@ -34,8 +34,6 @@ void save_deck_to_file(DoublyLinkedList *deck, const char *filename) {
         line_number++;
         current = current->next;
     }
-//    fprintf(fp, "This is testing for fprintf...\n");
-//    fputs("This is testing for fputs...\n", fp);
     fclose(file);
 }
 

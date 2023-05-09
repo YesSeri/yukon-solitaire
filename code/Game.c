@@ -395,6 +395,13 @@ void debug_init_default_deck_and_columns(DoublyLinkedList *deck, DoublyLinkedLis
 
 void debug_game() {
     srand(time(NULL));
+
+    struct history_node **currentMoveInHistory;
+    struct history_node *dummy_ptr = create_history_node(NULL);
+    currentMoveInHistory = &dummy_ptr;
+    dummy_ptr->next = dummy_ptr;
+    dummy_ptr->prev = dummy_ptr;
+
     DoublyLinkedList *deck = create_doubly_linked_list();
     DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS];
     Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
@@ -405,8 +412,8 @@ void debug_game() {
 
 
 int main() {
-//    debug_game();
+    debug_game();
 //    run_tests();
-    run_game();
+//    run_game();
 }
 
