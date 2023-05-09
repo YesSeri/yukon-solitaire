@@ -77,7 +77,8 @@ bool is_valid_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
         // If card_ptr is empty the dummy ptr points to itself, meaning there are no cards in this column or foundation.
     } else {
         card_from = search_list_for_card(from, move->card)->card_ptr;
-        if (from->dummy_ptr->next->card_ptr->value == move->card->value && from->dummy_ptr->next->card_ptr->suit == move->card->suit){
+        if (from->dummy_ptr->next->card_ptr->value == move->card->value &&
+            from->dummy_ptr->next->card_ptr->suit == move->card->suit) {
             move->card = NULL;
         }
     }
@@ -102,9 +103,9 @@ bool is_valid_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
         }
 
 
-    } else if (!move->is_to_col && move->card == NULL) {
+    } else if (!move->is_to_col) {
         return validate_to_foundation_move(move, from, to);
-    } else if (!move->is_from_col && move->is_to_col) {
+    } else if (!move->is_from_col) {
         return validate_from_foundation_move(move, from, to);
     }
     return true;
