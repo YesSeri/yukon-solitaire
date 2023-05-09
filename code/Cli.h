@@ -23,6 +23,8 @@ enum commandType {
     SHUFFLE_INTERLEAVED,
     UNDO,
     REDO,
+    SAVE_STATE,
+    LOAD_STATE,
     UNKNOWN,
     // TODO add all commands
 };

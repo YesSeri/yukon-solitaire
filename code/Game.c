@@ -175,7 +175,7 @@ void setup_startup_phase_deck(DoublyLinkedList *deck, DoublyLinkedList *columns_
     free_list_cards(deck);
     free_list_nodes(deck);
     if (command->has_arg) {
-        read_file_to_deck(deck, command->arg.str);
+        load_deck_file(deck, command->arg.str);
     } else {
         create_sorted_deck(deck);
     }
@@ -293,6 +293,32 @@ void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLi
             }
             redo_move(columns_arr, foundations_arr, currentMoveInHistory);
             return;
+
+        case SAVE_STATE:
+            if (*phase == STARTUP) {
+                yukon_error.error = WRITE_ERR;
+                strcpy(yukon_error.message, "You can't save state in startup phase - ");
+                return;
+            }
+            if (command->has_arg) {
+                save_state(deck, columns_arr, foundations_arr, command->arg.str);
+            } else {
+                save_state(deck, columns_arr, foundations_arr, "stateful_deck.txt");
+            }
+            return;
+        case LOAD_STATE:
+            if (*phase == PLAY) {
+                yukon_error.error = READ_ERR;
+                strcpy(yukon_error.message, "You can't load state in play phase - ");
+                return;
+            }
+            if (command->has_arg) {
+                load_state(deck, columns_arr, foundations_arr, command->arg.str);
+            } else {
+                load_state(deck, columns_arr, foundations_arr, "stateful_deck.txt");
+            }
+            set_cards_are_hidden(deck, false);
+            return;
         case UNKNOWN:
         default:
             yukon_error.error = CMD_ERR;
@@ -407,13 +433,14 @@ void debug_game() {
     Foundation *foundations_arr[NUMBER_OF_FOUNDATIONS];
 
     debug_init_default_deck_and_columns(deck, columns_arr, foundations_arr, col_heights_play);
-    print_view(columns_arr, foundations_arr, "");
+//    save_state(deck, columns_arr, foundations_arr, currentMoveInHistory, "debug.txt");
+    load_state(deck, columns_arr, foundations_arr, "debug.txt");
 }
 
 
 int main() {
-    debug_game();
+//    debug_game();
 //    run_tests();
-//    run_game();
+    run_game();
 }
 

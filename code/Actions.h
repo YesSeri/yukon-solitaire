@@ -20,7 +20,11 @@ typedef enum phase {
 
 void save_deck_to_file(DoublyLinkedList *, const char *);
 
-void read_file_to_deck(DoublyLinkedList *, const char *);
+void save_state(DoublyLinkedList *, DoublyLinkedList **, DoublyLinkedList **, const char *);
+
+void load_state(DoublyLinkedList *, DoublyLinkedList **, DoublyLinkedList **, const char *);
+
+void load_deck_file(DoublyLinkedList *deck, const char *filename);
 
 void shuffle_interleaved(DoublyLinkedList *, int);
 

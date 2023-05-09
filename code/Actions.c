@@ -37,12 +37,12 @@ void save_deck_to_file(DoublyLinkedList *deck, const char *filename) {
     fclose(file);
 }
 
-void read_file_to_deck(DoublyLinkedList *deck, const char *filename) {
+void load_deck_file(DoublyLinkedList *deck, const char *filename) {
     free_list_cards(deck);
     free_list_nodes(deck);
     char filepath[100] = "../decks/";
     strcat(filepath, filename);
-    FILE *file = fopen(filepath, "r"); /* should check the result */
+    FILE *file = fopen(filepath, "r");
     char line[256];
     if (file == NULL) {
         yukon_error.error = READ_ERR;
@@ -189,11 +189,129 @@ void move_action(Move *move, DoublyLinkedList *column_arr[NUMBER_OF_COLUMNS],
  * Save the current state of the game to a file.
  * we use x as delimiter
  */
+
+
+void write_card_to_file(FILE *file, char val, char suit) {
+    putc(val, file);
+    putc(suit, file);
+    putc('\n', file);
+}
+
+void load_state(DoublyLinkedList *deck, DoublyLinkedList **column_arr, DoublyLinkedList **foundation_arr,
+                const char *filename) {
+
+    free_list_cards(deck);
+    free_list_cards(column_arr);
+    free_list_cards(foundation_arr);
+
+    free_list_nodes(deck);
+    free_list_nodes(column_arr);
+    free_list_nodes(foundation_arr);
+
+    initiate_columns_and_foundations(column_arr, foundation_arr);
+
+    char filepath[100] = "../save_state/";
+    strcat(filepath, filename);
+    FILE *file = fopen(filepath, "r");
+    char line[16];
+    if (file == NULL) {
+        yukon_error.error = READ_ERR;
+        return;
+    }
+    while (1) {
+        fgets(line, sizeof(line), file);
+
+        if (line[0] == 'C') {
+            break;
+        }
+        Value v = card_char_to_value(line[0]);
+        Suit s = line[1];
+
+        Card *c = create_card(s, v, true);
+        if (c == NULL) {
+            yukon_error.error = INVALID_DECK;
+            sprintf(yukon_error.message, "Invalid card in deck: %c%c - ", line[0], s);
+            return;
+        }
+        Node *n = create_node(c);
+        append(deck, n);
+
+        if (deck->length > 52) {
+            yukon_error.error = INVALID_DECK;
+            sprintf(yukon_error.message, "Deck must contain 52 cards - ");
+            return;
+        }
+    }
+
+    if (deck->length < 52) {
+        yukon_error.error = INVALID_DECK;
+        sprintf(yukon_error.message, "Deck must contain 52 cards - ");
+        return;
+    }
+    for (int i = 0; i < 7; ++i) {
+        while (1) {
+            fgets(line, sizeof(line), file);
+            if (line[0] == '-') {
+                break;
+            }
+
+            Value v = card_char_to_value(line[0]);
+            Suit s = line[1];
+
+            Node *node = search_deck_for_node_with_card_value_of(deck, v, s);
+
+            if (node == NULL) {
+                yukon_error.error = INVALID_DECK;
+                strcpy(yukon_error.message, "The deck state is invalid in a column - ");
+                return;
+            } else {
+                Node *n = create_node(node->card_ptr);
+                prepend(column_arr[i], n);
+            }
+        }
+    }
+    fgets(line, sizeof(line), file);
+    if (line[0] != 'F') {
+        yukon_error.error = INVALID_DECK;
+        strcpy(yukon_error.message, "The foundation delimiter is missing - ");
+        return;
+    }
+
+    for (int i = 0; i < 4; ++i) {
+        while (1) {
+            fgets(line, sizeof(line), file);
+            if (line[0] == '-') {
+                break;
+            }
+
+            Value v = card_char_to_value(line[0]);
+            Suit s = line[1];
+
+            Node *node = search_deck_for_node_with_card_value_of(deck, v, s);
+
+            if (node == NULL) {
+                yukon_error.error = INVALID_DECK;
+                strcpy(yukon_error.message, "The deck state is invalid in a column - ");
+                return;
+            } else {
+                Node *n = create_node(node->card_ptr);
+                prepend(foundation_arr[i], n);
+            }
+        }
+    }
+
+    /* may check feof here to make a difference between eof and io failure -- network
+       timeout for instance */
+
+    fclose(file);
+
+
+}
+
 void save_state(DoublyLinkedList *deck, DoublyLinkedList **column_arr, DoublyLinkedList **foundation_arr,
-                struct history_node **currentMoveInHistory, const char *filename) {
+                const char *filename) {
 
 
-    save_deck_to_file(deck, filename);
     char filepath[100] = "../save_state/";
     strcat(filepath, filename);
     FILE *file = fopen(filepath, "w+");
@@ -210,19 +328,17 @@ void save_state(DoublyLinkedList *deck, DoublyLinkedList **column_arr, DoublyLin
         char v = card_value_to_char(deck_ptr->card_ptr->value);
         Suit s = deck_ptr->card_ptr->suit;
 
-        putc(v, file);
-        putc(s, file);
-        putc('\n', file);
+        write_card_to_file(file, v, s);
 
         line_number++;
         deck_ptr = deck_ptr->next;
     }
-    putc('X', file);
+    putc('C', file);
     putc('\n', file);
 
-    Node *col_ptr = column_arr[0]->dummy_ptr->next;
 
     for (int i = 0; i < NUMBER_OF_COLUMNS; ++i) {
+        Node *col_ptr = column_arr[i]->dummy_ptr->next;
         while (col_ptr->card_ptr != NULL) {
             char v = card_value_to_char(col_ptr->card_ptr->value);
             Suit s = col_ptr->card_ptr->suit;
@@ -230,13 +346,25 @@ void save_state(DoublyLinkedList *deck, DoublyLinkedList **column_arr, DoublyLin
             write_card_to_file(file, v, s);
             col_ptr = col_ptr->next;
         }
+
+        putc('-', file);
+        putc('\n', file);
+    }
+    putc('F', file);
+    putc('\n', file);
+    for (int i = 0; i < NUMBER_OF_FOUNDATIONS; ++i) {
+        Node *f_ptr = foundation_arr[i]->dummy_ptr->next;
+        while (f_ptr->card_ptr != NULL) {
+            char v = card_value_to_char(f_ptr->card_ptr->value);
+            Suit s = f_ptr->card_ptr->suit;
+
+            write_card_to_file(file, v, s);
+            f_ptr = f_ptr->next;
+        }
+
+        putc('-', file);
+        putc('\n', file);
     }
     fclose(file);
 }
 
-
-void write_card_to_file(FILE *file, char val, char suit) {
-    putc(val, file);
-    putc(suit, file);
-    putc('\n', file);
-}

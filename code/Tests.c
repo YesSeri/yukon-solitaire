@@ -183,7 +183,7 @@ void test_save_deck_to_file() {
 void test_read_file_to_deck() {
     printf("Testing loading deck from file:\n");
     DoublyLinkedList *deck1 = create_doubly_linked_list();
-    read_file_to_deck(deck1, "sorted_deck.txt");
+    load_deck_file(deck1, "sorted_deck.txt");
     DoublyLinkedList *deck2 = create_doubly_linked_list();
     create_sorted_deck(deck2);
 

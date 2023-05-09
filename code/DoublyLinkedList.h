@@ -49,4 +49,6 @@ Node *remove_at(DoublyLinkedList *, int);
 
 void move_single_card(DoublyLinkedList *, DoublyLinkedList *);
 
+Node *search_deck_for_node_with_card_value_of(DoublyLinkedList *deck, Value value, Suit suit);
+
 #endif //CODE_DOUBLYLINKEDLIST_H

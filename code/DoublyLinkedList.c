@@ -66,12 +66,23 @@ Node *search_list_for_card(DoublyLinkedList *dll, Card *c_ptr) {
     return NULL;
 }
 
+Node *search_deck_for_node_with_card_value_of(DoublyLinkedList *deck, Value value, Suit suit) {
+    Node *current = deck->dummy_ptr->next;
+// When we encounter a hidden card, or reach end of column, we stop searching.
+    while (current != deck->dummy_ptr) {
+        if (current->card_ptr->suit == suit && current->card_ptr->value == value) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
 Node *get_node_at(DoublyLinkedList *dll, int index) {
     Node *current = dll->dummy_ptr->next;
     while (index--) {
         current = current->next;
         if (current == dll->dummy_ptr) {
-            printf("Index out of bounds in fn get_node_at. Index: %d, list length-1: %d", index, dll->length - 1);
             return NULL;
         }
     }

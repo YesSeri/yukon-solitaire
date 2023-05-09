@@ -140,6 +140,12 @@ void parse_input_type(char *input, Command *command) {
         command->type = REDO;
     } else if (input[0] == 'U') {
         command->type = UNDO;
+    } else if (input[0] == 'S') {
+        read_string_arg_or_default(input, command);
+        command->type = SAVE_STATE;
+    } else if (input[0] == 'L') {
+        read_string_arg_or_default(input, command);
+        command->type = LOAD_STATE;
     } else {
         command->type = UNKNOWN;
     }
