@@ -224,10 +224,11 @@ void load_state(DoublyLinkedList *deck, DoublyLinkedList **column_arr, DoublyLin
         if (line[0] == 'C') {
             break;
         }
-        Value v = card_char_to_value(line[0]);
-        Suit s = line[1];
+        bool isHidden = line[0] == '-';
+        Value v = card_char_to_value(line[1]);
+        Suit s = line[2];
 
-        Card *c = create_card(s, v, true);
+        Card *c = create_card(s, v, isHidden);
         if (c == NULL) {
             yukon_error.error = INVALID_DECK;
             sprintf(yukon_error.message, "Invalid card in deck: %c%c - ", line[0], s);
@@ -266,7 +267,7 @@ void load_state(DoublyLinkedList *deck, DoublyLinkedList **column_arr, DoublyLin
                 return;
             } else {
                 Node *n = create_node(node->card_ptr);
-                prepend(column_arr[i], n);
+                append(column_arr[i], n);
             }
         }
     }
@@ -295,7 +296,7 @@ void load_state(DoublyLinkedList *deck, DoublyLinkedList **column_arr, DoublyLin
                 return;
             } else {
                 Node *n = create_node(node->card_ptr);
-                prepend(foundation_arr[i], n);
+                append(foundation_arr[i], n);
             }
         }
     }
@@ -325,6 +326,9 @@ void save_state(DoublyLinkedList *deck, DoublyLinkedList **column_arr, DoublyLin
 
     int line_number = 1;
     while (deck_ptr->card_ptr != NULL) {
+        bool isHidden = deck_ptr->card_ptr->is_hidden;
+        char visibilityIndicator = isHidden ? '-' : '+';
+        putc(visibilityIndicator, file);
         char v = card_value_to_char(deck_ptr->card_ptr->value);
         Suit s = deck_ptr->card_ptr->suit;
 

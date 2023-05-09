@@ -317,7 +317,7 @@ void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLi
             } else {
                 load_state(deck, columns_arr, foundations_arr, "stateful_deck.txt");
             }
-            set_cards_are_hidden(deck, false);
+            *phase = PLAY;
             return;
         case UNKNOWN:
         default:

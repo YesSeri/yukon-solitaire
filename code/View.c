@@ -50,7 +50,7 @@ void print_main_section(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS],
 void print_footer(char *prev_command) {
     printf("LAST Command: %s\n", prev_command);
     printf("Message: %s\n", yukon_error.message);
-    if(yukon_error.error != GAME_OVER){
+    if (yukon_error.error != GAME_OVER) {
         printf("INPUT > ");
     }
 
@@ -64,6 +64,7 @@ void print_view(DoublyLinkedList *columns_arr[NUMBER_OF_COLUMNS], Foundation *fo
     print_header();
     printf("\n");
     print_main_section(columns_arr, foundations_arr);
+    printf("\n");
     print_footer(prev_command);
     fflush(stdout);
 }
