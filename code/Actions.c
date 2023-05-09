@@ -43,7 +43,7 @@ void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struc
     //foundation saving
 
     for (int i = 0; i < 4; ++i) {
-        Node *foundationPtr = get_node_at(*foundationArr,i);
+        Node *foundationPtr = foundationArr[i]->dummy_ptr->next;
         while (foundationPtr->card_ptr != NULL) {
             print_card(foundationPtr,file);
             foundationPtr = foundationPtr->next;
@@ -56,11 +56,12 @@ void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struc
     //history saving
     struct history_node *curr_f = *(historyNode);
     //curr move
-    printf("%d->%d ", curr_f->move_ptr->from, curr_f->move_ptr->to);
-    putc(curr_f->move_ptr->from,file);
-    putc('>',file);
-    putc(curr_f->move_ptr->to,file);
-    putc('\n',file);
+    if(curr_f->move_ptr != NULL){
+        putw(curr_f->move_ptr->from,file);
+        putc('>',file);
+        putw(curr_f->move_ptr->to,file);
+        putc('\n',file);
+    }
     putc(':',file);
     putc('\n',file);
 
@@ -69,9 +70,9 @@ void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struc
     curr_f = curr_f->next;
 
     while (curr_f->move_ptr != NULL) {
-        putc(curr_f->move_ptr->from,file);
+        putw(curr_f->move_ptr->from,file);
         putc('>',file);
-        putc(curr_f->move_ptr->to,file);
+        putw(curr_f->move_ptr->to,file);
         putc('\n',file);
         curr_f = curr_f->next;
     }
@@ -80,9 +81,9 @@ void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struc
 
     //undo moves
     while (curr_p->move_ptr != NULL) {
-        putc(curr_p->move_ptr->from,file);
+        putw(curr_p->move_ptr->from,file);
         putc('>',file);
-        putc(curr_p->move_ptr->to,file);
+        putw(curr_p->move_ptr->to,file);
         putc('\n',file);
         curr_p = curr_p->prev;
     }
@@ -90,8 +91,8 @@ void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struc
     putc('\n',file);
     //save collumns
     //TODO do all collumns and foundations get printed (off by one ??)
-    for (int i = 0; i < 8; ++i) {
-        Node *collumn = get_node_at(*collumnArr,i);
+    for (int i = 0; i < 7; ++i) {
+        Node *collumn = collumnArr[i]->dummy_ptr->next;
         while(collumn->card_ptr!=NULL){
             print_card(collumn,file);
             collumn = collumn->next;
