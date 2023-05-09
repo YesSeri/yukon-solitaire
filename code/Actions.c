@@ -14,7 +14,7 @@ void move_from_col() {
 }
 
 
-void print_card_to_file(Node *cardNode, FILE *file){
+void print_card_to_file(Node *cardNode, FILE *file) {
     char v = card_value_to_char(cardNode->card_ptr->value);
     Suit s = cardNode->card_ptr->suit;
 
@@ -22,7 +22,9 @@ void print_card_to_file(Node *cardNode, FILE *file){
     putc(s, file);
     putc('\n', file);
 }
-void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struct history_node **historyNode, DoublyLinkedList **collumnArr, const char *filename){
+
+void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struct history_node **historyNode,
+                       DoublyLinkedList **collumnArr, const char *filename) {
     char filepath[100] = "../decks/";
     strcat(filepath, filename);
     FILE *file = fopen(filepath, "w+"); /* should check the result */
@@ -30,7 +32,7 @@ void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struc
         yukon_error.error = WRITE_ERR;
         return;
     }
-    putc(';',file);
+    putc(';', file);
     putc('\n', file);
     //deck saving
     Node *current = deck->dummy_ptr->next;
@@ -38,7 +40,7 @@ void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struc
         print_card_to_file(current, file);
         current = current->next;
     }
-    putc(';',file);
+    putc(';', file);
     putc('\n', file);
     //foundation saving
 
@@ -48,58 +50,58 @@ void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struc
             print_card_to_file(foundationPtr, file);
             foundationPtr = foundationPtr->next;
         }
-        putc(':',file);
+        putc(':', file);
         putc('\n', file);
     }
-    putc(';',file);
+    putc(';', file);
     putc('\n', file);
     //history saving
     struct history_node *curr_f = *(historyNode);
     //curr move
-    if(curr_f->move_ptr != NULL){
-        putw(curr_f->move_ptr->from,file);
-        putc('>',file);
-        putw(curr_f->move_ptr->to,file);
-        putc('\n',file);
+    if (curr_f->move_ptr != NULL) {
+        putw(curr_f->move_ptr->from, file);
+        putc('>', file);
+        putw(curr_f->move_ptr->to, file);
+        putc('\n', file);
     }
-    putc(':',file);
-    putc('\n',file);
+    putc(':', file);
+    putc('\n', file);
 
     //redo moves
     struct history_node *curr_p = curr_f->prev;
     curr_f = curr_f->next;
 
     while (curr_f->move_ptr != NULL) {
-        putw(curr_f->move_ptr->from,file);
-        putc('>',file);
-        putw(curr_f->move_ptr->to,file);
-        putc('\n',file);
+        putw(curr_f->move_ptr->from, file);
+        putc('>', file);
+        putw(curr_f->move_ptr->to, file);
+        putc('\n', file);
         curr_f = curr_f->next;
     }
-    putc(':',file);
-    putc('\n',file);
+    putc(':', file);
+    putc('\n', file);
 
     //undo moves
     while (curr_p->move_ptr != NULL) {
-        putw(curr_p->move_ptr->from,file);
-        putc('>',file);
-        putw(curr_p->move_ptr->to,file);
-        putc('\n',file);
+        putw(curr_p->move_ptr->from, file);
+        putc('>', file);
+        putw(curr_p->move_ptr->to, file);
+        putc('\n', file);
         curr_p = curr_p->prev;
     }
-    putc(';',file);
-    putc('\n',file);
+    putc(';', file);
+    putc('\n', file);
     //save collumns
-    //TODO do all collumns and foundations get printed (off by one ??)
     for (int i = 0; i < 7; ++i) {
         Node *collumn = collumnArr[i]->dummy_ptr->next;
-        while(collumn->card_ptr!=NULL){
+        while (collumn->card_ptr != NULL) {
             print_card_to_file(collumn, file);
             collumn = collumn->next;
         }
-        putc(':',file);
+        putc(':', file);
         putc('\n', file);
-    }*/
+    }
+    * /
 
 
     fclose(file);
@@ -171,6 +173,106 @@ void read_file_to_deck(DoublyLinkedList *deck, const char *filename) {
 
     fclose(file);
 
+}
+
+void read_file_to_game(DoublyLinkedList *deck, Foundation **foundationArr, struct history_node **historyNode,
+                       DoublyLinkedList **collumnArr, const char *filename) {
+    free_list_cards(deck);
+    free_list_nodes(deck);
+    //idk if i need to do this
+    for (int i = 0; i < 7; ++i) {
+        free_list_cards(collumnArr[i]);
+        free_list_nodes(collumnArr[i])
+    }
+    for (int i = 0; i < 4; ++i) {
+        free_list_cards(foundationArr[i]);
+        free_list_nodes(foundationArr[i]);
+    }
+    free_list_cards(historyNode);
+    free_list_nodes(historyNode);
+
+
+    char filepath[100] = "../decks/";
+    strcat(filepath, filename);
+    FILE *file = fopen(filepath, "r"); /* should check the result */
+    char line[256];
+    if (file == NULL) {
+        yukon_error.error = READ_ERR;
+        return;
+    }
+
+    int line_number = 1;
+    fgets(line, sizeof(line), file);
+    if (!line[0] == ';') {
+        yukon_error.error = READ_ERR;
+        sprintf(yukon_error.message, "Invalid file, this file is of type Deck");
+        return;
+    } else {
+        ++line_number;
+        fgets(line, sizeof(line), file);
+    }
+    //load deck
+    while (line[0] != ';') {
+        Value v = card_char_to_value(line[0]);
+        Suit s = line[1];
+
+        Card *c = create_card(s, v, true);
+        if (c == NULL) {
+            yukon_error.error = INVALID_DECK;
+            sprintf(yukon_error.message, "Invalid card in deck: %c%c at line %d - ", line[0], s, line_number);
+            return;
+        }
+        Node *n = create_node(c);
+        append(deck, n);
+        line_number++;
+        fgets(line, sizeof(line), file);
+    }
+    if (deck->length != 52) {
+        yukon_error.error = INVALID_DECK;
+        sprintf(yukon_error.message, "Deck must contain 52 cards - ");
+        return;
+    }
+    line_number++;
+    fgets(line, sizeof(line), file);
+    //load foundation
+
+    int foundationNr = 0;
+    for (int i = 0; i < 4; ++i) {
+        Foundation *foundation = foundationArr[i];
+        while (line[0] != ':') {
+            if(line[0]==';'){
+                break;
+            }
+            Value v = card_char_to_value(line[0]);
+            Suit s = line[1];
+
+            Card *c = create_card(s, v, true);
+            if (c == NULL) {
+                yukon_error.error = INVALID_DECK;
+                sprintf(yukon_error.message, "Invalid card in foundation: %c%c at line %d - ", line[0], s, line_number);
+                return;
+            }
+            Node *n = create_node(c);
+            append(foundation, n);
+            line_number++;
+            fgets(line, sizeof(line), file);
+
+        }
+        if(line[0]==';'){
+            break;
+        }
+        foundationNr++;
+    }
+    line_number++;
+    fgets(line, sizeof(line), file);
+    //load history
+
+
+
+
+
+    fclose(file);
+    fgets(line, sizeof(line), file);
 }
 
 
