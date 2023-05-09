@@ -77,6 +77,9 @@ bool is_valid_move(Move *move, DoublyLinkedList *from, DoublyLinkedList *to) {
         // If card_ptr is empty the dummy ptr points to itself, meaning there are no cards in this column or foundation.
     } else {
         card_from = search_list_for_card(from, move->card)->card_ptr;
+        if (card_from->value == move->card->value && card_from->suit == move->card->suit) {
+            move->card = NULL;
+        }
     }
     // Move multiple cards
     // You can never move several cards to a column.
