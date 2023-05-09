@@ -6,12 +6,11 @@
 
 // TODO write tests for relevant functions. Almost everything in Actions.c and DoublyLinkedList.c should be tested.
 
-
-
 /**
  * Makes two moves and the undos them.
  */
 void test_undo() {
+    printf("Test 'undo' command:\n");
     DoublyLinkedList *deck = create_doubly_linked_list();
     create_sorted_deck(deck);
     DoublyLinkedList *column_arr[NUMBER_OF_COLUMNS];
@@ -81,7 +80,7 @@ void test_random_shuffling() {
     fclose(expected_file);
     remove("../decks/test_deck.txt");*/
 
-    printf("Testing random shuffling\n");
+    printf("Testing random shuffling:\n");
 
     DoublyLinkedList *deck = create_doubly_linked_list();
     create_sorted_deck(deck);
@@ -95,9 +94,8 @@ void test_random_shuffling() {
 
 }
 
-// TODO create if statement that actually tests if things are working. Now I am just looking at it manually.
 void test_interleaved_shuffling() {
-    printf("Testing interleaved shuffling\n");
+    printf("Testing interleaved shuffling:\n");
     DoublyLinkedList *deck = create_doubly_linked_list();
     create_sorted_deck(deck);
     printf("Before shuffling.\n");
@@ -105,11 +103,35 @@ void test_interleaved_shuffling() {
     printf("Shuffling with arg 13.\n");
     shuffle_interleaved(deck, 13);
     debug_print(deck);
-    printf("\n\n");
+
+    save_deck_to_file(deck, "interleaved_deck_test.txt");
+    char expected_output[1000];
+    char temp_output[1000];
+
+    FILE *expected_file = fopen("../decks/interleaved_deck.txt", "r");
+    FILE *temp_file = fopen("../decks/interleaved_deck_test.txt", "r");
+    int i = 0;
+    while ((fgets(expected_output, 1000, expected_file) != NULL) && (fgets(temp_output, 1000, temp_file) != NULL)) {
+
+        if (strcmp(expected_output, temp_output) == 0) {
+            i++;
+            if (i == 52) {
+                printf("Interleaved shuffling test PASSED!\n\n");
+            }
+        } else {
+            printf("Interleaved shuffling test FAILED!\n\n");
+            break;
+        }
+    }
+    fclose(temp_file);
+    fclose(expected_file);
+    remove("../decks/interleaved_deck_test.txt");
+    printf("\n");
 }
 
+
 void test_game_over() {
-    printf("Testing game-over\n");
+    printf("Testing game-over:\n");
     DoublyLinkedList *deck = create_doubly_linked_list();
 
     DoublyLinkedList *_throwaway[NUMBER_OF_COLUMNS];
@@ -236,11 +258,11 @@ void test_read_file_to_deck() {
 
 
 void run_tests() {
-    test_undo();
-    test_read_file_to_deck();
+
     test_interleaved_shuffling();
     test_random_shuffling();
     test_game_over();
+    test_undo();
     test_save_deck_to_file();
     test_read_file_to_deck();
 
