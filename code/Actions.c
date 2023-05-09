@@ -14,7 +14,7 @@ void move_from_col() {
 }
 
 
-void print_card(Node *cardNode, FILE *file){
+void print_card_to_file(Node *cardNode, FILE *file){
     char v = card_value_to_char(cardNode->card_ptr->value);
     Suit s = cardNode->card_ptr->suit;
 
@@ -35,17 +35,17 @@ void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struc
     //deck saving
     Node *current = deck->dummy_ptr->next;
     while (current->card_ptr != NULL) {
-        print_card(current,file);
+        print_card_to_file(current, file);
         current = current->next;
     }
     putc(';',file);
     putc('\n', file);
     //foundation saving
 
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 1; i < 5; ++i) {
         Node *foundationPtr = foundationArr[i]->dummy_ptr->next;
         while (foundationPtr->card_ptr != NULL) {
-            print_card(foundationPtr,file);
+            print_card_to_file(foundationPtr, file);
             foundationPtr = foundationPtr->next;
         }
         putc(':',file);
@@ -94,12 +94,12 @@ void save_game_to_file(DoublyLinkedList *deck, Foundation **foundationArr, struc
     for (int i = 0; i < 7; ++i) {
         Node *collumn = collumnArr[i]->dummy_ptr->next;
         while(collumn->card_ptr!=NULL){
-            print_card(collumn,file);
+            print_card_to_file(collumn, file);
             collumn = collumn->next;
         }
         putc(':',file);
         putc('\n', file);
-    }
+    }*/
 
 
     fclose(file);

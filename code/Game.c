@@ -247,6 +247,7 @@ void run_command(Command *command, char *input, DoublyLinkedList *deck, DoublyLi
             } else {
                 save_game_to_file(deck,foundations_arr,currentMoveInHistory,columns_arr, "game.txt");
             }
+            return;
         case LOAD_DECK: {
             if (*phase != STARTUP) {
                 strcpy(yukon_error.message, "You can only load a deck in startup phase - ");
